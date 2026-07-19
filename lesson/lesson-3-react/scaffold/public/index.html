@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Animals</title>
+<style>
+  body { font: 16px/1.6 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         background: #f1f8f9; color: #2c4a4d; margin: 0; padding: 40px 20px; }
+  .page { max-width: 620px; margin: 0 auto; }
+  h1 { color: #005157; font-size: 28px; margin: 0 0 4px; }
+  .sub { color: #6b8a8d; font-size: 14px; margin: 0 0 26px; }
+  .card { background: #fff; border: 1px solid #dbe7e8; border-radius: 12px; padding: 20px 22px; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { padding: 10px 12px; border: 1px solid #dbe7e8; border-radius: 8px; margin-bottom: 8px; }
+  li strong { color: #005157; }
+  .tag { font-size: 11px; background: #f1f8f9; color: #6b8a8d; padding: 2px 8px;
+         border-radius: 999px; margin-left: 8px; }
+  .muted { color: #6b8a8d; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Animals</h1>
+  <p class="sub">Lesson 3. Fill in the steps below, then refresh this page.</p>
+  <div class="card"><div id="root"></div></div>
+</div>
+
+<!-- React and Babel from a CDN, so the JSX you write below runs as you write
+     it. No build step, just save and refresh. -->
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+function AnimalList() {
+    // ── STEP 1 ──  Hold the animals. useState, starting as an empty array.
+
+    // write it here
+
+    // ── STEP 2 ──  Fetch them. await fetch, await response.json(), then store.
+
+    // write it here
+
+    // ── STEP 3 ──  Run it once on page load. useEffect with an empty array.
+
+    // write it here
+
+    // ── STEP 4 ──  Show them. Return a <ul>, map each animal to an <li> with a key.
+
+    return <p className="muted">Nothing here yet. Start at step 1.</p>;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<AnimalList />);
+</script>
+</body>
+</html>

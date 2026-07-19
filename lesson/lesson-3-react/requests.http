@@ -1,0 +1,13 @@
+# LESSON 3 requests. Server: npm run lesson3  (or lesson3:scaffold)
+#
+# This lesson is about the browser doing the fetching, so there is only one
+# request. Sending it here shows the exact JSON the React page receives, which
+# is useful before writing any component code.
+
+@host = http://localhost:3300
+
+
+### The endpoint the component calls
+# Already working in both versions. Nothing to build on the server side.
+
+GET {{host}}/get-all-animals

@@ -1,0 +1,60 @@
+# LESSON 2 requests. Server: npm run lesson2  (or lesson2:scaffold)
+# In VS Code with the REST Client extension, a Send Request link appears above each.
+
+@host = http://localhost:3200
+
+
+### 1. GET the animals (already works, even in the scaffold)
+# Run this first so the starting three rows are visible.
+
+GET {{host}}/get-all-animals
+
+
+### 2. POST a new animal
+# The endpoint this lesson builds. Before it is written this returns 404,
+# which is a useful thing to show first.
+
+POST {{host}}/add-one-animal
+Content-Type: application/json
+
+{
+    "name": "Falcon",
+    "category": "Bird",
+    "can_fly": true,
+    "lives_in": "Cliffs"
+}
+
+
+### 3. GET again, to prove it saved
+# Replying nicely and actually storing the row are two different claims.
+# This checks the second one.
+
+GET {{host}}/get-all-animals
+
+
+### 4. POST with no name
+# Nothing stops this yet, so it saves with undefined as the name. A natural
+# opening for talking about checking data before saving it.
+
+POST {{host}}/add-one-animal
+Content-Type: application/json
+
+{
+    "category": "Bird",
+    "can_fly": true,
+    "lives_in": "Nowhere"
+}
+
+
+### 5. POST with no Content-Type header
+# Worth showing on purpose. Nothing parses the body, so req.body is empty.
+# It does not crash, it saves undefined, which is worse because it is silent.
+
+POST {{host}}/add-one-animal
+
+{
+    "name": "Sparrow",
+    "category": "Bird",
+    "can_fly": true,
+    "lives_in": "Hedges"
+}

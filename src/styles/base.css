@@ -1,0 +1,64 @@
+/* Tokens, resets and typography. */
+
+/* ---------------------------------------------------------------
+   Theme pulled straight from the logo:
+   deep teal #005157 and bright teal #109AA9
+   --------------------------------------------------------------- */
+
+:root {
+    --deep: #005157;
+    --bright: #109aa9;
+    --mist: #d9edef;
+    --wash: #f1f8f9;
+    --ink: #0a2a2d;
+    --body: #2c4a4d;
+    --soft: #6b8a8d;
+    --line: #dbe7e8;
+    --paper: #ffffff;
+    --code-bg: #04343a;
+    --code-fg: #d6eef1;
+    --amber: #c8781f;
+
+    --sans: "Avenir Next", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif;
+    --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(0, 81, 87, 0.06), 0 8px 24px rgba(0, 81, 87, 0.07);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Scrollbars are hidden everywhere, including inside the code panels. Scrolling
+   still works by wheel, trackpad, keyboard and touch: only the bar is gone, so
+   a panel appearing or filling up never shifts the layout beside it. */
+* {
+    scrollbar-width: none;          /* Firefox */
+    -ms-overflow-style: none;       /* old Edge */
+}
+
+*::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+body {
+    margin: 0;
+    background: var(--wash);
+    color: var(--body);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: var(--bright);
+    text-decoration: none;
+}

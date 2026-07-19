@@ -1,0 +1,536 @@
+/* Code display: static blocks, the explorer, its modes and the results view. */
+
+/* ---------------- code ---------------- */
+
+.code {
+    position: relative;
+    background: var(--code-bg);
+    border-radius: var(--radius);
+    margin: 0 0 18px;
+    overflow: hidden;
+}
+
+.code .bar {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.code .bar .name {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #8fc4ca;
+}
+
+.code .bar .copy {
+    margin-left: auto;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: #8fc4ca;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 7px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background 0.16s ease, color 0.16s ease;
+}
+
+.code .bar .copy:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.code pre {
+    margin: 0;
+    padding: 16px 18px;
+    overflow-x: auto;
+}
+
+.code code {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--code-fg);
+    white-space: pre;
+}
+
+/* ---------------- code explorer ---------------- */
+
+/* --exh is set per instance in CodeExplorer.jsx: the height this box needs to
+   show its code in full. Holding it here means the Code and Results views are
+   the same size, so the page does not jump when the toggle is used. */
+.explorer {
+    background: var(--code-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin: 0 0 18px;
+    display: flex;
+    flex-direction: column;
+    min-height: var(--exh, 0);
+}
+
+.explorer.bare {
+    margin: 0;
+    border-radius: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* An exact height rather than a floor. Used where several boxes sit side by
+   side and have to stay level: a demo that fills with results scrolls inside
+   its own box instead of pushing that column past the others. */
+.explorer.fixed {
+    height: var(--exh);
+    min-height: var(--exh);
+    max-height: var(--exh);
+}
+
+/* Three view buttons plus four mode buttons will not fit the pinned panel on
+   narrower displays, so the bar wraps rather than clipping. */
+.exbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    flex: none;
+}
+
+.modes {
+    display: flex;
+    gap: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 3px;
+    border-radius: 9px;
+}
+
+.modes button {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: #8fc4ca;
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    padding: 5px 11px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.modes button:hover {
+    color: #fff;
+}
+
+.modes button.on {
+    background: var(--bright);
+    color: #fff;
+}
+
+.excode {
+    overflow: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.excode pre {
+    margin: 0;
+    padding: 14px 0;
+}
+
+.excode code {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.62;
+    color: var(--code-fg);
+    white-space: pre;
+    display: block;
+}
+
+.ln {
+    display: block;
+    padding: 0 16px;
+    position: relative;
+    border-left: 2px solid transparent;
+}
+
+.ln.hot {
+    cursor: pointer;
+}
+
+.ln.hot:hover {
+    background: rgba(16, 154, 169, 0.18);
+    border-left-color: var(--bright);
+}
+
+.ln.sel {
+    background: rgba(16, 154, 169, 0.26);
+    border-left-color: var(--bright);
+}
+
+/* Lines the passage being read is about. Rather than colouring them, the rest
+   of the file steps back, which points without shouting and leaves the syntax
+   colours on the lit lines untouched. The moment a student hovers anything,
+   both classes come off and the file returns to normal. */
+.ln.spot {
+    background: rgba(126, 227, 184, 0.1);
+    border-left-color: #7ee3b8;
+}
+
+.ln.dim {
+    opacity: 0.34;
+    transition: opacity 0.3s ease;
+}
+
+/* In Content mode a line is a way into the lesson text, so it says so. */
+.ln.aim { cursor: pointer; }
+
+.ln.aim:hover {
+    background: rgba(16, 154, 169, 0.16);
+}
+
+.legendhint {
+    color: #6f8f96;
+    font-style: italic;
+    margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ln.dim { transition: none; }
+}
+
+.step {
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    font-size: 9.5px;
+    font-weight: 700;
+    background: var(--bright);
+    color: #fff;
+    border-radius: 999px;
+    min-width: 14px;
+    height: 14px;
+    line-height: 14px;
+    text-align: center;
+    padding: 0 3px;
+}
+
+.mode-flow .ln {
+    padding-left: 24px;
+}
+
+/* token colours */
+.k-keyword { color: #6fd3e2; font-weight: 600; }
+.k-type    { color: #c4a2ff; }
+.k-rule    { color: #ffb4a2; }
+.k-data    { color: #ffd9a0; }
+.k-name    { color: #d6eef1; }
+.k-fn      { color: #7ee3b8; }
+.k-comment { color: #6f8f96; font-style: italic; }
+.k-punct   { color: #9ab8bd; }
+.k-space   { color: inherit; }
+
+.mode-concept .hasdef {
+    cursor: help;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.28);
+}
+
+.mode-concept .hasdef:hover {
+    background: rgba(16, 154, 169, 0.32);
+    border-radius: 3px;
+    border-bottom-color: transparent;
+}
+
+.exnote {
+    flex: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    padding: 12px 16px;
+    min-height: 78px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.exnote .nlab {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.exnote .n-concept { color: #6fd3e2; }
+.exnote .n-name { color: #ffd9a0; }
+.exnote .n-context { color: #7ee3b8; }
+.exnote .n-flow { color: #c4a2ff; }
+
+.exnote p {
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #cfe6ea;
+}
+
+.exnote p.idle {
+    color: #7fa3aa;
+    font-style: italic;
+}
+
+.exlegend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 9px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    flex: none;
+}
+
+/* ---------------- code / results toggle ---------------- */
+
+.views {
+    display: flex;
+    gap: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 3px;
+    border-radius: 9px;
+    margin-right: 2px;
+}
+
+.views button {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: #8fc4ca;
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.views button:hover { color: #fff; }
+
+.views button.on {
+    background: #7ee3b8;
+    color: #04343a;
+}
+
+/* The lesson text has just said there is something to press. The glow says
+   where, and stops as soon as the student is on that view. `pulse` is the
+   shared ring animation from motion.css. */
+.views button.glow {
+    color: #04343a;
+    background: #7ee3b8;
+    animation: pulse 1.9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .views button.glow {
+        animation: none;
+        box-shadow: 0 0 0 3px rgba(126, 227, 184, 0.5);
+    }
+}
+
+/* A demo living inside the panel, rather than further down the page where the
+   code it belongs to has scrolled out of sight. */
+.extry {
+    overflow: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 14px;
+    animation: fadein 0.2s ease both;
+}
+
+.extry .demo {
+    margin: 0;
+    border: none;
+    border-radius: 10px;
+}
+
+/* ---------------- results ---------------- */
+
+.rwrap {
+    padding: 16px;
+    overflow: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    animation: fadein 0.2s ease both;
+}
+
+.rlead {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: #8fc4ca;
+    margin-bottom: 12px;
+}
+
+.ridle {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: #7fa3aa;
+    font-style: italic;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* rows */
+.rtable table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.rtable th {
+    text-align: left;
+    padding: 7px 9px;
+    color: #6fd3e2;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    white-space: nowrap;
+}
+
+/* Values wrap. Headers stay on one line, since a column name is short and
+   breaking it would be harder to read than a slightly taller row. */
+.rtable td {
+    padding: 6px 9px;
+    color: #d6eef1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    overflow-wrap: anywhere;
+}
+
+.rtable tr:last-child td { border-bottom: none; }
+.rnull { color: #6f8f96; font-style: italic; }
+
+.rcap {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    color: #7fa3aa;
+    margin-top: 9px;
+}
+
+/* a request and its reply */
+.rreq, .rres {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 9px;
+    padding: 11px 13px;
+    margin-bottom: 12px;
+}
+
+.rres { margin-top: 12px; margin-bottom: 0; }
+
+.rline {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 12px;
+}
+
+.rmethod {
+    background: #7ee3b8;
+    color: #04343a;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+}
+
+.rurl { color: #ffd9a0; }
+
+.rhdr {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #6f8f96;
+    margin: 7px 0;
+}
+
+.rjson {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: #d6eef1;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.rjson.out { color: #7ee3b8; }
+
+.rok {
+    background: #e4f7ee;
+    color: #12734f;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+}
+
+.rbad {
+    background: #ffe3dd;
+    color: #9c3b25;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+}
+
+.rms { color: #7fa3aa; font-size: 11.5px; }
+
+/* what the browser shows */
+.rscreen {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.rbar {
+    background: #eef2f7;
+    padding: 7px 11px;
+    display: flex;
+    gap: 6px;
+}
+
+.rdot { width: 8px; height: 8px; border-radius: 50%; display: block; }
+.rdot.red { background: #f87171; }
+.rdot.amber { background: #fbbf24; }
+.rdot.green { background: #34d399; }
+
+.rbody { padding: 14px 16px 16px; }
+
+.rbody h4 {
+    margin: 0 0 10px;
+    font-family: var(--sans);
+    font-size: 16px;
+    color: var(--deep);
+}
+
+.rbody ul { list-style: none; margin: 0; padding: 0; }
+
+.rbody li {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--body);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.rbody li:last-child { border-bottom: none; }
+.rbody li strong { color: var(--deep); }
+
+.inlinename {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--soft);
+    margin-bottom: 5px;
+}

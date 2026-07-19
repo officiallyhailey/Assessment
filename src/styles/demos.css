@@ -1,0 +1,299 @@
+/* The interactive demo panels embedded in lessons. */
+
+/* ---------------- demo panel ---------------- */
+
+.demo {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin: 4px 0 20px;
+}
+
+.demo .top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 18px;
+    background: var(--deep);
+    color: #fff;
+}
+
+.demo .top .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4fd2c2;
+    box-shadow: 0 0 0 0 rgba(79, 210, 194, 0.6);
+    animation: pulse 2.2s infinite;
+    flex: none;
+}
+
+.demo .top strong {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.demo .top .hint {
+    margin-left: auto;
+    font-size: 12.5px;
+    color: #9fd3d8;
+}
+
+.demo .pad {
+    padding: 20px;
+}
+
+.demo .lead {
+    font-size: 15px;
+    margin: 0 0 16px;
+    max-width: 66ch;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    align-items: center;
+}
+
+/* A row holding the query box aligns to the top, so the Run button stays beside
+   the first line rather than drifting down as the query grows. */
+.row:has(textarea) { align-items: flex-start; }
+
+/* Inputs share the row and shrink rather than pushing past the panel edge.
+   flex-basis is small so several fit side by side in the narrow pinned panel
+   and wrap onto their own line before they would ever overflow it. */
+.demo input[type="text"],
+.demo input:not([type="checkbox"]),
+.demo textarea,
+.demo select {
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    font-size: 14px;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: #fff;
+    min-width: 0;
+    flex: 1 1 130px;
+    max-width: 100%;
+}
+
+.demo input[type="checkbox"] { flex: none; }
+
+/* The query box. Wraps and is grown to fit by the component, so a long query
+   is readable in full rather than scrolling sideways inside a one line field. */
+.demo textarea.sqlbox {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.5;
+    flex: 1 1 220px;
+    resize: none;
+    overflow: hidden;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.demo textarea:focus {
+    outline: 2px solid var(--mist);
+    border-color: var(--bright);
+}
+
+.demo input:focus,
+.demo select:focus {
+    outline: 2px solid var(--mist);
+    border-color: var(--bright);
+}
+
+.btn {
+    padding: 9px 17px;
+    border: none;
+    border-radius: 9px;
+    background: var(--bright);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.16s ease, transform 0.12s ease;
+}
+
+.btn:hover {
+    background: #0d8794;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.btn.ghost {
+    background: transparent;
+    color: var(--deep);
+    border: 1px solid var(--line);
+}
+
+.btn.ghost:hover {
+    background: var(--wash);
+}
+
+/* Wraps rather than scrolling sideways. A long value used to push this box
+   wider than the panel holding it, which hid the end of the line. */
+.wire {
+    background: var(--code-bg);
+    border-radius: 11px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--code-fg);
+    margin: 14px 0 0;
+    min-width: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.wire > div { min-width: 0; }
+
+.wire .k {
+    color: #7fd7e0;
+}
+
+.wire .v {
+    color: #ffd9a0;
+}
+
+.wire .ok {
+    color: #7ee3b8;
+}
+
+.stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--soft);
+}
+
+.pill200 {
+    background: #e4f7ee;
+    color: #12734f;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 999px;
+}
+
+.pill201 {
+    background: #e2f2f5;
+    color: var(--deep);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 999px;
+}
+
+.fresh {
+    animation: flash 1.1s ease;
+}
+
+.renderbox {
+    border: 1px dashed var(--line);
+    border-radius: 11px;
+    padding: 16px;
+    background: var(--wash);
+}
+
+.rcount {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--soft);
+    margin-bottom: 9px;
+}
+
+.empty {
+    color: var(--soft);
+    font-style: italic;
+    font-size: 14.5px;
+}
+
+/* A result table inside a demo is tighter than one in the prose, because it can
+   carry six columns in a panel far narrower than the page. Words only break
+   when they genuinely cannot fit, rather than at any convenient point. */
+.demo .tw { overflow-x: auto; }
+
+.demo table.d { font-size: 13px; }
+
+.demo table.d th,
+.demo table.d td {
+    padding: 7px 9px;
+}
+
+.demo table.d td {
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+
+.demo table.d td.m,
+.demo table.d th.m {
+    font-size: 12px;
+}
+
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Wraps onto a second line rather than letting a long name push the id tag out
+   past the edge of the panel. */
+.list li {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 9px 13px;
+    margin-bottom: 7px;
+    font-size: 14.5px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 9px;
+    min-width: 0;
+}
+
+.list li .nm {
+    font-weight: 600;
+    color: var(--deep);
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.list li .where {
+    color: var(--soft);
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.tagm {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--wash);
+    color: var(--soft);
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: auto;
+}
+
+.tagm.fly {
+    background: #e2f4f2;
+    color: #0f7d6d;
+    margin-left: 0;
+}

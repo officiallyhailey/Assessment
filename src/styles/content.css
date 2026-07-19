@@ -1,0 +1,417 @@
+/* Lesson prose: figures, callouts, tables, vocabulary and the learn-more dropdown. */
+
+/* ---------------- figure ---------------- */
+
+.figure {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin: 6px 0 20px;
+}
+
+.figure img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.figure figcaption {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--soft);
+    text-align: center;
+}
+
+/* ---------------- glossary terms in the prose ---------------- */
+
+/* A defined word looks like part of its sentence until it is approached, which
+   keeps a paragraph readable rather than turning it into a field of links. */
+
+.termwrap {
+    position: relative;
+    display: inline-block;
+}
+
+.term {
+    font: inherit;
+    color: var(--deep);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: help;
+    border-bottom: 1px dashed var(--bright);
+    transition: background 0.15s ease;
+}
+
+.term:hover,
+.term.on {
+    background: var(--mist);
+    border-bottom-color: var(--deep);
+    border-radius: 3px;
+}
+
+.term:focus-visible {
+    outline: 2px solid var(--bright);
+    outline-offset: 2px;
+}
+
+.termpop {
+    position: absolute;
+    z-index: 40;
+    bottom: calc(100% + 9px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    background: var(--code-bg);
+    color: #cfe6ea;
+    border-radius: 11px;
+    padding: 12px 14px;
+    box-shadow: 0 10px 30px rgba(4, 52, 58, 0.28);
+    text-align: left;
+    cursor: default;
+    animation: fadein 0.13s ease both;
+}
+
+/* Near an edge the popup lines up with the word instead of centring on it. */
+.termpop.left { left: 0; transform: none; }
+.termpop.right { left: auto; right: 0; transform: none; }
+
+.termpop::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border: 6px solid transparent;
+    border-top-color: var(--code-bg);
+}
+
+.termpop.left::after { left: 24px; margin-left: 0; }
+.termpop.right::after { left: auto; right: 18px; margin-left: 0; }
+
+.termpop.pinned {
+    box-shadow: 0 0 0 2px var(--bright), 0 10px 30px rgba(4, 52, 58, 0.28);
+}
+
+.tw-word {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #6fd3e2;
+    margin-bottom: 5px;
+}
+
+.tw-def {
+    display: block;
+    font-size: 13.5px;
+    line-height: 1.5;
+}
+
+.tw-note {
+    display: block;
+    margin-top: 7px;
+    padding-top: 7px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #8fc4ca;
+}
+
+/* ---------------- a passage tied to lines of code ---------------- */
+
+/* The rule on the left is the only thing that moves as the page scrolls, so the
+   eye can follow which passage the code panel is currently answering to. */
+
+/* The tint is inset on every side so it never sits tight against the first and
+   last line of text, and there is no rule down the edge: the highlight should
+   read as the passage being lit, not as a quoted block. */
+.focus {
+    position: relative;
+    padding: 14px 18px;
+    margin: 0 -18px 6px;
+    border-radius: 12px;
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.focus.on {
+    background: rgba(16, 154, 169, 0.06);
+    box-shadow: 0 0 0 1px rgba(16, 154, 169, 0.12);
+}
+
+/* Pointed at from the code panel, which is deliberate rather than incidental,
+   so it is allowed to be a little louder than the scroll highlight. */
+.focus.aimed {
+    background: rgba(16, 154, 169, 0.11);
+    box-shadow: 0 0 0 1px rgba(16, 154, 169, 0.3);
+}
+
+/* The passage's own bottom margin would otherwise stack with the padding. */
+.focus > *:last-child { margin-bottom: 0; }
+
+.focustag {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--soft);
+    margin-bottom: 8px;
+    transition: color 0.25s ease;
+}
+
+.focus.on .focustag { color: var(--bright); }
+
+/* Numbered steps that carry the same numbers as the drawing above them. */
+ol.t.steps {
+    list-style: none;
+    counter-reset: step;
+    padding-left: 0;
+}
+
+ol.t.steps li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 42px;
+    margin-bottom: 13px;
+}
+
+ol.t.steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: var(--deep);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .focus,
+    .focustag,
+    .term { transition: none; }
+}
+
+/* ---------------- callout ---------------- */
+
+.note {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+    padding: 17px 20px;
+    margin: 0 0 18px;
+    max-width: 70ch;
+}
+
+.note .lab {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bright);
+    margin-bottom: 6px;
+}
+
+.note.warn {
+    background: #fff8ef;
+    border-color: #f0dcc0;
+}
+
+.note.warn .lab {
+    color: var(--amber);
+}
+
+.note p {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* ---------------- tables ---------------- */
+
+.tw {
+    overflow-x: auto;
+    margin: 0 0 18px;
+}
+
+table.d {
+    border-collapse: collapse;
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    font-size: 14.5px;
+}
+
+table.d th {
+    background: var(--wash);
+    color: var(--deep);
+    font-weight: 600;
+    text-align: left;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+}
+
+/* Long values wrap inside the cell rather than widening the table past its
+   container, which matters most in the pinned panel where space is tight. */
+table.d td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    overflow-wrap: anywhere;
+}
+
+table.d tr:last-child td {
+    border-bottom: none;
+}
+
+table.d td.m,
+table.d th.m {
+    font-family: var(--mono);
+    font-size: 13px;
+}
+
+/* ---------------- vocabulary ---------------- */
+
+.vocab {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin: 0 0 18px;
+}
+
+.vrow + .vrow {
+    border-top: 1px solid var(--line);
+}
+
+.vrow button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 15px 18px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: var(--deep);
+    transition: background 0.15s ease;
+}
+
+.vrow button:hover {
+    background: var(--wash);
+}
+
+.vocab.plain .vrow button {
+    font-family: var(--sans);
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--deep);
+    line-height: 1.45;
+}
+
+.vrow .tw2 {
+    margin-left: auto;
+    color: var(--bright);
+    font-size: 18px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+    flex: none;
+}
+
+.vrow.open .tw2 {
+    transform: rotate(45deg);
+}
+
+.vrow .body {
+    animation: fadein 0.2s ease both;
+}
+
+.vrow .body p {
+    margin: 0;
+    padding: 0 18px 16px;
+    font-size: 15px;
+    max-width: 68ch;
+}
+
+/* ---------------- learn more dropdown ---------------- */
+
+.more {
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--paper);
+    margin: 0 0 16px;
+    max-width: 70ch;
+    overflow: hidden;
+}
+
+.more > button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--bright);
+    transition: background 0.15s ease;
+}
+
+.more > button:hover {
+    background: var(--wash);
+}
+
+.more .mk {
+    font-size: 15px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+    flex: none;
+}
+
+.more.open .mk {
+    transform: rotate(45deg);
+}
+
+.more .mbody {
+    animation: fadein 0.2s ease both;
+    border-top: 1px solid var(--line);
+}
+
+.more .minner {
+    padding: 2px 16px 6px;
+}
+
+.more .minner > *:first-child {
+    margin-top: 13px;
+}
+
+.more .minner p.t,
+.more .minner ul.t,
+.more .minner ol.t {
+    font-size: 14.5px;
+}
+
+.more .minner .sub {
+    font-size: 16px;
+    margin-top: 16px;
+}

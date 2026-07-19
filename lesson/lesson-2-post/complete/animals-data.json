@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Lion",
+    "category": "Mammal",
+    "can_fly": false,
+    "lives_in": "Savanna",
+    "population": 23000
+  },
+  {
+    "id": 2,
+    "name": "Penguin",
+    "category": "Bird",
+    "can_fly": false,
+    "lives_in": "Antarctica",
+    "population": 1200000
+  },
+  {
+    "id": 3,
+    "name": "Eagle",
+    "category": "Bird",
+    "can_fly": true,
+    "lives_in": "Mountains",
+    "population": 5000
+  }
+]

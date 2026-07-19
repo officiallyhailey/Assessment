@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Animals</title>
+<style>
+  body { font: 16px/1.6 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         background: #f1f8f9; color: #2c4a4d; margin: 0; padding: 40px 20px; }
+  .page { max-width: 620px; margin: 0 auto; }
+  h1 { color: #005157; font-size: 28px; margin: 0 0 4px; }
+  .sub { color: #6b8a8d; font-size: 14px; margin: 0 0 26px; }
+  .card { background: #fff; border: 1px solid #dbe7e8; border-radius: 12px; padding: 20px 22px; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { padding: 10px 12px; border: 1px solid #dbe7e8; border-radius: 8px; margin-bottom: 8px; }
+  li strong { color: #005157; }
+  .tag { font-size: 11px; background: #f1f8f9; color: #6b8a8d; padding: 2px 8px;
+         border-radius: 999px; margin-left: 8px; }
+  .muted { color: #6b8a8d; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Animals</h1>
+  <p class="sub">Lesson 3, running live against the API next door.</p>
+  <div class="card"><div id="root"></div></div>
+</div>
+
+<!-- React and Babel from a CDN, so real JSX runs with no build step. -->
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+function AnimalList() {
+    // -----------------------------------------------------------------------
+    // STEP 1.  Hold the animals.
+    //
+    // useState creates a value the component remembers between redraws. It
+    // hands back two things: the current value, and the function that updates
+    // it. Calling that function is also what tells React to draw again.
+    //
+    // It starts as an empty array on purpose. map works fine on an empty array
+    // and shows nothing, where starting with no value at all would
+    // throw on the very first render, before any data could possibly exist.
+    // -----------------------------------------------------------------------
+    const [animals, setAnimals] = useState([]);
+
+    // -----------------------------------------------------------------------
+    // STEP 2.  Fetch them.
+    //
+    // Two awaits, because there are two separate waits. The first resolves
+    // once the server responds, and hands back a Response object describing
+    // the reply. That is not the data yet. response.json() reads the body and
+    // turns it into a real array, which is the second wait.
+    //
+    // setAnimals is the line that puts it on screen: storing the data is what
+    // asks React to draw the component again.
+    // -----------------------------------------------------------------------
+    const getAnimals = async () => {
+        const response = await fetch("/get-all-animals");
+        const data = await response.json();
+        setAnimals(data);
+    };
+
+    // -----------------------------------------------------------------------
+    // STEP 3.  Run it once, when the page loads.
+    //
+    // useEffect runs code AFTER the component has drawn. Fetching directly in
+    // the body of the component would run during the draw, and storing the
+    // result would cause another draw, which would fetch again, forever.
+    //
+    // The empty array at the end is the dependency list. Empty means run once.
+    // Leave it off entirely and you get exactly that endless loop, which is
+    // worth causing on purpose with the Network tab open.
+    // -----------------------------------------------------------------------
+    useEffect(() => {
+        getAnimals();
+    }, []);
+
+    // -----------------------------------------------------------------------
+    // STEP 4.  Show them.
+    //
+    // Everything returned here is JSX. It reads like HTML and it is
+    // JavaScript. The curly braces are the door back into JavaScript, which is
+    // why map sits inside them.
+    //
+    // map is the ordinary array method, not a React feature. It turns each
+    // animal into one list item, and JSX renders an array of elements by
+    // drawing each in turn.
+    //
+    // key is a stable id per item so React can tell them apart between draws.
+    // The database id is ideal, because nothing else shares it and it never
+    // changes. Using the array position instead breaks as soon as the list is
+    // reordered or filtered.
+    //
+    // Remember the screen draws TWICE: once here with an empty array, and
+    // again once the fetch above has stored the data. That is not a bug, it is
+    // what lets the page appear instantly instead of freezing until the server
+    // answers.
+    // -----------------------------------------------------------------------
+    return (
+        <ul>
+            {animals.map((animal) => (
+                <li key={animal.id}>
+                    <strong>{animal.name}</strong>, {animal.lives_in}
+                    {animal.can_fly && <span className="tag">can fly</span>}
+                </li>
+            ))}
+        </ul>
+    );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<AnimalList />);
+</script>
+</body>
+</html>
