@@ -5,23 +5,20 @@
 // be called from anywhere, not just from an endpoint.
 
 const fs = require("fs/promises");
-const path = require("path");
-
-const DATA_FILE = path.join(__dirname, "animals-data.json");
-
-// The data here is a JSON file, so reading means parsing text into JavaScript
-// and writing means turning JavaScript back into text. Against a real database
-// these two lines would be the database driver instead.
-const readData = async () => JSON.parse(await fs.readFile(DATA_FILE, "utf8"));
-const writeData = (animals) => fs.writeFile(DATA_FILE, JSON.stringify(animals, null, 2));
 
 // ---------------------------------------------------------------------------
 // STEP 3.  Save one animal and return it.
 //
+// Read, add, write. The reading and writing are written out here rather than
+// hidden in helpers of their own, because both directions are worth seeing:
+//
+//   readFile gives back a STRING, so JSON.parse turns it into a real array.
+//   JSON.stringify does the reverse, because a file can only hold text.
+//
 // The id is worked out here because a real database would generate it with
 // SERIAL. population is left empty on purpose, to show an optional column.
 //
-// Against a real database:
+// Against a real database, the whole function would be one query:
 //   INSERT INTO animals (name, category, can_fly, lives_in)
 //   VALUES ($1, $2, $3, $4) RETURNING *;
 //
@@ -29,14 +26,15 @@ const writeData = (animals) => fs.writeFile(DATA_FILE, JSON.stringify(animals, n
 // caller sees exactly what is stored, including the id it was given.
 // ---------------------------------------------------------------------------
 async function addOneAnimal(name, category, can_fly, lives_in) {
-    const animals = await readData();
+    const text = await fs.readFile("animals-data.json", "utf8");
+    const animals = JSON.parse(text);
 
     const nextId = animals.length > 0 ? Math.max(...animals.map((a) => a.id)) + 1 : 1;
 
     const newAnimal = { id: nextId, name, category, can_fly, lives_in, population: null };
     animals.push(newAnimal);
 
-    await writeData(animals);
+    await fs.writeFile("animals-data.json", JSON.stringify(animals, null, 2));
 
     return newAnimal;
 }

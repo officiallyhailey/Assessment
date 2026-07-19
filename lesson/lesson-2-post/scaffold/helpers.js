@@ -1,17 +1,16 @@
 // LESSON 2, helpers.  One thing to write, at STEP 3.
 
 const fs = require("fs/promises");
-const path = require("path");
-
-const DATA_FILE = path.join(__dirname, "animals-data.json");
-
-// given: read the file, write the file
-const readData = async () => JSON.parse(await fs.readFile(DATA_FILE, "utf8"));
-const writeData = (animals) => fs.writeFile(DATA_FILE, JSON.stringify(animals, null, 2));
 
 // ── STEP 3 ────────────────────────────────────────────────────────────
 // Save one animal and return it.
-//   read, work out the next id, push the new animal, write, return it
+//   read animals-data.json     await fs.readFile(file, "utf8")
+//   text into JavaScript       JSON.parse
+//   work out the next id       highest existing id, plus 1
+//   build it and push it       { id, name, category, can_fly, lives_in }
+//   JavaScript back into text  JSON.stringify
+//   write the file             await fs.writeFile
+//   return the new animal      server.js uses its name in the reply
 async function addOneAnimal(name, category, can_fly, lives_in) {
     // write it here
 }

@@ -29,7 +29,11 @@ In `helpers.js`:
 
 3. the `addOneAnimal` helper
 
-Reading and writing the file is already there, marked `given`.
+Nothing is pre-written. Reading and writing the file is part of step 3, so the
+whole path from request to saved row gets typed out.
+
+The scripts run from the lesson folder, which is why the code says
+`"animals-data.json"` and not a long path built from `__dirname`.
 
 ## Sending requests
 

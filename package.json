@@ -9,10 +9,10 @@
     "client": "vite",
     "build": "vite build",
     "reset": "node server/reset.js",
-    "lesson2": "node lesson/lesson-2-post/complete/server.js",
-    "lesson2:scaffold": "node lesson/lesson-2-post/scaffold/server.js",
-    "lesson3": "node lesson/lesson-3-react/complete/server.js",
-    "lesson3:scaffold": "node lesson/lesson-3-react/scaffold/server.js",
+    "lesson2": "cd lesson/lesson-2-post/complete && node server.js",
+    "lesson2:scaffold": "cd lesson/lesson-2-post/scaffold && node server.js",
+    "lesson3": "cd lesson/lesson-3-react/complete && node server.js",
+    "lesson3:scaffold": "cd lesson/lesson-3-react/scaffold && node server.js",
     "lesson:reset": "node lesson/reset.js"
   },
   "dependencies": {

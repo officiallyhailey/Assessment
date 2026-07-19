@@ -28,8 +28,8 @@ Each lesson covers **one verb**, and nothing else. Lesson 2 sends data in, lesso
 | Lesson | You write | Already working for you |
 |---|---|---|
 | 1, SQL | the whole file, in four steps | nothing needed, it runs in DB Fiddle |
-| 2, POST | `express.json()`, the POST endpoint, the `addOneAnimal` helper | reading and writing the data file |
-| 3, GET | the GET endpoint, then the component: state, the fetch, `useEffect`, the JSX | the page shell and reading the data file |
+| 2, POST | `express.json()`, the POST endpoint, the `addOneAnimal` helper including the file read and write | nothing, beyond the empty file |
+| 3, GET | the GET endpoint including the file read, then the component: state, the fetch, `useEffect`, the JSX | the page shell and its styles |
 
 Lesson 2 has no GET, so to confirm a POST saved you open `animals-data.json`. Lesson 3 has no POST.
 
@@ -71,7 +71,7 @@ npm run lesson:reset
 
 ## Teaching notes
 
-**Lesson 2.** Send the POST before writing `express.json()` to show `req.body` arriving as undefined, then add the line and send again. The GET is already there, so after the POST works you can immediately prove the row really landed rather than trusting the reply.
+**Lesson 2.** Send the POST before writing `express.json()` to show `req.body` arriving as undefined, then add the line and send again. Once it works, open `animals-data.json` beside the editor: a friendly reply and a stored row are two different claims, and the file is the one that settles it.
 
 **Lesson 3.** `public/AnimalList.jsx` is the only file to write in. Babel is loaded in the page, so it takes real JSX with no build step: write the steps, save, refresh, and the list appears. Once it works, delete the empty array from `useEffect` with the Network tab open to show the endless loop.
 
