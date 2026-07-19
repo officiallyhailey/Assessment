@@ -62,15 +62,6 @@ return (
                     alt: "The same page twice: first with nothing in it, then again with three animals listed",
                     caption: "The numbers are the three steps below, in the order they happen.",
                 },
-                {
-                    type: "olist",
-                    steps: true,
-                    items: [
-                        "The page appears straight away, with nothing in it yet.",
-                        "The data is asked for, and takes a moment to come back.",
-                        "The page appears again, this time with the list.",
-                    ],
-                },
                 { type: "p", text: "That is the whole lesson. The same page is drawn twice, and each piece of code below exists to make one of those three things happen." },
                 {
                     type: "more",
