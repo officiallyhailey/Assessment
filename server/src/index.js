@@ -4,15 +4,19 @@
 //   1. get the input from the request   (req.body / req.params)
 //   2. call a helper that does the work (await)
 //   3. send a response                  (res.json / res.send)
+//
+// No SQL in this file. The queries all live in animals-helpers.js.
 // ---------------------------------------------------------------------------
 
-const express = require("express");
-const {
-    getAllAnimals,
-    getOneAnimalById,
-    addOneAnimal,
-} = require("./animals-helpers");
-const { resetAnimals } = require("./reset");
+import express from "express";
+
+// Postgres by default. `npm run dev:offline` swaps in a JSON-backed twin with
+// the same functions, so a dead network cannot cancel a session. The endpoints
+// below cannot tell the difference, which is the point of the helper split.
+const offline = process.env.DATA_SOURCE === "json";
+const { getAllAnimals, getOneAnimalById, addOneAnimal, resetAnimals } = offline
+  ? await import("./animals-helpers.offline.js")
+  : await import("./animals-helpers.js");
 
 const app = express();
 
@@ -23,8 +27,8 @@ app.use(express.json());
 // TOPIC 3. GET all the animals
 // ---------------------------------------------------------------------------
 app.get("/get-all-animals", async (req, res) => {
-    const animals = await getAllAnimals();
-    res.json(animals);
+  const animals = await getAllAnimals();
+  res.json(animals);
 });
 
 // ---------------------------------------------------------------------------
@@ -32,28 +36,36 @@ app.get("/get-all-animals", async (req, res) => {
 // The :id is a placeholder. /get-one-animal-by-id/3  ->  req.params.id === "3"
 // ---------------------------------------------------------------------------
 app.get("/get-one-animal-by-id/:id", async (req, res) => {
-    const animal = await getOneAnimalById(req.params.id);
-    res.json(animal);
+  const animal = await getOneAnimalById(req.params.id);
+  res.json(animal);
 });
 
 // ---------------------------------------------------------------------------
 // TOPIC 2. POST a new animal
 // ---------------------------------------------------------------------------
 app.post("/add-one-animal", async (req, res) => {
-    const { name, category, can_fly, lives_in } = req.body;
-    const animal = await addOneAnimal(name, category, can_fly, lives_in);
-    res.send(`The farm has grown: ${animal.name} was added!`);
+  const { name, category, can_fly, lives_in } = req.body;
+  const animal = await addOneAnimal(name, category, can_fly, lives_in);
+  res.send(`The farm has grown: ${animal.name} was added!`);
 });
 
 // ---------------------------------------------------------------------------
 // Not part of any lesson. The site's reset button calls this, so the data can
 // be put back to the original three animals without leaving the browser.
 // ---------------------------------------------------------------------------
-app.post("/reset-animals", (req, res) => {
-    const animals = resetAnimals();
-    res.json(animals);
+app.post("/reset-animals", async (req, res) => {
+  const animals = await resetAnimals();
+  res.json(animals);
 });
 
-app.listen(3010, () => {
-    console.log("Server running on http://localhost:3010");
+const port = 3010;
+app.listen(port, async () => {
+  if (offline) {
+    console.log(`Server running on http://localhost:${port}  (offline, JSON file)`);
+    return;
+  }
+  // Wake the database before anyone asks it for anything. See db.js.
+  const { warmUp } = await import("./db.js");
+  const ms = await warmUp();
+  console.log(`Server running on http://localhost:${port}  (Postgres, awake in ${ms} ms)`);
 });

@@ -11,10 +11,22 @@ Only one topic is taught in any given session, and which one is not known in adv
 
 ---
 
+## Setting it up
+
+The data lives in a Postgres database on Neon, the same arrangement the class
+project uses. Five steps, once:
+
+1. Create a Neon project with a database called `neondb`.
+2. Copy the **pooled** connection string from the dashboard (it has `-pooler` in it).
+3. `cp server/src/config.example.js server/src/config.js` and paste the string in.
+4. Open Neon's SQL Editor, paste `db/schema.sql`, run it.
+5. `npm run install:all`
+
+`server/src/config.js` is gitignored, because that string is a password.
+
 ## Running it
 
 ```bash
-npm install
 npm run dev
 ```
 
@@ -24,14 +36,24 @@ That starts two processes at once:
 
 | Piece | Port | What it is |
 |---|---|---|
-| API | 3000 | Express server holding the animals data |
+| API | 3010 | Express server, talks to Postgres |
 | APP | 5174 | The lesson website |
 
-Stop both with `Ctrl + C`. To put the animals back to the original three:
+Ports avoid 3001 and 5173 on purpose: the class project uses those, and both
+will be open at once on a teaching day.
+
+Stop both with `Ctrl + C`. The animals go back to the original three from the
+Reset button in the site header.
+
+### With no internet
 
 ```bash
-npm run reset
+npm run dev:offline
 ```
+
+Swaps the Postgres helpers for a JSON-backed twin with the same functions, so a
+dead network cannot cancel a session. Everything on the site behaves the same.
+The Postgres version is the one the lessons teach.
 
 > Keep this project on a local drive. `npm install` creates thousands of files, and if the folder sits in iCloud the sync daemon saturates the file system and Vite hangs on startup.
 
@@ -41,9 +63,9 @@ npm run reset
 
 ```
 server/          the API the demos talk to
-src/             the website
+client/          the website
+db/              the schema, pasted into Neon once
 lesson/          plain files for coding live in a session
-public/          logo and the three lesson illustrations
 ```
 
 ### The API
@@ -52,10 +74,11 @@ Everything server-side is in **`server/`**, and it is deliberately small.
 
 | File | What it does |
 |---|---|
-| `server.js` | The three endpoints, and the only place routes are defined |
-| `animals-helpers.js` | Reads and writes the data. The endpoints call these and never touch the file directly |
-| `animals-data.json` | The data itself. This is the file that changes when you POST |
-| `reset.js` | Rewrites the data back to the original three animals |
+| `src/index.js` | The endpoints, and the only place routes are defined. No SQL |
+| `src/animals-helpers.js` | Every query. The endpoints call these and never write SQL themselves |
+| `src/db.js` | The connection pool, and the wake-up call that avoids a cold first read |
+| `src/config.js` | Your Neon connection string. Gitignored, you create it |
+| `src/animals-helpers.offline.js` | The JSON-backed twin used by `npm run dev:offline`. Not the teaching version |
 
 The endpoints:
 
@@ -66,16 +89,16 @@ The endpoints:
 | `POST` | `/add-one-animal` | A confirmation message, and saves a row |
 | `POST` | `/reset-animals` | The original three animals, and rewrites the file |
 
-`/reset-animals` is not part of any lesson. It backs the **Reset the data** button on the All Together page, so a class that has been adding rows can start clean without leaving the browser. It runs the same code as `npm run reset`.
+`/reset-animals` is not part of any lesson. It backs the **Reset data** button in the site header, so a class that has been adding rows can start clean without leaving the browser. It runs `TRUNCATE animals RESTART IDENTITY` and re-seeds, so the ids go back to 1, 2 and 3 rather than climbing.
 
-The website runs on a different port from the API, so `vite.config.mjs` forwards those three paths to port 3000. That is why the demos can call `/get-all-animals` as if it were local.
+The website runs on a different port from the API. Everything it fetches starts with `/api`, and `client/vite.config.js` strips that prefix before forwarding to port 3010. The server never sees it. This is the same proxy arrangement the class project uses.
 
 **Data is a JSON file rather than a real database on purpose.** It keeps setup to `npm install`, and the helper functions have the same shape they would have against Postgres, with the equivalent SQL written above each one.
 
 ### The website
 
 ```
-src/
+client/src/
 ├── main.jsx              entry point
 ├── App.jsx               routes
 ├── pages/
@@ -164,7 +187,7 @@ See `lesson/README.md` for the teaching notes, including the failures worth caus
 | A line-by-line note | `src/data/annotations.js` |
 | A word definition | `src/data/concepts.js` |
 | An endpoint | `server/server.js` |
-| The starting data | `server/reset.js`, then `npm run reset` |
+| The starting data | `db/schema.sql`, then the Reset button |
 | How code is coloured | `src/lib/tokenize.js` |
 | Styling | the matching file in `src/styles/` |
 
