@@ -4,6 +4,8 @@
   "private": true,
   "description": "Teaching app for the Backend Assessment lessons",
   "scripts": {
+    "check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-lessons.mjs",
+    "predev": "npm run check",
     "dev": "concurrently -n API,APP -c green,cyan \"npm run server\" \"npm run client\"",
     "server": "node server/server.js",
     "client": "vite",
