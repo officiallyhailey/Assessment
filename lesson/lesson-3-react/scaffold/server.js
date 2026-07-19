@@ -1,7 +1,7 @@
 // LESSON 3 support.  Nothing here needs writing.
 //
 // A working API so the page has real data to fetch. This lesson stands alone:
-// the server is done, you only write the component in public/index.html.
+// the server is done, you only write the component in public/AnimalList.jsx.
 
 const express = require("express");
 const fs = require("fs/promises");
@@ -21,6 +21,6 @@ app.listen(3300, () => {
     console.log("");
     console.log("  LESSON 3 (scaffold)   http://localhost:3300");
     console.log("  API  /get-all-animals   already works");
-    console.log("  Write the 4 steps in public/index.html, then refresh.");
+    console.log("  Write the 4 steps in public/AnimalList.jsx, then refresh.");
     console.log("");
 });

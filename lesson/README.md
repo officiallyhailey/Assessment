@@ -71,6 +71,6 @@ npm run lesson:reset
 
 **Lesson 2.** Send the POST before writing `express.json()` to show `req.body` arriving as undefined, then add the line and send again. The GET is already there, so after the POST works you can immediately prove the row really landed rather than trusting the reply.
 
-**Lesson 3.** `public/index.html` is what actually runs, and it takes real JSX because Babel is loaded in the page. Write the steps, save, refresh, and the list appears. `AnimalList.jsx` sits alongside as the clean version to read on screen. Once it works, delete the empty array from `useEffect` with the Network tab open to show the endless loop.
+**Lesson 3.** `public/AnimalList.jsx` is the only file to write in. Babel is loaded in the page, so it takes real JSX with no build step: write the steps, save, refresh, and the list appears. Once it works, delete the empty array from `useEffect` with the Network tab open to show the endless loop.
 
 > Lesson 3 loads React and Babel from a CDN, so it needs internet. If that is a risk on the day, the same demo runs fully offline on the lesson website.

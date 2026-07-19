@@ -14,16 +14,20 @@ Then **http://localhost:3200**
 
 ## What you write
 
-All four steps are in `server.js`, top to bottom:
+Two files, the same split the lesson teaches. `server.js` is about requests and
+responses, `helpers.js` is about the data.
+
+In `server.js`:
 
 1. `express.json()`
-2. the `getAllAnimals` helper
-3. the `addOneAnimal` helper
-4. the POST endpoint
+2. the POST endpoint
 
-One file on purpose, so there is no jumping between tabs while coding live. The
-GET endpoint at the bottom is already written and is not part of this lesson,
-it is there so the saved row can be checked.
+In `helpers.js`:
+
+3. the `addOneAnimal` helper
+
+`getAllAnimals` and the GET endpoint are already written and are not part of
+this lesson. They are there so the saved row can be read back and checked.
 
 ## Sending requests
 

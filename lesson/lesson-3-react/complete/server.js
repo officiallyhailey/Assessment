@@ -1,7 +1,7 @@
 // LESSON 3 support.  Nothing here needs writing.
 //
 // A working API so the page has real data to fetch. This lesson stands alone:
-// the server is done, you only write the component in public/index.html.
+// the server is done, you only write the component in public/AnimalList.jsx.
 
 const express = require("express");
 const fs = require("fs/promises");

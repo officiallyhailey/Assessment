@@ -21,38 +21,17 @@
 <body>
 <div class="page">
   <h1>Animals</h1>
-  <p class="sub">Lesson 3. Fill in the steps below, then refresh this page.</p>
+  <p class="sub">Lesson 3. Fill in the four steps in AnimalList.jsx, then refresh this page.</p>
   <div class="card"><div id="root"></div></div>
 </div>
 
-<!-- React and Babel from a CDN, so the JSX you write below runs as you write
-     it. No build step, just save and refresh. -->
+<!-- React and Babel from a CDN, so real JSX runs with no build step. Babel
+     fetches AnimalList.jsx and compiles it in the browser, which is why the
+     component lives in its own file rather than inline here. -->
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-<script type="text/babel">
-const { useState, useEffect } = React;
-
-function AnimalList() {
-    // ── STEP 1 ──  Hold the animals. useState, starting as an empty array.
-
-    // write it here
-
-    // ── STEP 2 ──  Fetch them. await fetch, await response.json(), then store.
-
-    // write it here
-
-    // ── STEP 3 ──  Run it once on page load. useEffect with an empty array.
-
-    // write it here
-
-    // ── STEP 4 ──  Show them. Return a <ul>, map each animal to an <li> with a key.
-
-    return <p className="muted">Nothing here yet. Start at step 1.</p>;
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(<AnimalList />);
-</script>
+<script type="text/babel" src="AnimalList.jsx"></script>
 </body>
 </html>

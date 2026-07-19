@@ -14,7 +14,7 @@ Then **http://localhost:3300**
 
 ## What you write
 
-All four steps in `public/index.html`:
+All four steps in `public/AnimalList.jsx`:
 
 1. `useState` to hold the animals
 2. the fetch helper
@@ -24,7 +24,7 @@ All four steps in `public/index.html`:
 That file takes **real JSX**, because Babel is loaded in the page. Write, save,
 refresh, and it works. No build step to explain.
 
-In the scaffold `public/index.html` is the **only** file you touch, so there is
+In the scaffold `public/AnimalList.jsx` is the **only** file you touch, so there is
 no doubt about where to type. The finished folder also carries
 `AnimalList.jsx`, which is the same component as it would look in a real React
 project, for reading afterwards.
