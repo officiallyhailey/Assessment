@@ -1,0 +1,20 @@
+{
+  "name": "backend-lessons",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Teaching app for the Backend Assessment lessons",
+  "comment": "No dependencies of its own on purpose. client/ and server/ each hold theirs, so opening either one alone looks exactly like the project this course is assessed against.",
+  "scripts": {
+    "check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-lessons.mjs",
+    "predev": "npm run check",
+    "dev": "concurrently -n API,APP -c green,cyan \"npm --prefix server start\" \"npm --prefix client run dev\"",
+    "build": "npm --prefix client run build",
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "dev:offline": "concurrently -n API,APP -c green,cyan \"npm --prefix server run start:offline\" \"npm --prefix client run dev\"",
+    "reset": "npm --prefix server run reset",
+    "session": "npm --prefix lesson run session"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
