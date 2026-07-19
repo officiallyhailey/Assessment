@@ -1,13 +1,15 @@
 # Live lesson
 
-The project coded in front of a room. Same shape as the class project: a Vite
+The template filled in during a session. Same shape as the class project: a Vite
 and React client on **5173**, an Express and Postgres server on **3001**, and an
 `/api` proxy between them.
 
-Separate from the website in this repo on purpose. The website is the proof of
-concept, where the lesson runs on the page and nobody has to open a file. This
-is the backend build, so what gets typed in the room is what the class project
-actually looks like.
+The page has a picker for the three lessons. Each one says how to run it and
+shows the data that comes back, so the room can see the code working rather than
+being told it does.
+
+The website in this repo explains the concepts. These files stay lean on
+purpose: short comments, marked sections, and an answer key beside them.
 
 ---
 
@@ -15,43 +17,8 @@ actually looks like.
 
 ```bash
 cd server && npm install && cd ../client && npm install
+cp server/src/config.example.js server/src/config.js   # paste your Neon string
 ```
-
-Copy the config and paste your Neon connection string into it:
-
-```bash
-cp server/src/config.example.js server/src/config.js
-```
-
-Then create the table. Paste this into the Neon SQL editor, or into DB Fiddle
-set to PostgreSQL, which is also lesson 1.
-
-It is called `lesson_animals` rather than `animals` so a session can add and
-delete rows freely without touching what the website in this repo is showing.
-
-```sql
-CREATE TABLE lesson_animals (
-  id          SERIAL PRIMARY KEY,
-  name        VARCHAR(100) NOT NULL UNIQUE,
-  category    VARCHAR(50),
-  can_fly     BOOLEAN NOT NULL,
-  lives_in    VARCHAR(100),
-  population  INTEGER
-);
-
-INSERT INTO lesson_animals
-  (name, category, can_fly, lives_in, population)
-VALUES
-  ('Lion',    'Mammal', false, 'Savanna',    23000),
-  ('Penguin', 'Bird',   false, 'Antarctica', 1200000),
-  ('Eagle',   'Bird',   true,  'Mountains',  5000);
-```
-
----
-
-## Running it
-
-Two terminals, the same as the class project.
 
 ```bash
 cd server && npm start      # 3001
@@ -62,19 +29,47 @@ Open **http://localhost:5173**.
 
 ---
 
-## What each lesson leaves behind
+## The three lessons
 
-| Lesson | Where the result shows |
-|---|---|
-| 1, SQL | the table exists, and the three animals are in it |
-| 2, POST | `addOneAnimal` and `POST /add-one-animal`, used by the form |
-| 3, GET | `getAllAnimals` and `GET /get-all-animals`, used by the list |
+| Lesson | Where you work | What appears |
+|---|---|---|
+| 1, SQL | the Neon console | the table's contents on the page |
+| 2, POST | `server/src/index.js` | your row joining the table |
+| 3, GET | `server/src/index.js` | the list rendered by React |
 
-`server/src/index.js` holds the connection, both helpers and both endpoints, in
-that order. One file, the same as the class project.
+**Lesson 1** is done in Neon, not in a file. The page shows the SQL to paste and
+then reads the table back, so the room sees the table exists.
 
-To teach one lesson on its own, delete the parts belonging to the other and
-write them back live.
+**Lesson 2** writes the POST. The GET it uses to check the row landed is already
+written, marked `GIVEN`, so a new row appearing is proof the POST saved rather
+than just replied nicely.
+
+**Lesson 3** writes the GET. There is no POST in it and it needs none.
+
+All three use one table, `lesson_one_table`, which lesson 1 creates.
+
+---
+
+## The files
+
+```
+client/
+  vite.config.js        the proxy, and the only place 3001 is named here
+  src/
+    App.jsx             the lesson picker
+    pages/
+      LessonOne.jsx     the SQL to paste, and the table read back
+      LessonTwo.jsx     the form that sends your POST
+      LessonThree.jsx   the list your GET feeds
+server/
+  src/
+    index.js            where you write, with a marked section per lesson
+    answer-key.js       what goes in those sections
+    config.js           your Neon string, gitignored
+```
+
+`index.js` is the only file written during a session. Everything in `client/` is
+there so the result can be seen.
 
 ---
 
@@ -89,5 +84,16 @@ page asks for      /api/get-all-animals
 server receives    /get-all-animals
 ```
 
-That is why Postman uses the plain path: it talks to the server directly, with
-no client in between.
+Postman uses the plain path, since it talks to the server directly.
+
+---
+
+## Starting over
+
+Rerun the `INSERT` from lesson 1's page, or in Neon:
+
+```sql
+TRUNCATE lesson_one_table RESTART IDENTITY;
+```
+
+then paste the `INSERT` again.

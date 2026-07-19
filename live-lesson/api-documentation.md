@@ -1,30 +1,28 @@
 # API
 
-The server runs on **http://localhost:3001**.
+The server runs on **http://localhost:3001**. Paths here have no `/api` prefix:
+that belongs to the client, and Vite strips it on the way through.
 
-Paths here have no `/api` prefix. That belongs to the client: Vite forwards
-anything starting with `/api` to this server and strips it on the way. A request
-sent straight here, from Postman or `curl`, uses the plain path.
+All three endpoints read and write **`lesson_one_table`**.
 
 ---
 
-## `GET /get-all-animals`
+## `GET /lesson-one-table` — given
 
-Every animal, ordered by id.
+Written already, so lesson 1 can show the table exists and lesson 2 can check a
+POST landed.
 
 **200**
 
 ```json
-[
-  { "id": 1, "name": "Lion", "category": "Mammal", "can_fly": false, "lives_in": "Savanna", "population": 23000 }
-]
+[{ "id": 1, "name": "Lion", "category": "Mammal", "can_fly": false, "lives_in": "Savanna", "population": 23000 }]
 ```
+
+**500** if the table does not exist yet. That is lesson 1.
 
 ---
 
-## `POST /add-one-animal`
-
-Adds one animal and replies with a confirmation.
+## `POST /add-one-animal` — lesson 2
 
 **Headers**
 
@@ -32,21 +30,16 @@ Adds one animal and replies with a confirmation.
 Content-Type: application/json
 ```
 
-Without this header the body still arrives, but nothing parses it and every
-value comes out undefined.
+Without it the body still arrives, but nothing parses it and every value is
+undefined.
 
 **Body**
 
 ```json
-{
-  "name": "Falcon",
-  "category": "Bird",
-  "can_fly": true,
-  "lives_in": "Cliffs"
-}
+{ "name": "Falcon", "category": "Bird", "can_fly": true, "lives_in": "Cliffs" }
 ```
 
-`id` is never sent. The database generates it, which is what `SERIAL` means.
+`id` is never sent. `SERIAL` means the database makes it.
 
 **200**
 
@@ -54,5 +47,13 @@ value comes out undefined.
 The farm has grown: Falcon was added!
 ```
 
-**500** when the database refuses the row. `name` is `NOT NULL` and `UNIQUE`, so
-a missing name, or one already in the table, fails here.
+**404** until the endpoint is written.
+
+---
+
+## `GET /get-all-animals` — lesson 3
+
+Every row, ordered by id. Same shape as `/lesson-one-table`; writing it is the
+lesson.
+
+**404** until the endpoint is written.

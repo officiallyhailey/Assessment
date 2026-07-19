@@ -1,14 +1,9 @@
 // THE SERVER
 //
-// One file, the same as the class project: the connection, the helper
-// functions, then the endpoints that use them.
+// Lesson 1 is done in Neon, not here. Lesson 2 and lesson 3 each have a marked
+// section below. Write in the section, save, and the page updates.
 //
-// Every endpoint follows the same three steps:
-//   1. get the input from the request   (req.body / req.params)
-//   2. call a helper that does the work (await)
-//   3. send a response                  (res.json / res.send)
-//
-// Run it:  npm start        from live-lesson/server
+// answer-key.js has the finished version of both.
 
 import express from "express";
 import pg from "pg";
@@ -20,77 +15,41 @@ const db = new pg.Pool({
 });
 
 const app = express();
-
-// Reads incoming JSON bodies. WITHOUT THIS LINE req.body IS undefined.
 app.use(express.json());
 
 // ---------------------------------------------------------------------------
-// HELPER FUNCTIONS
+// GIVEN
 //
-// These talk to the database. Nothing in here knows about requests or
-// responses: hand one some values, get data back.
+// Reads the table lesson 1 creates. Lesson 1's page uses it to show the table
+// exists, and lesson 2 uses it to check a POST really landed.
 // ---------------------------------------------------------------------------
-
-// LESSON 3. Read every animal.
-// ORDER BY id keeps them in a predictable order. Without it the database is
-// free to return them however it likes, which usually looks fine and
-// occasionally does not.
-async function getAllAnimals() {
-  const result = await db.query("SELECT * FROM lesson_animals ORDER BY id");
-
-  return result.rows;
-}
-
-// LESSON 2. Save one animal and return it.
-//
-// $1 and $2 are placeholders. The values travel separately, in the array
-// below, and the database never reads them as part of the command. Building
-// the query by joining strings would let a value containing SQL run as SQL,
-// which is called SQL injection.
-//
-// RETURNING * asks for the row that was just created, including the id the
-// database generated for it.
-async function addOneAnimal(name, category, can_fly, lives_in) {
-  const result = await db.query(
-    `INSERT INTO lesson_animals
-       (name, category, can_fly, lives_in)
-     VALUES ($1, $2, $3, $4)
-     RETURNING *`,
-    [name, category, can_fly, lives_in],
-  );
-
-  return result.rows[0];
-}
-
-// ---------------------------------------------------------------------------
-// ENDPOINTS
-// ---------------------------------------------------------------------------
-
-// LESSON 3. GET all the animals.
-//
-// A GET asks for data and sends none, which is why there is no req.body here.
-//
-// The client asks for /api/get-all-animals and Vite strips the /api before it
-// arrives, so this path has no prefix. See client/vite.config.js.
-app.get("/get-all-animals", async (req, res) => {
-  const animals = await getAllAnimals();
-
-  res.json(animals);
+app.get("/lesson-one-table", async (req, res) => {
+  const result = await db.query("SELECT * FROM lesson_one_table ORDER BY id");
+  res.json(result.rows);
 });
 
-// LESSON 2. POST a new animal.
+// ═══════════════════════════════════════════════════════════════════════
+// LESSON 2.  Write the POST endpoint.
 //
-// async because the database takes real time, and await is what makes the code
-// wait for it. Without await the reply would be sent before the row was saved.
-app.post("/add-one-animal", async (req, res) => {
-  const { name, category, can_fly, lives_in } = req.body;
+//   path        /add-one-animal
+//   read        name, category, can_fly, lives_in off req.body
+//   insert      into lesson_one_table, RETURNING *
+//   reply       res.send a message using the saved name
+// ═══════════════════════════════════════════════════════════════════════
 
-  const animal = await addOneAnimal(name, category, can_fly, lives_in);
+// write it here
 
-  // Uses the name the database returned, not the one that arrived, so the
-  // message reflects what was actually stored.
-  res.send(`The farm has grown: ${animal.name} was added!`);
-});
+// ═══════════════════════════════════════════════════════════════════════
+// LESSON 3.  Write the GET endpoint.
+//
+//   path        /get-all-animals
+//   query       SELECT * FROM lesson_one_table ORDER BY id
+//   reply       res.json the rows
+// ═══════════════════════════════════════════════════════════════════════
+
+// write it here
+
+// ═══════════════════════════════════════════════════════════════════════
 
 const port = 3001;
 app.listen(port, () => {
