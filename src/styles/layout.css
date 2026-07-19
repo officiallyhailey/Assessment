@@ -417,7 +417,7 @@
 }
 
 section.block {
-    padding-top: 54px;
+    padding-top: 34px;
     scroll-margin-top: 84px;
 }
 
@@ -446,7 +446,7 @@ section.block > h2 + .h {
 .sub {
     font-size: 19px;
     color: var(--deep);
-    margin: 34px 0 12px;
+    margin: 20px 0 12px;
     font-weight: 600;
 }
 

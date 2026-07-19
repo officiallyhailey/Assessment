@@ -4,6 +4,8 @@ import { explain } from "../data/concepts";
 import { ANNOTATIONS } from "../data/annotations";
 import { parseLines } from "../lib/focus";
 import { fallbackContext, fallbackFlow } from "../lib/lineNotes";
+import { anchorTo } from "../lib/anchor";
+import Popover from "./Popover";
 import ResultView from "./ResultView";
 import PostDemo from "./demos/PostDemo";
 import SqlDemo from "./demos/SqlDemo";
@@ -22,11 +24,11 @@ const MODES = [
 ];
 
 // Height of one line of code, and everything around the code area, in pixels.
-// These mirror code.css: .excode code line-height, .excode pre padding,
-// .exbar and the note strip below. They are used to reserve the space the code
-// needs up front, so switching to Results never collapses the box.
+// These mirror code.css: .excode code line-height, .excode pre padding, .exbar
+// and the single line footer. They reserve the space the code needs up front,
+// so switching views never collapses the box.
 const LINE = 20.25;
-const CHROME = 38 + 28 + 78;
+const CHROME = 38 + 28 + 34;
 
 function CodeExplorer({ sample, bare, minLines, fixed, highlight, glow, onAimLine, onGoToLine, onLinking }) {
     const [mode, setMode] = useState("content");
@@ -178,8 +180,13 @@ function CodeExplorer({ sample, bare, minLines, fixed, highlight, glow, onAimLin
                                         showSpot && !spot.has(n) ? " dim" : ""
                                     }${linking && onAimLine ? " aim" : ""}`}
                                     key={n}
-                                    onMouseEnter={() => {
-                                        if (active) setHover({ ...showLine(n), line: n });
+                                    onMouseEnter={(e) => {
+                                        if (active)
+                                            setHover({
+                                                ...showLine(n),
+                                                line: n,
+                                                pos: anchorTo(e.currentTarget),
+                                            });
                                         // In Content mode, pointing at a line asks
                                         // the page to mark the passage about it.
                                         if (linking && onAimLine) onAimLine(n);
@@ -188,13 +195,13 @@ function CodeExplorer({ sample, bare, minLines, fixed, highlight, glow, onAimLin
                                         if (active) setHover(null);
                                         if (linking && onAimLine) onAimLine(null);
                                     }}
-                                    onClick={() => {
+                                    onClick={(e) => {
                                         if (linking && onGoToLine) {
                                             onGoToLine(n);
                                             return;
                                         }
                                         if (!active) return;
-                                        const v = { ...showLine(n), line: n };
+                                        const v = { ...showLine(n), line: n, pos: anchorTo(e.currentTarget) };
                                         setPinnedNote((p) => (p && p.line === n ? null : v));
                                     }}
                                 >
@@ -224,11 +231,15 @@ function CodeExplorer({ sample, bare, minLines, fixed, highlight, glow, onAimLin
                                             <span
                                                 className={`k-${tk.k} hasdef`}
                                                 key={ti}
-                                                onMouseEnter={() => setHover(v)}
+                                                onMouseEnter={(e) =>
+                                                    setHover({ ...v, pos: anchorTo(e.currentTarget) })
+                                                }
                                                 onMouseLeave={() => setHover(null)}
-                                                onClick={() =>
+                                                onClick={(e) =>
                                                     setPinnedNote((p) =>
-                                                        p && p.label === v.label ? null : v
+                                                        p && p.label === v.label
+                                                            ? null
+                                                            : { ...v, pos: anchorTo(e.currentTarget) }
                                                     )
                                                 }
                                             >
@@ -245,33 +256,40 @@ function CodeExplorer({ sample, bare, minLines, fixed, highlight, glow, onAimLin
             </div>
             )}
 
-            {view === "code" && !linking && (
-                <div className={`exnote${note ? " has" : ""}`}>
-                    {note ? (
+            {/* The explanation appears beside what is being pointed at, the same
+                way the glossary words in the prose do. It used to fill a strip
+                along the bottom, which meant reading down there and then looking
+                back up to find the word again. */}
+            {view === "code" && note && (
+                <Popover pos={note.pos} kind={note.kind} label={note.label} pinned={!!pinnedNote}>
+                    <span className="pop-body">{note.text}</span>
+                </Popover>
+            )}
+
+            {/* One footer line for every mode, so the panel is the same height
+                whichever is chosen. */}
+            {view === "code" && (
+                <div className="exlegend">
+                    {linking ? (
                         <>
-                            <div className={`nlab n-${note.kind}`}>{note.label}</div>
-                            <p>{note.text}</p>
+                            <span className="k-keyword">command</span>
+                            <span className="k-type">data type</span>
+                            <span className="k-rule">rule</span>
+                            <span className="k-data">value</span>
+                            <span className="k-name">name</span>
+                            {onAimLine && (
+                                <span className="legendhint">point at a line to find it in the lesson</span>
+                            )}
                         </>
                     ) : (
-                        <p className="idle">
+                        <span className="legendhint solo">
                             {mode === "concept"
                                 ? "Hover any word for a definition. Click to keep it open."
                                 : mode === "context"
                                 ? "Hover a line to see what it is for. Click to keep it open."
                                 : "Hover a line to see when it runs. Click to keep it open."}
-                        </p>
+                        </span>
                     )}
-                </div>
-            )}
-
-            {view === "code" && linking && (
-                <div className="exlegend">
-                    <span className="k-keyword">command</span>
-                    <span className="k-type">data type</span>
-                    <span className="k-rule">rule</span>
-                    <span className="k-data">value</span>
-                    <span className="k-name">name</span>
-                    {onAimLine && <span className="legendhint">point at a line to find it in the lesson</span>}
                 </div>
             )}
         </div>
