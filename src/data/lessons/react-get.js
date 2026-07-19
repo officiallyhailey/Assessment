@@ -55,53 +55,47 @@ return (
             label: "Overview",
             heading: "Getting data onto the screen",
             blocks: [
-                { type: "p", text: "A React [[component]] is a function that returns what should appear on the screen." },
-                { type: "p", text: "To display data living on a server it has to do three things: request it, store it, and display it. Each uses a different tool." },
+                { type: "p", text: "A React [[component]] is a function that returns what should appear on the screen. The awkward part is that data kept on a server does not arrive instantly, and the screen cannot wait." },
                 {
-                    type: "table",
-                    head: ["Tool", "What it does"],
-                    rows: [
-                        ["fetch()", "Sends the request to the API"],
-                        ["useState", "Stores the data in the component"],
-                        ["useEffect", "Runs the request when the page loads"],
-                    ],
-                    mono: [0, 1, 2],
+                    type: "figure",
+                    src: "/topic3.png",
+                    alt: "The same page twice: first with nothing in it, then again with three animals listed",
+                    caption: "The numbers are the three steps below, in the order they happen.",
                 },
-                {
-                    type: "more",
-                    label: "useState and useEffect are React Hooks",
-                    blocks: [
-                        { type: "p", text: "[[hook|Hooks]] are built in functions that give a component abilities it would not otherwise have: somewhere to keep a value between renders, and a way to run code at a particular moment." },
-                        { type: "p", text: "They are called at the top of the component, never inside an if or a loop. React keeps track of them by the order they run in, so that order has to be the same every time." },
-                    ],
-                },
-                { type: "h", text: "The screen renders twice" },
-                { type: "p", text: "Requesting data takes time, and the component does not wait for it. So it [[render|renders]] twice." },
-                { type: "figure", src: "/topic3.png", alt: "Two browser windows side by side, the first empty and the second showing the list of animals" },
                 {
                     type: "olist",
+                    steps: true,
                     items: [
-                        "The page loads and the component displays immediately, with no data yet.",
-                        "The data arrives and gets stored.",
-                        "The component displays again, now showing the list.",
+                        "The page appears straight away, with nothing in it yet.",
+                        "The data is asked for, and takes a moment to come back.",
+                        "The page appears again, this time with the list.",
+                    ],
+                },
+                { type: "p", text: "That is the whole lesson. The same page is drawn twice, and each piece of code below exists to make one of those three things happen." },
+                {
+                    type: "more",
+                    label: "Drawing twice is correct, and it is not something to fix",
+                    blocks: [
+                        { type: "p", text: "It is what lets the page appear immediately instead of sitting blank until the server replies. A page that waited would look broken on a slow connection." },
+                        { type: "p", text: "It does mean the first drawing has to cope with having no data yet, which is a real constraint the code has to respect rather than a detail." },
                     ],
                 },
                 {
                     type: "more",
-                    label: "Two updates is correct, not a bug to fix",
+                    label: "Drawing the screen is called rendering, and it happens more than you would think",
                     blocks: [
-                        { type: "p", text: "It is what lets the page appear straight away instead of staying blank until the server replies." },
-                        { type: "p", text: "It also means the first display has to cope with having no data. An empty array works quietly here, which is why the state starts as one." },
+                        { type: "p", text: "A [[render]] is React working out what should be on screen and putting it there. The component function runs once per render, top to bottom." },
+                        { type: "p", text: "It renders when it first appears, and again whenever the data it is holding changes. Nothing else makes it render, which is why storing the data matters so much." },
                     ],
                 },
             ],
         },
         {
             id: "code",
-            label: "The code",
-            heading: "A component that fetches and displays data",
+            label: "Storing and requesting",
+            heading: "The first two of the three tools",
             blocks: [
-                { type: "p", text: "The full [[component]] has four parts." },
+                { type: "p", text: "The component is four parts, and the first two are about getting hold of the data: somewhere to keep it, and the request that goes and gets it." },
                 { type: "coderef" },
                 {
                     type: "focus",
@@ -120,7 +114,15 @@ return (
                     lines: "3-4",
                     blocks: [
                         { type: "h", text: "1. Storing the data" },
-                        { type: "p", text: "useState creates a place to keep the animals as [[state]], starting as an empty [[array]] because there is no data yet." },
+                        { type: "p", text: "useState is the first of the three tools. It creates a place to keep the animals as [[state]], starting as an empty [[array]] because there is no data yet." },
+                        {
+                            type: "more",
+                            label: "State is a value the component keeps between renders",
+                            blocks: [
+                                { type: "p", text: "The component function runs again on every render, so an ordinary variable inside it is created fresh each time and whatever it held is gone." },
+                                { type: "p", text: "State survives that. React keeps it outside the function and hands it back on each render, which is the only reason the animals are still there the second time around." },
+                            ],
+                        },
                         {
                             type: "more",
                             label: "It hands back two things: the value, and a function to change it",
@@ -146,7 +148,7 @@ return (
                     lines: "6-12",
                     blocks: [
                         { type: "h", text: "2. Requesting the data" },
-                        { type: "p", text: "getAnimals sends the request with fetch, reads the reply, and stores the result." },
+                        { type: "p", text: "fetch is the second tool. It sends the request to the endpoint, and this function reads the reply and stores the result." },
                         {
                             type: "more",
                             label: "It takes two steps, and the second one is easy to forget",
@@ -165,6 +167,14 @@ return (
                         },
                     ],
                 },
+            ],
+        },
+        {
+            id: "showing",
+            label: "Running it and showing it",
+            heading: "What makes it happen, and what appears",
+            blocks: [
+                { type: "p", text: "The store and the request both exist now, but nothing has called either one. These last two parts are what set it running and what a person actually sees." },
                 {
                     type: "focus",
                     title: "Lines 14 to 16",
@@ -172,7 +182,15 @@ return (
                     lines: "14-16",
                     blocks: [
                         { type: "h", text: "3. Running it on page load" },
-                        { type: "p", text: "useEffect runs the request as an [[effect]], after the component has appeared. The empty brackets mean run once." },
+                        { type: "p", text: "useEffect is the third tool. It runs the request as an [[effect]], after the component has appeared, and the empty brackets mean run once." },
+                        {
+                            type: "more",
+                            label: "useState and useEffect are both Hooks, which is why they look alike",
+                            blocks: [
+                                { type: "p", text: "A [[hook]] is a built in function giving a component an ability it would not otherwise have: somewhere to keep a value between renders, and a way to run code at a chosen moment." },
+                                { type: "p", text: "They are always called at the top of the component, never inside an if or a loop. React keeps track of them by the order they run in, so that order has to be identical on every render." },
+                            ],
+                        },
                         {
                             type: "note",
                             label: "Careful",
