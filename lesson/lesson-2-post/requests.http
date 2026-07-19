@@ -2,7 +2,8 @@
 # In VS Code with the REST Client extension, a Send Request link appears above each.
 #
 # This lesson only sends data IN, so every request here is a POST. Reading it
-# back is lesson 3. To see the result, open animals-data.json after sending.
+# back is lesson 3. To see the result, open the site or run lesson 3: the rows
+# go to the same database. npm run reset puts the animals back to three.
 
 @host = http://localhost:3200
 
@@ -23,7 +24,7 @@ Content-Type: application/json
 
 
 ### 2. POST another, to show the id counting up
-# The id is never sent. The helper works it out, the way a database would.
+# The id is never sent. The database generates it, which is what SERIAL means.
 
 POST {{host}}/add-one-animal
 Content-Type: application/json
@@ -37,8 +38,15 @@ Content-Type: application/json
 
 
 ### 3. POST with no name
-# Nothing stops this yet, so it saves with undefined as the name. A natural
-# opening for talking about checking data before saving it.
+# name is NOT NULL in the table, so the database refuses this row.
+#
+# Worth knowing before you send it: this request never comes back. The endpoint
+# has no error handling, so when the query is refused nothing sends a reply and
+# the client sits there waiting. Cancel it. The terminal will show what the
+# database said, and the server keeps running.
+#
+# That is not a bug in the setup, it is what an endpoint without a try/catch
+# does, and it is exactly what the Going further section of the lesson adds.
 
 POST {{host}}/add-one-animal
 Content-Type: application/json

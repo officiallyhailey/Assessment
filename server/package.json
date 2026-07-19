@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node src/index.js",
-    "start:offline": "DATA_SOURCE=json node src/index.js"
+    "start:offline": "DATA_SOURCE=json node src/index.js",
+    "reset": "node src/reset.js"
   },
   "dependencies": {
     "express": "^4.19.2",

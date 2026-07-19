@@ -1,0 +1,10 @@
+{
+  "name": "backend-lessons-live",
+  "private": true,
+  "type": "module",
+  "description": "The files coded live during a session. Its own package so a lesson folder runs on its own, the same way the class project does.",
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.13.1"
+  }
+}

@@ -1,10 +1,11 @@
-// LESSON 2, a POST endpoint.  Write steps 1 and 2 here, step 3 in helpers.js.
+// LESSON 2, a POST endpoint.  Write steps 1 and 2 here, step 3 in
+// animals-helpers.js.
 //
 // This lesson only sends data IN. Reading it back is lesson 3.
-// To check it saved, open animals-data.json after you send.
+// Send the requests in requests.http to try it.
 
-const express = require("express");
-const { addOneAnimal } = require("./helpers");
+import express from "express";
+import { addOneAnimal } from "./animals-helpers.js";
 
 const app = express();
 
@@ -23,9 +24,10 @@ const app = express();
 
 // ──────────────────────────────────────────────────────────────────────
 
-app.listen(3200, () => {
-    console.log("");
-    console.log("  LESSON 2 (scaffold)   http://localhost:3200");
-    console.log("  POST /add-one-animal   write steps 1 and 2, then step 3 in helpers.js");
-    console.log("");
+const port = 3200;
+app.listen(port, () => {
+  console.log("");
+  console.log(`  LESSON 2 (scaffold)   http://localhost:${port}`);
+  console.log("  POST /add-one-animal   write steps 1 and 2, then step 3 in animals-helpers.js");
+  console.log("");
 });

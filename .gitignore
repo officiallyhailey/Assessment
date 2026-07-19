@@ -6,3 +6,6 @@ client/dist/
 # Holds the database connection string. server/.gitignore covers it too;
 # this is the second guard, because committing it once is one time too many.
 server/src/config.js
+
+# The lesson folder has its own dependencies.
+lesson/node_modules/

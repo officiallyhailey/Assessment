@@ -669,6 +669,15 @@ app.delete("/delete-one-animal/:id", async (req, res) => {
                         2,
                     ],
                 },
+                {
+                    type: "more",
+                    label: "Plenty of real projects use POST for all four, and that is worth knowing before you meet one",
+                    blocks: [
+                        { type: "p", text: "The table above is the convention. It is not enforced by anything: a server answers whatever method you register, so nothing stops a project routing every write through POST, including changes and deletions." },
+                        { type: "p", text: "Course projects often do exactly that, with paths like /delete-one-truck/:id answered by app.post rather than app.delete. It works, and it is a reasonable thing to have written." },
+                        { type: "p", text: "Knowing both is the useful position. Read the method and the path together to see what an endpoint does, rather than assuming the method tells you, and follow whatever the project you are in already does." },
+                    ],
+                },
                 { type: "h", text: "Status codes" },
                 { type: "p", text: "Every response carries one. Setting it deliberately beats relying on the default of 200." },
                 {

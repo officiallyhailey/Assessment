@@ -31,9 +31,9 @@ Each lesson covers **one verb**, and nothing else. Lesson 2 sends data in, lesso
 | 2, POST | `express.json()`, the POST endpoint, the `addOneAnimal` helper including the file read and write | nothing, beyond the empty file |
 | 3, GET | the GET endpoint including the file read, then the component: state, the fetch, `useEffect`, the JSX | the page shell and its styles |
 
-Lesson 2 has no GET, so to confirm a POST saved you open `animals-data.json`. Lesson 3 has no POST.
+Lesson 2 has no GET, so to confirm a POST saved you query the table or open the site. Lesson 3 has no POST.
 
-Each lesson also keeps **its own copy of the animal data** (`animals-data.json`), so running one never changes another. That file is the live data and gets written to when you POST. `npm run lesson:reset` rewrites all of them back to the original three animals.
+Both lessons talk to **the same Postgres database the site uses**, through the same `db.js` the class project has. A POST in lesson 2 is visible in lesson 3 and on the site, because it is one table. `npm run reset` puts the animals back to the original three.
 
 ---
 
@@ -54,7 +54,7 @@ Different ports on purpose, so leaving one running never blocks the other.
 Put the animals back to the original three before a session:
 
 ```bash
-npm run lesson:reset
+npm run reset
 ```
 
 ---
@@ -71,7 +71,7 @@ npm run lesson:reset
 
 ## Teaching notes
 
-**Lesson 2.** Send the POST before writing `express.json()` to show `req.body` arriving as undefined, then add the line and send again. Once it works, open `animals-data.json` beside the editor: a friendly reply and a stored row are two different claims, and the file is the one that settles it.
+**Lesson 2.** Send the POST before writing `express.json()` to show `req.body` arriving as undefined, then add the line and send again. Once it works, open the site or run lesson 3: a friendly reply and a stored row are two different claims, and only reading the table settles it.
 
 **Lesson 3.** `public/AnimalList.jsx` is the only file to write in. Babel is loaded in the page, so it takes real JSX with no build step: write the steps, save, refresh, and the list appears. Once it works, delete the empty array from `useEffect` with the Network tab open to show the endless loop.
 

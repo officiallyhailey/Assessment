@@ -4,7 +4,7 @@ Stands alone, and covers one thing: sending data IN with a POST. There is no
 GET endpoint here on purpose. Reading data back is lesson 3, and having both
 in one file makes it unclear which idea is being taught.
 
-To confirm a POST saved, open `animals-data.json`.
+To confirm a POST saved, query the table, or open the site and look at the list.
 
 ## Running it
 
@@ -18,22 +18,22 @@ Then **http://localhost:3200**
 ## What you write
 
 Two files, the same split the lesson teaches. `server.js` is about the request
-and the response, `helpers.js` is about the data.
+and the response, `animals-helpers.js` is about the data.
 
 In `server.js`:
 
 1. `express.json()`
 2. the POST endpoint
 
-In `helpers.js`:
+In `animals-helpers.js`:
 
 3. the `addOneAnimal` helper
 
 Nothing is pre-written. Reading and writing the file is part of step 3, so the
 whole path from request to saved row gets typed out.
 
-The scripts run from the lesson folder, which is why the code says
-`"animals-data.json"` and not a long path built from `__dirname`.
+The rows go to the same Postgres database the site uses. `npm run reset` puts
+the animals back to the original three.
 
 ## Sending requests
 

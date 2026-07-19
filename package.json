@@ -14,8 +14,8 @@
     "lesson2:scaffold": "cd lesson/lesson-2-post/scaffold && node server.js",
     "lesson3": "cd lesson/lesson-3-react/complete && node server.js",
     "lesson3:scaffold": "cd lesson/lesson-3-react/scaffold && node server.js",
-    "lesson:reset": "node lesson/reset.js",
-    "dev:offline": "concurrently -n API,APP -c green,cyan \"npm --prefix server run start:offline\" \"npm --prefix client run dev\""
+    "dev:offline": "concurrently -n API,APP -c green,cyan \"npm --prefix server run start:offline\" \"npm --prefix client run dev\"",
+    "reset": "npm --prefix server run reset"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"
