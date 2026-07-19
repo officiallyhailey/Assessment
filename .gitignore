@@ -1,3 +1,8 @@
 node_modules/
 dist/
+client/dist/
 .DS_Store
+
+# Holds the database connection string. server/.gitignore covers it too;
+# this is the second guard, because committing it once is one time too many.
+server/src/config.js

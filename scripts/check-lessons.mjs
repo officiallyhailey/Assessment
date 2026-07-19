@@ -8,9 +8,9 @@
 //
 // Run with `npm run check`. Exits non-zero with a list of problems.
 
-import { lessons } from "../src/data/lessons/index.js";
-import { ANNOTATIONS } from "../src/data/annotations.js";
-import { parseLines } from "../src/lib/focus.js";
+import { lessons } from "../client/src/data/lessons/index.js";
+import { ANNOTATIONS } from "../client/src/data/annotations.js";
+import { parseLines } from "../client/src/lib/focus.js";
 
 const problems = [];
 const fail = (where, msg) => problems.push(`${where}\n    ${msg}`);

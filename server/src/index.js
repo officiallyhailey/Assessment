@@ -54,6 +54,6 @@ app.post("/reset-animals", (req, res) => {
     res.json(animals);
 });
 
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+app.listen(3010, () => {
+    console.log("Server running on http://localhost:3010");
 });

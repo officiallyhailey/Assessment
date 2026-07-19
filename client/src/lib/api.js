@@ -1,16 +1,19 @@
 /**
  * The demo panels talk to the same animals API the students will build, so
- * what they see on the page is what they would see in their own project. Vite
- * forwards these paths to the Express server (see vite.config.mjs).
+ * what they see on the page is what they would see in their own project.
+ *
+ * The /api prefix is stripped by Vite before the request reaches the server
+ * (see vite.config.js), which is the arrangement the class project uses. The
+ * server itself has no idea the prefix exists.
  *
  * Every call reports how long it took, because the timing is part of the
  * lesson: a request is not instant, which is exactly why React renders twice.
  */
 
-const ANIMALS = "/get-all-animals";
-const ONE_ANIMAL = "/get-one-animal-by-id";
-const ADD_ANIMAL = "/add-one-animal";
-const RESET = "/reset-animals";
+const ANIMALS = "/api/get-all-animals";
+const ONE_ANIMAL = "/api/get-one-animal-by-id";
+const ADD_ANIMAL = "/api/add-one-animal";
+const RESET = "/api/reset-animals";
 
 /** Wraps a request so callers get timing and errors in one predictable shape. */
 async function timed(run) {
