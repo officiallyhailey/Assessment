@@ -10,14 +10,9 @@
     "dev": "concurrently -n API,APP -c green,cyan \"npm --prefix server start\" \"npm --prefix client run dev\"",
     "build": "npm --prefix client run build",
     "install:all": "npm --prefix server install && npm --prefix client install",
-    "lesson2": "cd lesson/lesson-2-post/complete && node server.js",
-    "lesson2:scaffold": "cd lesson/lesson-2-post/scaffold && node server.js",
-    "lesson3": "cd lesson/lesson-3-react/complete && node server.js",
-    "lesson3:scaffold": "cd lesson/lesson-3-react/scaffold && node server.js",
     "dev:offline": "concurrently -n API,APP -c green,cyan \"npm --prefix server run start:offline\" \"npm --prefix client run dev\"",
     "reset": "npm --prefix server run reset",
-    "fill": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/scaffold.mjs fill",
-    "blanks": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/scaffold.mjs blanks"
+    "session": "npm --prefix lesson run session"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"

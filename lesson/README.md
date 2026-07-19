@@ -1,98 +1,133 @@
-# Lesson folder
+# The live lesson project
 
-Runnable code for teaching, separate from the website.
+The files coded in front of a room. This is a real client and server pair, the
+same shape as the class project: **Vite + React on 5173, Express + Postgres on
+3001, and an `/api` proxy between them.**
 
-**Each lesson stands completely on its own.** You will not know which topic you are teaching until the day, so no lesson needs anything from the other two. Open one folder, run one command, teach.
-
-```
-lesson-1-sql/      Topic 1, create a table and query it
-lesson-2-post/     Topic 2, a POST endpoint that saves data
-lesson-3-react/    Topic 3, a React page that fetches and shows data
-```
-
-Every lesson has two copies:
-
-| Folder | What it is |
-|---|---|
-| `scaffold/` | Short numbered prompts, kept lean so it reads on a projector. What you write in front of the student. |
-| `complete/` | The same file finished, with the full explanation in the comments. The guide to study afterwards. |
-
-Both hold the **same file in the same shape**, so the student can put them side by side. The endpoint and its helper functions live in one file rather than two, so live coding runs top to bottom with no jumping between tabs. (A real project would split the helpers into their own file, which is what the lesson site shows.)
+It is deliberately not part of the website. The website is the proof of concept,
+where the lesson and its examples run on the page so nobody has to open a file.
+This is the backend build, so what gets typed in the room is what the class
+project actually looks like.
 
 ---
 
-## How each one is made independent
+## First time
 
-Each lesson covers **one verb**, and nothing else. Lesson 2 sends data in, lesson 3 reads it back out. Neither contains the other's endpoint, so it is always clear which idea is on screen.
+```bash
+cp server/src/config.example.js server/src/config.js   # paste your Neon string in
+npm run install:all
+npm run setup                                          # creates the table
+```
 
-| Lesson | You write | Already working for you |
+`npm run setup` creates **`lesson_animals`** and fills it with the original
+three. That is its own table: a live session adds and deletes rows, and none of
+it touches what the website is showing.
+
+---
+
+## Running a session
+
+Pick the lesson, then start it.
+
+```bash
+npm run session 2        # lesson 2, blanks to fill in
+npm run session 3        # lesson 3, blanks
+```
+
+```bash
+npm run server           # terminal 1
+npm run client           # terminal 2, lesson 3 only, then open localhost:5173
+```
+
+If the room runs out of time, or you want to rehearse from the finished state:
+
+```bash
+npm run session 2 done
+npm run session 3 done
+```
+
+Back to the original three animals at any point:
+
+```bash
+npm run setup
+```
+
+---
+
+## What each lesson writes
+
+Only one topic is taught in a session, so the other one is not merely hidden,
+it is not there. Lesson 2 has no GET endpoint at all; lesson 3 has no POST.
+
+| Lesson | Files you write | How you see it work |
 |---|---|---|
-| 1, SQL | the whole file, in four steps | nothing needed, it runs in DB Fiddle |
-| 2, POST | `express.json()`, the POST endpoint, the `addOneAnimal` helper including the file read and write | nothing, beyond the empty file |
-| 3, GET | the GET endpoint including the file read, then the component: state, the fetch, `useEffect`, the JSX | the page shell and its styles |
+| 2, POST | `server/src/index.js`, `server/src/animals-helpers.js` | `server/requests.http`, or Postman |
+| 3, GET | both of those, plus `client/src/AnimalList.jsx` | the page on localhost:5173 |
 
-Lesson 2 has no GET, so to confirm a POST saved you query the table or open the site. Lesson 3 has no POST.
-
-Both lessons talk to **the same Postgres database the site uses**, through the same `db.js` the class project has. A POST in lesson 2 is visible in lesson 3 and on the site, because it is one table. `npm run reset` puts the animals back to the original three.
+Lesson 1 is SQL and needs none of this. It lives in `lesson-1-sql/` and gets
+pasted into DB Fiddle, which hands out a fresh database each time.
 
 ---
 
-## Running them
+## The `/api` prefix
 
-Lesson 1 needs no server. Open `lesson-1-sql/` and paste the SQL into [DB Fiddle](https://www.db-fiddle.com/) set to PostgreSQL.
+This catches people out, so it is worth saying once.
 
-```bash
-npm run lesson2            # Topic 2, finished      → http://localhost:3200
-npm run lesson2:scaffold   # Topic 2, fill in
+The client asks for `/api/get-all-animals`. The server answers
+`/get-all-animals`. Both are correct: the client and server are different
+origins, so `client/vite.config.js` forwards anything starting with `/api` to
+port 3001 and **strips the prefix on the way**.
 
-npm run lesson3            # Topic 3, finished      → http://localhost:3300
-npm run lesson3:scaffold   # Topic 3, fill in
+```
+component asks for   /api/get-all-animals
+server receives      /get-all-animals
 ```
 
-Different ports on purpose, so leaving one running never blocks the other.
-
-Put the animals back to the original three before a session:
-
-```bash
-npm run reset
-```
+That is why `requests.http` has no `/api` in it: it talks to the server
+directly, with no client in between.
 
 ---
 
-## Showing the data arrive
+## Where things live
 
-`lesson-2-post/requests.http` and `lesson-3-react/requests.http` open in VS Code with the REST Client extension, giving a Send Request link above each one. Postman works too, just copy the method, URL and body.
-
-**Lesson 2** has five requests: GET the animals, POST a new one, GET again to prove it saved, then two deliberate failures. The last two both save an animal with `undefined` as its name without crashing, which is the useful part: a silent wrong result is harder to catch than an error, and it opens the conversation about checking data before saving it.
-
-**Lesson 3** has one request, since the browser does the fetching. Sending it first shows the exact JSON the component will receive.
-
----
-
-
-## If you run out of time
-
-The scaffold is the file on screen during a session. To turn it into the
-finished code without retyping it:
-
-```bash
-npm run fill 1        # lesson 1, 2 or 3
-npm run blanks 1      # put the blanks back afterwards
+```
+client/
+  vite.config.js        the proxy, and the only place 3001 is named on this side
+  index.html
+  src/
+    main.jsx            entry point
+    App.jsx             the page frame
+    AnimalList.jsx      written in lesson 3
+server/
+  src/
+    index.js            the endpoints, written in lessons 2 and 3
+    animals-helpers.js  the queries, written in lessons 2 and 3
+    db.js               the connection pool, given
+    config.js           your Neon string, gitignored
+    setup.js            creates and fills lesson_animals
+  requests.http         the POST requests for lesson 2
+variants/               the blank and finished copies session swaps in
 ```
 
-It refuses to overwrite anything you have typed and not committed. Add
-`-- --force` if you mean it.
+Nothing in `client/` other than `AnimalList.jsx` is touched during a lesson, and
+nothing in `server/src/` other than `index.js` and `animals-helpers.js`.
 
-For lessons 2 and 3, `npm run lesson2` already runs the finished copy. The
-difference is that `fill` changes the file you are looking at, so the class
-sees it too. Lesson 1 has no server, so `fill 1` is the only way to get the
-finished SQL in front of them without pasting it yourself.
-
+---
 
 ## Teaching notes
 
-**Lesson 2.** Send the POST before writing `express.json()` to show `req.body` arriving as undefined, then add the line and send again. Once it works, open the site or run lesson 3: a friendly reply and a stored row are two different claims, and only reading the table settles it.
+**Lesson 2.** Send the POST before writing `express.json()` to show `req.body`
+arriving as undefined, then add the line and send again. Request 4 in
+`requests.http` makes the same point from the other direction: the body is sent
+but no header says what it is, so nothing parses it.
 
-**Lesson 3.** `public/AnimalList.jsx` is the only file to write in. Babel is loaded in the page, so it takes real JSX with no build step: write the steps, save, refresh, and the list appears. Once it works, delete the empty array from `useEffect` with the Network tab open to show the endless loop.
+Request 3 sends no name, which the table refuses because the column is
+`NOT NULL`. Express 5 answers 500 on its own and stays up. Checking for it
+first, and answering 400 instead, is the natural next thing to add.
 
-> Lesson 3 loads React and Babel from a CDN, so it needs internet. If that is a risk on the day, the same demo runs fully offline on the lesson website.
+**Lesson 3.** Write the endpoint first and open
+`localhost:3001/get-all-animals` in a browser. If that is wrong, the component
+looks broken for a reason that has nothing to do with React.
+
+Once the list appears, delete the empty array from `useEffect` with the Network
+tab open. The endless loop is worth causing on purpose.

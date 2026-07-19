@@ -7,5 +7,7 @@ client/dist/
 # this is the second guard, because committing it once is one time too many.
 server/src/config.js
 
-# The lesson folder has its own dependencies.
-lesson/node_modules/
+# The live lesson project has its own client and server, each with their own
+# dependencies and its own Neon config.
+lesson/*/node_modules/
+lesson/server/src/config.js

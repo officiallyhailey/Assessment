@@ -1,0 +1,71 @@
+# LESSON 2 requests.  Server: npm run server  (from lesson/)
+# In VS Code with the REST Client extension, a Send Request link appears above
+# each one. Postman works just as well.
+#
+# The server runs on 3001, the same port the class project uses. There is no
+# /api here: that prefix belongs to the client, and Vite strips it before the
+# request arrives. See client/vite.config.js.
+
+@host = http://localhost:3001
+
+
+### 1. POST a new animal
+# The endpoint this lesson builds. Before step 3 is written this returns 404,
+# which is a useful thing to show first.
+
+POST {{host}}/add-one-animal
+Content-Type: application/json
+
+{
+    "name": "Falcon",
+    "category": "Bird",
+    "can_fly": true,
+    "lives_in": "Cliffs"
+}
+
+
+### 2. POST another, to show the id counting up
+# The id is never sent. The database generates it, which is what SERIAL means.
+
+POST {{host}}/add-one-animal
+Content-Type: application/json
+
+{
+    "name": "Otter",
+    "category": "Mammal",
+    "can_fly": false,
+    "lives_in": "Rivers"
+}
+
+
+### 3. POST with no name
+# name is NOT NULL in the table, so the database refuses this row.
+#
+# Express 5 catches the failure and answers 500 on its own, which is worth
+# seeing: the server stays up, and the reply tells you what the database said.
+# Checking for a missing name before the query, and answering 400 instead, is
+# what you would add next.
+
+POST {{host}}/add-one-animal
+Content-Type: application/json
+
+{
+    "category": "Bird",
+    "can_fly": true,
+    "lives_in": "Nowhere"
+}
+
+
+### 4. POST with no Content-Type header
+# Worth showing on purpose. Nothing parses the body, so req.body is empty and
+# every value is undefined. The database refuses it for the same reason as
+# above, but the cause is entirely different, and that is the lesson.
+
+POST {{host}}/add-one-animal
+
+{
+    "name": "Sparrow",
+    "category": "Bird",
+    "can_fly": true,
+    "lives_in": "Hedges"
+}

@@ -2,9 +2,12 @@
   "name": "backend-lessons-live",
   "private": true,
   "type": "module",
-  "description": "The files coded live during a session. Its own package so a lesson folder runs on its own, the same way the class project does.",
-  "dependencies": {
-    "express": "^4.19.2",
-    "pg": "^8.13.1"
+  "description": "The project coded live in a session. A real client and server pair, the same shape as the class project.",
+  "scripts": {
+    "session": "node scripts/session.mjs",
+    "setup": "npm --prefix server run setup",
+    "server": "npm --prefix server start",
+    "client": "npm --prefix client run dev",
+    "install:all": "npm --prefix server install && npm --prefix client install"
   }
 }
