@@ -11,6 +11,7 @@
 import { lessons } from "../client/src/data/lessons/index.js";
 import { ANNOTATIONS } from "../client/src/data/annotations.js";
 import { parseLines } from "../client/src/lib/focus.js";
+import { readFile } from "node:fs/promises";
 import { resolveLines } from "../client/src/lib/sample.js";
 
 const problems = [];
@@ -56,7 +57,9 @@ function eachBlock(blocks, fn) {
 // 1. Focus blocks: the file exists, and every line is real and not blank.
 // 2. Titles that spell out line numbers agree with the block's own `lines`.
 // ---------------------------------------------------------------------------
-const TITLE_LINES = /^Lines? (\d+)(?:\s*(?:to|and|-)\s*(\d+))?/i;
+// Numbers anywhere in a title, not only at the start: a title like
+// "with-states.jsx, lines 2 to 4" carries the same drift and used to slip by.
+const TITLE_LINES = /\blines? (\d+)(?:\s*(?:to|and|-)\s*(\d+))?/i;
 
 for (const lesson of lessons) {
   // A section can carry its own code, which replaces the lesson's in the panel.
@@ -151,6 +154,28 @@ for (const [name, entry] of Object.entries(ANNOTATIONS)) {
       } else if (isBlank(source[n - 1])) {
         fail(where, "lands on a blank line");
       }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 4. Duplicate keys in annotations.js.
+//
+// Two notes on the same line is not an error to JavaScript: the second quietly
+// replaces the first, and the lost note is never missed. Only the source text
+// can show it, so this reads the file rather than the parsed object.
+// ---------------------------------------------------------------------------
+const source = await readFile(new URL("../client/src/data/annotations.js", import.meta.url), "utf8");
+
+for (const block of source.matchAll(/"([\w.\-]+)": \{(.*?)\n {4}\},/gs)) {
+  const [, name, body] = block;
+  for (const mode of body.matchAll(/(context|flow): \{(.*?)\n {8}\},/gs)) {
+    const seen = new Set();
+    for (const [, key] of mode[2].matchAll(/^\s+(\d+):/gm)) {
+      if (seen.has(key)) {
+        fail(`annotations "${name}" ${mode[1]}`, `line ${key} is listed twice, so the first note is silently dropped`);
+      }
+      seen.add(key);
     }
   }
 }

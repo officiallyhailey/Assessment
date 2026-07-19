@@ -20,33 +20,56 @@ export const reactGet = {
             // Try it runs this exact flow inside the panel, so the two renders
             // can be watched next to the code that causes them.
             try: "fetch",
-            code: `import { useState, useEffect } from "react";
-
-function AnimalList() {
-const [animals, setAnimals] = useState([]);
-
-const getAnimals = async () => {
-    const response = await fetch(
-        "/get-all-animals"
-    );
+            // Written in parts so the focus blocks can name a region rather
+            // than a line number. See lib/sample.js. It also lets the body be
+            // indented properly: it used to sit flush against the margin so the
+            // hand-written line numbers would line up.
+            parts: [
+                {
+                    id: "imports",
+                    code: `import { useState, useEffect } from "react";`,
+                },
+                {
+                    id: "open",
+                    code: `function AnimalList() {`,
+                },
+                {
+                    id: "state",
+                    gap: 0,
+                    code: `  const [animals, setAnimals] = useState([]);`,
+                },
+                {
+                    id: "fetch",
+                    code: `  const getAnimals = async () => {
+    const response = await fetch("/api/get-all-animals");
     const data = await response.json();
     setAnimals(data);
-};
-
-useEffect(() => {
+  };`,
+                },
+                {
+                    id: "effect",
+                    code: `  useEffect(() => {
     getAnimals();
-}, []);
-
-return (
+  }, []);`,
+                },
+                {
+                    id: "render",
+                    code: `  return (
     <ul>
-        {animals.map((animal) => (
-            <li key={animal.id}>
-                {animal.name}, {animal.lives_in}
-            </li>
-        ))}
+      {animals.map((animal) => (
+        <li key={animal.id}>
+          {animal.name}, {animal.lives_in}
+        </li>
+      ))}
     </ul>
-);
-}`,
+  );`,
+                },
+                {
+                    id: "close",
+                    gap: 0,
+                    code: `}`,
+                },
+            ],
         },
     ],
     sections: [
@@ -90,9 +113,8 @@ return (
                 { type: "coderef" },
                 {
                     type: "focus",
-                    title: "Line 1",
                     file: "AnimalList.jsx",
-                    lines: [1],
+                    at: "imports",
                     blocks: [
                         { type: "h", text: "Bringing in the tools" },
                         { type: "p", text: "The two [[hook|hooks]] this component needs, loaded from React before anything else happens." },
@@ -100,9 +122,8 @@ return (
                 },
                 {
                     type: "focus",
-                    title: "Lines 3 and 4",
                     file: "AnimalList.jsx",
-                    lines: "3-4",
+                    at: ["open", "state"],
                     blocks: [
                         { type: "h", text: "1. Storing the data" },
                         { type: "p", text: "useState is the first of the three tools. It creates a place to keep the animals as [[state]], starting as an empty [[array]] because there is no data yet." },
@@ -134,9 +155,8 @@ return (
                 },
                 {
                     type: "focus",
-                    title: "Lines 6 to 12",
                     file: "AnimalList.jsx",
-                    lines: "6-12",
+                    at: "fetch",
                     blocks: [
                         { type: "h", text: "2. Requesting the data" },
                         { type: "p", text: "fetch is the second tool. It sends the request to the endpoint, and this function reads the reply and stores the result." },
@@ -168,9 +188,8 @@ return (
                 { type: "p", text: "The store and the request both exist now, but nothing has called either one. These last two parts are what set it running and what a person actually sees." },
                 {
                     type: "focus",
-                    title: "Lines 14 to 16",
                     file: "AnimalList.jsx",
-                    lines: "14-16",
+                    at: "effect",
                     blocks: [
                         { type: "h", text: "3. Running it on page load" },
                         { type: "p", text: "useEffect is the third tool. It runs the request as an [[effect]], after the component has appeared, and the empty brackets mean run once." },
@@ -200,9 +219,8 @@ return (
                 },
                 {
                     type: "focus",
-                    title: "Lines 18 to 26",
                     file: "AnimalList.jsx",
-                    lines: "18-26",
+                    at: "render",
                     blocks: [
                         { type: "h", text: "4. Displaying the data" },
                         { type: "p", text: "Everything inside the return is [[jsx|JSX]], and map turns the array into one list item per animal." },
@@ -227,7 +245,7 @@ return (
                 {
                     type: "focus",
                     file: "AnimalList.jsx",
-                    lines: "1-27",
+                    at: ["imports", "close"],
                     try: true,
                     blocks: [
                         { type: "h", text: "Watch it render twice" },
@@ -313,69 +331,93 @@ return (
                 {
                     name: "with-states.jsx",
                     result: { kind: "screen", caption: "After the loading message clears.", title: "Animals" },
-                    code: `function AnimalList() {
-const [animals, setAnimals] = useState([]);
-const [loading, setLoading] = useState(true);
-const [error, setError] = useState(null);
-
-const getAnimals = async () => {
+                    parts: [
+                        {
+                            id: "open",
+                            code: `function AnimalList() {`,
+                        },
+                        {
+                            id: "states",
+                            gap: 0,
+                            code: `  const [animals, setAnimals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);`,
+                        },
+                        {
+                            id: "fetch",
+                            code: `  const getAnimals = async () => {
     try {
-        const response = await fetch(
-            "/get-all-animals"
-        );
-        if (!response.ok) {
-            throw new Error("Request failed");
-        }
-        setAnimals(await response.json());
+      const response = await fetch("/api/get-all-animals");
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+      setAnimals(await response.json());
     } catch (err) {
-        setError(err.message);
+      setError(err.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-
-useEffect(() => {
+  };`,
+                        },
+                        {
+                            id: "effect",
+                            code: `  useEffect(() => {
     getAnimals();
-}, []);
-
-if (loading) return <p>Loading...</p>;
-if (error) return <p>Something went wrong.</p>;
-
-return (
+  }, []);`,
+                        },
+                        {
+                            id: "guards",
+                            code: `  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Something went wrong.</p>;`,
+                        },
+                        {
+                            id: "render",
+                            code: `  return (
     <ul>
-        {animals.map((animal) => (
-            <li key={animal.id}>{animal.name}</li>
-        ))}
+      {animals.map((animal) => (
+        <li key={animal.id}>{animal.name}</li>
+      ))}
     </ul>
-);
-}`,
+  );`,
+                        },
+                        {
+                            id: "close",
+                            gap: 0,
+                            code: `}`,
+                        },
+                    ]
                 },
                 {
                     name: "sending-data.jsx",
                     try: "one",
-                    code: `// Sending a new animal to the server
+                    parts: [
+                        {
+                            id: "post",
+                            code: `// Sending a new animal to the server
 const addAnimal = async (newAnimal) => {
-const response = await fetch("/add-one-animal", {
+  const response = await fetch("/api/add-one-animal", {
     method: "POST",
     headers: {
-        "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(newAnimal),
-});
+  });
 
-const saved = await response.json();
-setAnimals([...animals, saved]);
-};
-
-// Asking for one record instead of all of them
+  const saved = await response.json();
+  setAnimals([...animals, saved]);
+};`,
+                        },
+                        {
+                            id: "one",
+                            code: `// Asking for one record instead of all of them
 const [animal, setAnimal] = useState(null);
 
 const getOneAnimal = async (id) => {
-const response = await fetch(
-    \`/get-one-animal-by-id/\${id}\`
-);
-setAnimal(await response.json());
+  const response = await fetch(\`/api/get-one-animal-by-id/\${id}\`);
+  setAnimal(await response.json());
 };`,
+                        },
+                    ]
                 },
             ],
             blocks: [
@@ -383,9 +425,9 @@ setAnimal(await response.json());
                 { type: "coderef" },
                 {
                     type: "focus",
-                    title: "with-states.jsx, lines 2 to 4",
+                    title: "with-states.jsx, the three stored values",
                     file: "with-states.jsx",
-                    lines: "1-4",
+                    at: ["open", "states"],
                     blocks: [
                         { type: "h", text: "Loading and error messages" },
                         {
@@ -410,9 +452,9 @@ setAnimal(await response.json());
                 },
                 {
                     type: "focus",
-                    title: "with-states.jsx, lines 6 to 24",
+                    title: "with-states.jsx, the request",
                     file: "with-states.jsx",
-                    lines: "6-24",
+                    at: ["fetch", "effect"],
                     blocks: [
                         { type: "h", text: "Handling a failure" },
                         { type: "p", text: "try holds the risky part, catch deals with a failure, and finally runs either way." },
@@ -445,9 +487,9 @@ setAnimal(await response.json());
                 },
                 {
                     type: "focus",
-                    title: "with-states.jsx, lines 26 to 36",
+                    title: "with-states.jsx, what gets shown",
                     file: "with-states.jsx",
-                    lines: "26-36",
+                    at: ["guards", "close"],
                     blocks: [
                         { type: "h", text: "Three possible screens" },
                         {
@@ -458,9 +500,9 @@ setAnimal(await response.json());
                 },
                 {
                     type: "focus",
-                    title: "sending-data.jsx, lines 1 to 13",
+                    title: "sending-data.jsx, sending one in",
                     file: "sending-data.jsx",
-                    lines: "1-13",
+                    at: "post",
                     blocks: [
                         { type: "h", text: "Sending data to the server" },
                         { type: "p", text: "The same fetch, with a second argument that turns it from a read into a write." },
@@ -496,9 +538,9 @@ setAnimal(await response.json());
                 },
                 {
                     type: "focus",
-                    title: "sending-data.jsx, lines 15 to 23",
+                    title: "sending-data.jsx, asking for one",
                     file: "sending-data.jsx",
-                    lines: "15-23",
+                    at: "one",
                     try: true,
                     blocks: [
                         { type: "h", text: "Requesting one record instead of all of them" },

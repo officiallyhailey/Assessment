@@ -238,10 +238,15 @@
 
 /* ---------------- lesson layout ---------------- */
 
+/* The bottom padding is deliberately large. A passage becomes the active one by
+   being nearest the reading line at 45% of the viewport, and without room to
+   scroll past the end, the final passage on a page could never get there: the
+   one above it stayed nearest even at maximum scroll, so the code panel kept
+   highlighting the wrong thing. This gives the last passage somewhere to go. */
 .lesson {
     max-width: 1120px;
     margin: 0 auto;
-    padding: 0 28px 100px;
+    padding: 0 28px 45vh;
     display: grid;
     grid-template-columns: 210px 1fr;
     gap: 44px;
@@ -266,7 +271,7 @@
         max-width: 1900px;
         grid-template-columns: 180px minmax(0, 1fr) clamp(470px, 34vw, 720px);
         gap: 32px;
-        padding: 0 24px 100px;
+        padding: 0 24px 45vh;
     }
 
     /* The panel holds the height of the screen below the header and centres the
