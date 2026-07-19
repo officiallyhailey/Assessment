@@ -11,6 +11,7 @@
 import { lessons } from "../client/src/data/lessons/index.js";
 import { ANNOTATIONS } from "../client/src/data/annotations.js";
 import { parseLines } from "../client/src/lib/focus.js";
+import { resolveLines } from "../client/src/lib/sample.js";
 
 const problems = [];
 const fail = (where, msg) => problems.push(`${where}\n    ${msg}`);
@@ -75,10 +76,24 @@ for (const lesson of lessons) {
         return;
       }
 
+      // `at` names a region of a sample written in parts; `lines` names numbers
+      // directly. Regions are worked out in lib/sample.js and cannot drift, so
+      // the only thing to check is that the name exists.
+      if (block.at) {
+        const named = Array.isArray(block.at) ? block.at : [block.at];
+        const missing = named.filter((r) => !(sample.regions && sample.regions[r]));
+        if (missing.length) {
+          const known = Object.keys(sample.regions || {}).join(", ") || "none";
+          fail(where, `points at region "${missing.join('", "')}" of ${block.file}, which has: ${known}`);
+          return;
+        }
+      }
+
+      const spec = resolveLines(block, sample);
       const source = linesOf(sample);
-      const wanted = parseLines(block.lines);
+      const wanted = parseLines(spec);
       if (wanted.length === 0) {
-        fail(where, `has no usable lines (lines: ${JSON.stringify(block.lines)})`);
+        fail(where, `has no usable lines (at: ${JSON.stringify(block.at)}, lines: ${JSON.stringify(block.lines)})`);
         return;
       }
 
@@ -92,13 +107,13 @@ for (const lesson of lessons) {
       // it covers and simply do not light up. What must not be blank is a line
       // the spec names directly — an endpoint of a range, or a single line —
       // because that is where a slipped range shows itself.
-      for (const n of namedLines(block.lines)) {
+      for (const n of namedLines(spec)) {
         if (n >= 1 && n <= source.length && isBlank(source[n - 1])) {
           fail(where, `line ${n} of ${block.file} is blank, and the range starts or ends on it`);
         }
       }
 
-      const spelled = TITLE_LINES.exec(block.title || "");
+      const spelled = TITLE_LINES.exec(block.title || "");  // only explicit titles can disagree
       if (spelled) {
         const first = Number(spelled[1]);
         const last = spelled[2] ? Number(spelled[2]) : first;

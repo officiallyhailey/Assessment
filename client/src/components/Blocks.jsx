@@ -8,6 +8,7 @@ import FetchDemo from "./demos/FetchDemo";
 import OneDemo from "./demos/OneDemo";
 import { rich } from "../lib/richText";
 import { linesAttr } from "../lib/focus";
+import { resolveLines, resolveTitle } from "../lib/sample";
 
 const DEMOS = { sql: SqlDemo, post: PostDemo, fetch: FetchDemo, one: OneDemo };
 
@@ -139,6 +140,11 @@ function Blocks({ blocks, pinned, activeFocus, aimed, path = "b" }) {
             // passage is the one being read.
             case "focus": {
                 const id = `${path}-${i}`;
+                // A focus may name its lines directly, or name a region of the
+                // sample and let lib/sample.js work the numbers out.
+                const sample = pinned.find((c) => c.name === b.file);
+                const lines = resolveLines(b, sample);
+                const title = resolveTitle(b, sample);
                 return (
                     <div
                         key={i}
@@ -147,10 +153,10 @@ function Blocks({ blocks, pinned, activeFocus, aimed, path = "b" }) {
                             aimed === id ? " aimed" : ""
                         }`}
                         data-file={b.file || ""}
-                        data-lines={linesAttr(b.lines) || ""}
+                        data-lines={linesAttr(lines) || ""}
                         data-try={b.try ? "1" : ""}
                     >
-                        {b.title && <div className="focustag">{b.title}</div>}
+                        {title && <div className="focustag">{title}</div>}
                         <Blocks
                             blocks={b.blocks}
                             pinned={pinned}

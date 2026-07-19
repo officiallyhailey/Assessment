@@ -20,43 +20,87 @@ export const postEndpoint = {
             // The Try it view puts the real request inside the panel, next to
             // the code that answers it, instead of further down the page.
             try: "post",
-            code: `const express = require("express");
-const app = express();
-
-app.use(express.json());
-
-app.post("/add-one-animal", async (req, res) => {
-    const { name, category, can_fly, lives_in }
-        = req.body;
-
-    const animal = await addOneAnimal(
-        name, category, can_fly, lives_in
-    );
-
-    res.send(
-        \`The farm has grown: \${animal.name} was added!\`
-    );
-});
-
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
+            // Written in parts so the focus blocks can name a region rather
+            // than a line number. See lib/sample.js.
+            parts: [
+                {
+                    id: "imports",
+                    code: `import express from "express";
+import { addOneAnimal } from "./animals-helpers.js";`,
+                },
+                {
+                    id: "app",
+                    code: `const app = express();`,
+                },
+                {
+                    id: "json",
+                    code: `app.use(express.json());`,
+                },
+                {
+                    id: "open",
+                    code: `app.post("/add-one-animal", async (req, res) => {`,
+                },
+                {
+                    id: "body",
+                    gap: 0,
+                    code: `  const { name, category, can_fly, lives_in } = req.body;`,
+                },
+                {
+                    id: "call",
+                    code: `  const animal = await addOneAnimal(
+    name, category, can_fly, lives_in
+  );`,
+                },
+                {
+                    id: "reply",
+                    code: `  res.send(\`The farm has grown: \${animal.name} was added!\`);`,
+                },
+                {
+                    id: "close",
+                    gap: 0,
+                    code: `});`,
+                },
+                {
+                    id: "listen",
+                    code: `const port = 3010;
+app.listen(port, () => {
+  console.log(\`Server is listening on port \${port}\`);
 });`,
+                },
+            ],
         },
         {
-            name: "helpers.js",
-            code: `async function addOneAnimal(
-    name, category, can_fly, lives_in
-) {
-    const result = await db.query(
-        \`INSERT INTO animals
-           (name, category, can_fly, lives_in)
-         VALUES ($1, $2, $3, $4)
-         RETURNING *\`,
-        [name, category, can_fly, lives_in]
-    );
-
-    return result.rows[0];
-}`,
+            name: "animals-helpers.js",
+            parts: [
+                {
+                    id: "imports",
+                    code: `import db from "./db.js";`,
+                },
+                {
+                    id: "signature",
+                    code: `export async function addOneAnimal(name, category, can_fly, lives_in) {`,
+                },
+                {
+                    id: "query",
+                    gap: 0,
+                    code: `  const result = await db.query(
+    \`INSERT INTO animals
+       (name, category, can_fly, lives_in)
+     VALUES ($1, $2, $3, $4)
+     RETURNING *\`,
+    [name, category, can_fly, lives_in],
+  );`,
+                },
+                {
+                    id: "return",
+                    code: `  return result.rows[0];`,
+                },
+                {
+                    id: "close",
+                    gap: 0,
+                    code: `}`,
+                },
+            ],
         },
     ],
     sections: [
@@ -127,19 +171,25 @@ app.listen(3000, () => {
                 },
                 {
                     type: "focus",
-                    title: "Line 1",
                     file: "server.js",
-                    lines: [1],
+                    at: "imports",
                     blocks: [
-                        { type: "h", text: "Loading the library" },
-                        { type: "p", text: "require fetches Express and const names it. Nothing has been built yet: this is taking the toolbox off the shelf." },
+                        { type: "h", text: "Loading what the file needs" },
+                        { type: "p", text: "import brings in Express, and the helper that will do the database work. Nothing has been built yet: this is taking the tools off the shelf." },
+                        {
+                            type: "more",
+                            label: "The helper is imported here but lives in its own file",
+                            blocks: [
+                                { type: "p", text: "Everything about the database is in animals-helpers.js. This file is about requests and responses, and it calls the helper rather than writing a query itself." },
+                                { type: "p", text: "That split is the shape most Express projects settle into. Reading the endpoint tells you what the request does; reading the helper tells you what the data does." },
+                            ],
+                        },
                     ],
                 },
                 {
                     type: "focus",
-                    title: "Line 2",
                     file: "server.js",
-                    lines: [2],
+                    at: "app",
                     blocks: [
                         { type: "h", text: "Creating the application" },
                         { type: "p", text: "Calling express() builds one application and names it app. Everything else in the file attaches to it." },
@@ -155,9 +205,8 @@ app.listen(3000, () => {
                 },
                 {
                     type: "focus",
-                    title: "Line 4, the third of them",
                     file: "server.js",
-                    lines: [4],
+                    at: "json",
                     blocks: [
                         { type: "h", text: "Teaching it to read what arrives" },
                         { type: "p", text: "This line is what puts the incoming data on [[req.body]]. Without it, nothing else in this lesson works." },
@@ -205,9 +254,8 @@ app.listen(3000, () => {
                 { type: "p", text: "app.post takes the path and a function to run when a POST reaches it. That function is the [[handler]], and it receives two objects every time it runs." },
                 {
                     type: "focus",
-                    title: "Line 6",
                     file: "server.js",
-                    lines: [6],
+                    at: "open",
                     blocks: [
                         {
                             type: "table",
@@ -230,9 +278,8 @@ app.listen(3000, () => {
                 },
                 {
                     type: "focus",
-                    title: "Lines 7 and 8",
                     file: "server.js",
-                    lines: "7-8",
+                    at: "body",
                     blocks: [
                         { type: "h", text: "Reading what arrived" },
                         { type: "p", text: "Step 1. The data the client sent is on [[req.body]], already parsed by the middleware." },
@@ -258,9 +305,8 @@ app.listen(3000, () => {
                 },
                 {
                     type: "focus",
-                    title: "Lines 10 to 12",
                     file: "server.js",
-                    lines: "10-12",
+                    at: "call",
                     blocks: [
                         { type: "h", text: "Handing the work over" },
                         { type: "p", text: "Step 2. The handler calls a [[helper function]], passes it the four values, and waits. What comes back is the animal as the database saved it, id and all." },
@@ -284,9 +330,8 @@ app.listen(3000, () => {
                 },
                 {
                     type: "focus",
-                    title: "Lines 14 to 16",
                     file: "server.js",
-                    lines: "14-16",
+                    at: "reply",
                     blocks: [
                         { type: "h", text: "Sending a reply" },
                         { type: "p", text: "Step 3. Every request gets exactly one response, and there are two common ways to send it." },
@@ -337,9 +382,8 @@ app.listen(3000, () => {
                 },
                 {
                     type: "focus",
-                    title: "Lines 19 to 21",
                     file: "server.js",
-                    lines: "19-21",
+                    at: "listen",
                     blocks: [
                         { type: "h", text: "Switching it on" },
                         { type: "p", text: "The endpoint is written, and app.listen is what lets a request actually reach it. It opens a [[port]] and waits." },
@@ -364,9 +408,9 @@ app.listen(3000, () => {
                 { type: "coderef" },
                 {
                     type: "focus",
-                    title: "helpers.js, lines 1 to 3",
-                    file: "helpers.js",
-                    lines: "1-3",
+                    title: "animals-helpers.js, the signature",
+                    file: "animals-helpers.js",
+                    at: "signature",
                     blocks: [
                         { type: "h", text: "Declaring the helper" },
                         { type: "p", text: "The line names the function and lists what it needs. The four names in the brackets are its [[parameter|parameters]], empty labels waiting to be filled in by whoever calls it." },
@@ -391,9 +435,9 @@ app.listen(3000, () => {
                 },
                 {
                     type: "focus",
-                    title: "helpers.js, lines 4 to 10",
-                    file: "helpers.js",
-                    lines: "4-10",
+                    title: "animals-helpers.js, the query",
+                    file: "animals-helpers.js",
+                    at: "query",
                     blocks: [
                         { type: "h", text: "Running the query" },
                         { type: "p", text: "One [[query]] goes to the database: an INSERT INTO that adds the row. db.query takes two things, the SQL text and an array of values, and they are deliberately kept apart." },
@@ -416,9 +460,9 @@ app.listen(3000, () => {
                 },
                 {
                     type: "focus",
-                    title: "helpers.js, the end of the function lines 12-13",
-                    file: "helpers.js",
-                    lines: "12-13",
+                    title: "animals-helpers.js, what it hands back",
+                    file: "animals-helpers.js",
+                    at: ["return", "close"],
                     blocks: [
                         { type: "h", text: "Handing one row down" },
                         { type: "p", text: "[[return]] sends a value back to whoever called the function. This one hands back a single saved animal, and that is where animal.name in the reply comes from." },
@@ -444,7 +488,7 @@ app.listen(3000, () => {
                 {
                     type: "focus",
                     file: "server.js",
-                    lines: "6-17",
+                    at: ["open", "close"],
                     try: true,
                     blocks: [
                         { type: "h", text: "Send one and watch it land" },
@@ -552,25 +596,24 @@ app.listen(3000, () => {
                     code: `// The same endpoint, now checking the data
 // and setting a status code
 app.post("/add-one-animal", async (req, res) => {
-    const { name, category, can_fly, lives_in }
-        = req.body;
+  const { name, category, can_fly, lives_in } = req.body;
 
-    if (!name) {
-        return res.status(400).json({
-            error: "name is required"
-        });
-    }
+  if (!name) {
+    return res.status(400).json({
+      error: "name is required",
+    });
+  }
 
-    try {
-        const animal = await addOneAnimal(
-            name, category, can_fly, lives_in
-        );
-        res.status(201).json(animal);
-    } catch (error) {
-        res.status(500).json({
-            error: "Could not save the animal"
-        });
-    }
+  try {
+    const animal = await addOneAnimal(
+      name, category, can_fly, lives_in
+    );
+    res.status(201).json(animal);
+  } catch (error) {
+    res.status(500).json({
+      error: "Could not save the animal",
+    });
+  }
 });`,
                 },
                 {
@@ -582,28 +625,28 @@ app.post("/add-one-animal", async (req, res) => {
                     },
                     code: `// Reading every animal
 app.get("/get-all-animals", async (req, res) => {
-    const animals = await getAllAnimals();
-    res.json(animals);
+  const animals = await getAllAnimals();
+  res.json(animals);
 });
 
 // Reading one, using a route parameter
 app.get("/get-one-animal/:id", async (req, res) => {
-    const animal = await getOneAnimal(req.params.id);
-    res.json(animal);
+  const animal = await getOneAnimal(req.params.id);
+  res.json(animal);
 });
 
 // Changing one
 app.put("/update-one-animal/:id", async (req, res) => {
-    const animal = await updateAnimal(
-        req.params.id, req.body
-    );
-    res.json(animal);
+  const animal = await updateAnimal(
+    req.params.id, req.body
+  );
+  res.json(animal);
 });
 
 // Removing one
 app.delete("/delete-one-animal/:id", async (req, res) => {
-    await deleteAnimal(req.params.id);
-    res.status(204).send();
+  await deleteAnimal(req.params.id);
+  res.status(204).send();
 });`,
                 },
             ],
