@@ -274,28 +274,10 @@ return (
                 { type: "p", text: "This one check tells you whether a problem is in the frontend or the backend, which saves a lot of guessing." },
                 {
                     type: "more",
-                    label: "304 is a success, even though it is not 200",
+                    label: "A second load often shows 304 rather than 200",
                     blocks: [
-                        { type: "p", text: "It means Not Modified. When the server first sent this data it attached a tag identifying that exact version. The browser kept both." },
-                        { type: "p", text: "Next time it asks for the same thing it sends the tag along, meaning: only send it if it is not still this one. If nothing has changed the server replies 304 with an empty body, and the browser hands your code the copy it already had." },
-                        { type: "p", text: "So the data still arrives, and your code never notices the difference. Only the Network tab shows the 304, because only the Network tab is watching the wire. It appears on a second load rather than the first, and ticking Disable cache forces a full 200 every time, which is worth doing while debugging." },
-                    ],
-                },
-                {
-                    type: "more",
-                    label: "Why the numbers in the Network tab will not match the ones in Try it",
-                    blocks: [
-                        { type: "p", text: "They are measuring different things, and neither is wrong." },
-                        {
-                            type: "table",
-                            head: ["Column", "Try it shows", "The Network tab shows"],
-                            rows: [
-                                ["Status", "What JavaScript sees, so 200 even on a 304", "What crossed the wire, so 304 when cached"],
-                                ["Size", "Characters of JSON after parsing", "Bytes actually transferred, headers included, in kB"],
-                                ["Time", "The whole call, including reading the body", "The network portion only"],
-                            ],
-                        },
-                        { type: "p", text: "The Initiator column is worth a look too. On this page it says api.js, because these demos call the endpoint through one shared file rather than writing fetch in each component. In your own project it would name the file you wrote it in." },
+                        { type: "p", text: "Not Modified. The server tags each version of the data, the browser keeps the tag, and on the next request it asks whether that version is still current." },
+                        { type: "p", text: "If nothing has changed the server sends 304 with an empty body and the browser reuses the copy it already had. The data still reaches your code either way. Ticking Disable cache forces a full 200 every time, which is worth doing while debugging." },
                     ],
                 },
             ],

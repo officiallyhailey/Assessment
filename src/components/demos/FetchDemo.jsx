@@ -8,17 +8,17 @@ function FetchDemo() {
     const [phase, setPhase] = useState("idle"); // idle, waiting, done
     const [animals, setAnimals] = useState([]);
     const [renders, setRenders] = useState(0);
-    const [net, setNet] = useState(null);
+    const [failed, setFailed] = useState(false);
 
     const mount = async () => {
         setPhase("waiting");
         setAnimals([]);
         setRenders(1);
-        setNet(null);
+        setFailed(false);
 
-        const { data, status, size, ms, failed } = await getAllAnimals();
-        setNet({ status: failed ? 0 : status, ms, size: size || 0 });
-        if (!failed) {
+        const { data, failed: didFail } = await getAllAnimals();
+        setFailed(didFail);
+        if (!didFail) {
             setAnimals(data);
             setRenders(2);
         }
@@ -77,24 +77,15 @@ function FetchDemo() {
                     )}
                 </div>
 
-                {/* These are what JavaScript can see, which is not the same as
-                    what the Network tab reports. Labelled precisely rather than
-                    generically, because a student who compares the two will
-                    find they disagree and be right to wonder why. */}
-                {net && (
-                    <div className="wire" style={{ marginTop: "12px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "9px", flexWrap: "wrap" }}>
-                            <span className="k">GET</span>
-                            <span>/get-all-animals</span>
-                            <span className="pill200">{net.status || "failed"}</span>
-                            <span style={{ opacity: 0.7 }}>{net.ms} ms round trip</span>
-                            <span style={{ opacity: 0.7 }}>{net.size} characters of JSON</span>
-                        </div>
-                        <div style={{ opacity: 0.65, marginTop: "6px", fontSize: "12px" }}>
-                            this request is in your own Network tab, though the numbers there are measured
-                            differently and will not match
-                        </div>
-                    </div>
+                {/* No status, timing or size readout here on purpose. Reporting
+                    what JavaScript sees put numbers on screen that disagree with
+                    the ones in the Network tab, which then needed explaining
+                    away. The demo shows what the code produces; the Network tab
+                    is the place to read what actually crossed the wire. */}
+                {failed && (
+                    <p className="stat" style={{ marginTop: "14px" }}>
+                        Could not reach the server on port 3000.
+                    </p>
                 )}
             </div>
         </div>
