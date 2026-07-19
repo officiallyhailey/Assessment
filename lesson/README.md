@@ -69,6 +69,24 @@ npm run reset
 
 ---
 
+
+## If you run out of time
+
+The scaffold is the file on screen during a session. To turn it into the
+finished code without retyping it:
+
+```bash
+npm run fill 3        # lesson 3's scaffold becomes the finished code
+npm run blanks 3      # put the blanks back afterwards
+```
+
+It refuses to overwrite anything you have typed and not committed. Add
+`-- --force` if you mean it.
+
+Note that `npm run lesson3` already runs the finished copy. The difference is
+that `fill` changes the file you are looking at, so the class sees it too.
+
+
 ## Teaching notes
 
 **Lesson 2.** Send the POST before writing `express.json()` to show `req.body` arriving as undefined, then add the line and send again. Once it works, open the site or run lesson 3: a friendly reply and a stored row are two different claims, and only reading the table settles it.
