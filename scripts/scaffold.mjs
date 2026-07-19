@@ -21,7 +21,14 @@ import { dirname, join, relative } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
+// `run` is a sentence rather than always a command, because lesson 1 has no
+// server: it is SQL pasted into DB Fiddle, which gives a fresh database every
+// time and is why it can CREATE TABLE without colliding with the real one.
 const LESSONS = {
+  1: {
+    dir: "lesson/lesson-1-sql",
+    run: "paste lesson/lesson-1-sql/scaffold/animals.sql into DB Fiddle, set to PostgreSQL",
+  },
   2: { dir: "lesson/lesson-2-post", run: "npm run lesson2:scaffold" },
   3: { dir: "lesson/lesson-3-react", run: "npm run lesson3:scaffold" },
 };
@@ -31,7 +38,7 @@ const lesson = LESSONS[which];
 
 if (!lesson) {
   console.error("");
-  console.error("  Which lesson? 2 or 3.");
+  console.error("  Which lesson? 1, 2 or 3.");
   console.error("");
   console.error("    npm run fill 2      fill lesson 2's scaffold in");
   console.error("    npm run blanks 2    put its blanks back");

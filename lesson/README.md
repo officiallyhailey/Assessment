@@ -76,15 +76,17 @@ The scaffold is the file on screen during a session. To turn it into the
 finished code without retyping it:
 
 ```bash
-npm run fill 3        # lesson 3's scaffold becomes the finished code
-npm run blanks 3      # put the blanks back afterwards
+npm run fill 1        # lesson 1, 2 or 3
+npm run blanks 1      # put the blanks back afterwards
 ```
 
 It refuses to overwrite anything you have typed and not committed. Add
 `-- --force` if you mean it.
 
-Note that `npm run lesson3` already runs the finished copy. The difference is
-that `fill` changes the file you are looking at, so the class sees it too.
+For lessons 2 and 3, `npm run lesson2` already runs the finished copy. The
+difference is that `fill` changes the file you are looking at, so the class
+sees it too. Lesson 1 has no server, so `fill 1` is the only way to get the
+finished SQL in front of them without pasting it yourself.
 
 
 ## Teaching notes
