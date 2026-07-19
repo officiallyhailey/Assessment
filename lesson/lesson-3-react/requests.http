@@ -1,13 +1,16 @@
 # LESSON 3 requests. Server: npm run lesson3  (or lesson3:scaffold)
 #
-# This lesson is about the browser doing the fetching, so there is only one
-# request. Sending it here shows the exact JSON the React page receives, which
-# is useful before writing any component code.
+# This lesson only reads data OUT, so the one request here is a GET. Sending
+# data in was lesson 2.
 
 @host = http://localhost:3300
 
 
-### The endpoint the component calls
-# Already working in both versions. Nothing to build on the server side.
+### The endpoint you write in step 1
+# Before step 1 is written this returns 404. Worth sending first, so the 404
+# is a known state rather than a surprise later.
+#
+# Once it works, this shows the exact JSON the React page will receive, which
+# is the thing to get right before writing any component code.
 
 GET {{host}}/get-all-animals

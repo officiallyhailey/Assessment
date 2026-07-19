@@ -23,13 +23,15 @@ Both hold the **same file in the same shape**, so the student can put them side 
 
 ## How each one is made independent
 
-A lesson only blanks **its own** material. Everything else is handed over already working, so the data always shows up no matter which topic you draw.
+Each lesson covers **one verb**, and nothing else. Lesson 2 sends data in, lesson 3 reads it back out. Neither contains the other's endpoint, so it is always clear which idea is on screen.
 
 | Lesson | You write | Already working for you |
 |---|---|---|
-| 1, SQL | the whole file | nothing needed, it runs in DB Fiddle |
-| 2, POST | `express.json()`, both helpers, the POST endpoint (4 steps, one file) | the GET endpoint, so you can read the row back and prove it saved |
-| 3, React | the component: state, the fetch, `useEffect`, the JSX | the entire server and API, so there is real data to fetch from the first second |
+| 1, SQL | the whole file, in four steps | nothing needed, it runs in DB Fiddle |
+| 2, POST | `express.json()`, the POST endpoint, the `addOneAnimal` helper | reading and writing the data file |
+| 3, GET | the GET endpoint, then the component: state, the fetch, `useEffect`, the JSX | the page shell and reading the data file |
+
+Lesson 2 has no GET, so to confirm a POST saved you open `animals-data.json`. Lesson 3 has no POST.
 
 Each lesson also keeps **its own copy of the animal data** (`animals-data.json`), so running one never changes another. That file is the live data and gets written to when you POST. `npm run lesson:reset` rewrites all of them back to the original three animals.
 

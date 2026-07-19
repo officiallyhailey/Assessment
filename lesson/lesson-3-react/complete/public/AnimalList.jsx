@@ -2,7 +2,7 @@ const { useState, useEffect } = React;
 
 function AnimalList() {
     // -----------------------------------------------------------------------
-    // STEP 1.  Hold the animals.
+    // STEP 2.  Hold the animals.
     //
     // useState creates a value the component remembers between redraws. It
     // hands back two things: the current value, and the function that updates
@@ -15,7 +15,7 @@ function AnimalList() {
     const [animals, setAnimals] = useState([]);
 
     // -----------------------------------------------------------------------
-    // STEP 2.  Fetch them.
+    // STEP 3.  Fetch them.
     //
     // Two awaits, because there are two separate waits. The first resolves
     // once the server responds, and hands back a Response object describing
@@ -32,7 +32,7 @@ function AnimalList() {
     };
 
     // -----------------------------------------------------------------------
-    // STEP 3.  Run it once, when the page loads.
+    // STEP 4.  Run it once, when the page loads.
     //
     // useEffect runs code AFTER the component has drawn. Fetching directly in
     // the body of the component would run during the draw, and storing the
@@ -47,7 +47,7 @@ function AnimalList() {
     }, []);
 
     // -----------------------------------------------------------------------
-    // STEP 4.  Show them.
+    // STEP 5.  Show them.
     //
     // Everything returned here is JSX. It reads like HTML and it is
     // JavaScript. The curly braces are the door back into JavaScript, which is

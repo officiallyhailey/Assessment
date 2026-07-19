@@ -1,13 +1,11 @@
-// LESSON 2, POST endpoint.  Finished version.
+// LESSON 2, a POST endpoint.  Finished version.
 //
-// This is what the scaffold builds up to, with the full explanation written in.
-// Read it afterwards as the guide to what you just wrote.
-//
-// Two files, matching the lesson: this one is about requests and responses,
-// helpers.js is about the data. Neither knows much about the other.
+// This lesson only sends data IN. There is deliberately no GET endpoint here:
+// reading data back is lesson 3, and mixing the two makes it unclear which
+// idea is being taught. To confirm a POST worked, open animals-data.json.
 
 const express = require("express");
-const { getAllAnimals, addOneAnimal } = require("./helpers");
+const { addOneAnimal } = require("./helpers");
 
 const app = express();
 
@@ -27,13 +25,11 @@ app.use(express.json());
 // STEP 2.  The POST endpoint.
 //
 // app.post registers a handler for POST requests at this exact path. The method
-// and the path together identify an endpoint, so a GET to the same path is a
-// different endpoint entirely.
+// and the path together identify an endpoint.
 //
 // async is here because the helper touches the file system, which takes time,
 // and await is what makes the code wait for it. Without await the reply would
-// be sent before the animal was saved, and it would appear to work right up
-// until the save failed.
+// be sent before the animal was saved.
 //
 // req is everything that arrived. res is how a reply is sent, and exactly one
 // reply must be sent.
@@ -53,22 +49,9 @@ app.post("/add-one-animal", async (req, res) => {
     res.send(`The farm has grown: ${animal.name} was added!`);
 });
 
-// ---------------------------------------------------------------------------
-// Given to you, not part of this lesson.
-//
-// A GET endpoint, here so the saved animal can be read back. Replying nicely
-// and actually storing the row are two different claims, and this checks the
-// second one.
-// ---------------------------------------------------------------------------
-app.get("/get-all-animals", async (req, res) => {
-    const animals = await getAllAnimals();
-    res.json(animals);
-});
-
 app.listen(3200, () => {
     console.log("");
     console.log("  LESSON 2   http://localhost:3200");
-    console.log("  GET  /get-all-animals");
     console.log("  POST /add-one-animal");
     console.log("");
 });

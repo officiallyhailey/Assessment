@@ -1,7 +1,10 @@
 # Lesson 2, a POST endpoint with Express
 
-Stands alone. The GET endpoint and its helper are already written, so you can
-read the data back and prove your POST really saved.
+Stands alone, and covers one thing: sending data IN with a POST. There is no
+GET endpoint here on purpose. Reading data back is lesson 3, and having both
+in one file makes it unclear which idea is being taught.
+
+To confirm a POST saved, open `animals-data.json`.
 
 ## Running it
 
@@ -14,8 +17,8 @@ Then **http://localhost:3200**
 
 ## What you write
 
-Two files, the same split the lesson teaches. `server.js` is about requests and
-responses, `helpers.js` is about the data.
+Two files, the same split the lesson teaches. `server.js` is about the request
+and the response, `helpers.js` is about the data.
 
 In `server.js`:
 
@@ -26,16 +29,15 @@ In `helpers.js`:
 
 3. the `addOneAnimal` helper
 
-`getAllAnimals` and the GET endpoint are already written and are not part of
-this lesson. They are there so the saved row can be read back and checked.
+Reading and writing the file is already there, marked `given`.
 
 ## Sending requests
 
 `requests.http` opens in VS Code with the REST Client extension. Postman works
 just as well.
 
-Order that tells a story: GET, POST, GET again. The third one is the point,
-because a friendly reply and a stored row are two different claims.
+Send request 1 before writing anything. A 404 is a clear starting point, and
+it makes the moment the endpoint appears obvious.
 
 ## Teaching notes
 
@@ -43,5 +45,5 @@ Send the POST before writing `express.json()`. `req.body` arrives undefined and
 the endpoint fails in a confusing way. Add the one line, restart, send again.
 That contrast is worth more than explaining it.
 
-Requests 4 and 5 both save an animal with `undefined` as its name without
+Requests 3 and 4 both save an animal with `undefined` as its name without
 crashing, which opens the conversation about checking data before saving it.

@@ -1,54 +1,35 @@
-// LESSON 3.  Write the four steps, save, then refresh the page.
+// LESSON 3, the React.  Write steps 2 to 5, save, refresh the page.
 //
-// The server is already done and /get-all-animals already returns the three
-// animals. Everything you write is in this file.
+// Step 1 was the GET endpoint in server.js. Check that works first.
 
 const { useState, useEffect } = React;
 
 function AnimalList() {
-    // ── STEP 1 ──  Hold the animals.
-    //
-    // useState gives the component a value it remembers between draws, and
-    // hands back two things: the value, and the function that updates it.
-    // Start it as an empty array, so there is something valid to show before
-    // any data has arrived.
+    // ── STEP 2 ────────────────────────────────────────────────────────
+    // Hold the animals. useState, starting as an empty array.
 
     // write it here
 
-    // ── STEP 2 ──  Fetch them.
-    //
-    // Two awaits, because there are two waits: one for the server to answer,
-    // and one to read the body of that answer.
-    //
+    // ── STEP 3 ────────────────────────────────────────────────────────
+    // Fetch them.
     //   const response = await fetch("/get-all-animals")
     //   const data = await response.json()
-    //   then store it with the function from step 1
-    //
-    // Storing it is what puts it on screen. Fetching alone changes nothing.
+    //   then store it with the setter from step 2
 
     // write it here
 
-    // ── STEP 3 ──  Run it once, when the page loads.
-    //
-    // useEffect runs code after the component has drawn. The second argument
-    // is a list of things to watch: an empty array means run once and never
-    // again. Leave the array off and it runs after every draw, which stores
-    // data, which causes another draw, forever.
+    // ── STEP 4 ────────────────────────────────────────────────────────
+    // Run it once on page load. useEffect, with an empty array at the end.
 
     // write it here
 
-    // ── STEP 4 ──  Show them.
-    //
-    // Return a <ul>. Inside it, map each animal to an <li> with a key, using
-    // the animal's id. Curly braces are the way back into JavaScript.
-    //
-    //   {animals.map((animal) => (
-    //       <li key={animal.id}>...</li>
-    //   ))}
-    //
-    // Replace the line below once step 1 exists.
+    // ── STEP 5 ────────────────────────────────────────────────────────
+    // Show them. Return a <ul>, map each animal to an <li key={animal.id}>.
+    // Replace the line below.
 
-    return <p className="muted">Nothing here yet. Start at step 1.</p>;
+    return <p className="muted">Nothing here yet. Start at step 2.</p>;
+
+    // ──────────────────────────────────────────────────────────────────
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<AnimalList />);
