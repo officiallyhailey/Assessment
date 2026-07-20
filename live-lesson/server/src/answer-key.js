@@ -59,8 +59,7 @@ app.get("/get-all-animals", async (req, res) => {
 // ███████████████████████████████████████████████████████████████████████████
 //   TOPIC 3          client/src/pages/AnimalList.jsx
 //
-//   The import at the top of that file becomes:
-//     import { useState, useEffect } from "react";
+//   The imports are already there. Only the body of the function changes.
 // ███████████████████████████████████████████████████████████████████████████
 
 function AnimalList() {

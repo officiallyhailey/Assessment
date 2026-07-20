@@ -1,7 +1,6 @@
-// ███████████████████████████████████████████████████████████████████████████
+// 
 //
 //   TOPIC 3          Send a GET request in React and render the data
-//
 //   1.  HELPER  getAnimals
 //       const response = await fetch("/api/get-all-animals")
 //       const data = await response.json()
@@ -23,10 +22,14 @@
 //   development on purpose, to surface bugs like this one being written badly.
 //   It happens once in a real build.
 //
-// ███████████████████████████████████████████████████████████████████████████
+// 
+// Setup, the same as the pages in the class project: the stylesheet, and the
+// hooks this file uses. Nothing to change here.
+import { useState, useEffect } from "react";
+import "../App.css";
 
 function AnimalList() {
-  // write it here
+  // replace current code: write it here
 
   return <p className="empty">Nothing here yet. Start at step 1.</p>;
 }
