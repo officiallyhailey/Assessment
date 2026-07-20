@@ -23,8 +23,7 @@ export const reactGet = {
                     id: "imports",
                     code: `import express from "express";
 import pg from "pg";
-import config from "./config.js";
-import "./seed.js";`,
+import config from "./config.js";`,
                 },
                 {
                     id: "pool",

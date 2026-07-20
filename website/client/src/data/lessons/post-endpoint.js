@@ -28,8 +28,7 @@ export const postEndpoint = {
                     id: "imports",
                     code: `import express from "express";
 import pg from "pg";
-import config from "./config.js";
-import "./seed.js";`,
+import config from "./config.js";`,
                 },
                 {
                     id: "pool",
@@ -158,10 +157,10 @@ app.listen(port, () => {
         },
         {
             id: "express",
-            label: "Setting up Express",
-            heading: "The three lines that build the server",
+            label: "Setting up the file",
+            heading: "Everything above the code you write",
             blocks: [
-                { type: "p", text: "[[express|Express]] is a [[library]]: code somebody else wrote that you load into your own. Three lines set it up, a fourth switches it on, and all four run once at startup." },
+                { type: "p", text: "The top of the file is setup: load what is needed, open a connection to the database, create the app, and start it listening. None of it is specific to animals, and all of it runs once at startup." },
                 {
                     type: "more",
                     label: "Express exists so you are not the one reading raw network traffic",
@@ -176,13 +175,38 @@ app.listen(port, () => {
                     at: "imports",
                     blocks: [
                         { type: "h", text: "Loading what the file needs" },
-                        { type: "p", text: "import brings in Express, and the helper that will do the database work. Nothing has been built yet: this is taking the tools off the shelf." },
+                        { type: "p", text: "Three imports, and nothing has been built yet. This is taking the tools off the shelf." },
                         {
                             type: "more",
-                            label: "The helper is imported here but lives in its own file",
+                            label: "Three imports, and what each one is for",
                             blocks: [
-                                { type: "p", text: "Everything about the database is in animals-helpers.js. This file is about requests and responses, and it calls the helper rather than writing a query itself." },
-                                { type: "p", text: "That split is the shape most Express projects settle into. Reading the endpoint tells you what the request does; reading the helper tells you what the data does." },
+                                { type: "p", text: "express is the library that handles requests. pg is the driver that talks to Postgres. config holds your connection string, which lives in its own file so it never gets committed." },
+                                { type: "p", text: "Nothing here is specific to this project except the last one, and that is the one you have to create yourself." },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    type: "focus",
+                    file: "index-post",
+                    at: "pool",
+                    blocks: [
+                        { type: "h", text: "Opening the database connection" },
+                        { type: "p", text: "A Pool keeps a handful of connections open and hands one out per [[query]], rather than opening a fresh one every time and closing it after." },
+                        {
+                            type: "more",
+                            label: "Why a pool rather than a single connection",
+                            blocks: [
+                                { type: "p", text: "Opening a database connection is slow, far slower than the query usually is. Doing it per request would make every request pay that cost." },
+                                { type: "p", text: "A pool opens a few up front and lends them out. Your code never picks one: db.query takes the next free connection and gives it back when the query finishes." },
+                            ],
+                        },
+                        {
+                            type: "more",
+                            label: "The connection string is in its own file on purpose",
+                            blocks: [
+                                { type: "p", text: "It contains a password. config.js is listed in .gitignore, so it never reaches the repository, and config.example.js is committed in its place showing the shape without the secret." },
+                                { type: "p", text: "This is the normal arrangement for anything secret. A password in a repository is a password everybody has, including after you change it, because the history keeps it." },
                             ],
                         },
                     ],
@@ -260,142 +284,6 @@ app.listen(port, () => {
                                 { type: "p", text: "What does have to come first is the middleware. express.json only applies to requests that arrive after it was registered, which is why it sits above rather than below." },
                             ],
                         },
-                    ],
-                },
-            ],
-        },
-        {
-            id: "request",
-            label: "Request and response",
-            heading: "req and res",
-            blocks: [
-                { type: "p", text: "app.post takes the path and a function to run when a POST reaches it. That function is the [[handler]], and it receives two objects every time it runs." },
-                {
-                    type: "focus",
-                    file: "index-post",
-                    at: "open",
-                    blocks: [
-                        {
-                            type: "table",
-                            head: ["Object", "What it is"],
-                            rows: [
-                                ["req", "The request. Everything the client sent"],
-                                ["res", "The response. How you send a reply back"],
-                            ],
-                            mono: [0],
-                        },
-                        {
-                            type: "more",
-                            label: "The names are a convention, the order is not",
-                            blocks: [
-                                { type: "p", text: "They arrive in that order, always. The names could be anything, and req and res are what everyone uses, so keeping to them makes your code readable to anyone who has seen Express before." },
-                                { type: "p", text: "The handler is also marked [[async]], because it is going to wait for the database. Only an async function may use await inside it." },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    type: "focus",
-                    file: "index-post",
-                    at: "body",
-                    blocks: [
-                        { type: "h", text: "Reading what arrived" },
-                        { type: "p", text: "Step 1. The data the client sent is on [[req.body]], already parsed by the middleware." },
-                        {
-                            type: "code",
-                            name: "req.body",
-                            code: `{
-    "name": "Falcon",
-    "category": "Bird",
-    "can_fly": true,
-    "lives_in": "Cliffs"
-}`,
-                        },
-                        {
-                            type: "more",
-                            label: "The curly braces on the left of the equals sign are called destructuring",
-                            blocks: [
-                                { type: "p", text: "[[destructuring]] pulls all four values out into their own variables in one line, instead of writing req.body four separate times." },
-                                { type: "p", text: "The names inside the braces have to match the keys in the data. Ask for a key that is not there and you get undefined rather than an error, which is worth remembering when a value mysteriously goes missing." },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    type: "focus",
-                    file: "index-post",
-                    at: "call",
-                    blocks: [
-                        { type: "h", text: "Handing the work over" },
-                        { type: "p", text: "Step 2. The handler calls a [[helper function]], passes it the four values, and waits. What comes back is the animal as the database saved it, id and all." },
-                        {
-                            type: "more",
-                            label: "await is what does the waiting, and leaving it off is a real bug",
-                            blocks: [
-                                { type: "p", text: "The database takes real time. [[await]] holds the handler at this line until the row is actually written." },
-                                { type: "p", text: "Without it the code carries straight on and sends the reply before the row exists. Worse, it usually still looks like it worked: the client gets a cheerful confirmation for something that may not have been saved." },
-                            ],
-                        },
-                        {
-                            type: "more",
-                            label: "The helper itself is a separate file, covered in the next section",
-                            blocks: [
-                                { type: "p", text: "All the handler needs to know is that it hands over four values and gets a saved animal back. What happens in between is the helper's business." },
-                                { type: "p", text: "That split is deliberate, and it is what keeps this handler readable: three short steps, none of which mention SQL." },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    type: "focus",
-                    file: "index-post",
-                    at: "reply",
-                    blocks: [
-                        { type: "h", text: "Sending a reply" },
-                        { type: "p", text: "Step 3. Every request gets exactly one response, and there are two common ways to send it." },
-                        {
-                            type: "table",
-                            head: ["Method", "Sends", "Use it when"],
-                            rows: [
-                                ["res.send()", "Text", "A short confirmation is enough"],
-                                ["res.json()", "Data", "The client needs the record back"],
-                            ],
-                            mono: [0],
-                        },
-                        {
-                            type: "more",
-                            label: "This one uses res.send because the reply is one sentence",
-                            blocks: [
-                                { type: "p", text: "If a web page had to display the animal that was just saved, res.json would be the right choice instead, because a page needs the values rather than a sentence about them." },
-                                { type: "p", text: "Either way it counts as the one response. Sending a second one after that is an error, which is why a guard clause usually has return in front of it." },
-                            ],
-                        },
-                        {
-                            type: "more",
-                            label: "The message uses the name the database gave back, not the one sent in",
-                            blocks: [
-                                { type: "p", text: "animal.name comes from the row the database returned, not from the value that arrived in the request. Here the two happen to be identical." },
-                                { type: "p", text: "The habit still matters. The database is what decides what was actually stored, and it may trim, default or reject something. Reporting what was saved rather than what was asked for is the difference between a confirmation and a guess." },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    type: "more",
-                    label: "Where else data can arrive in a request",
-                    blocks: [
-                        { type: "p", text: "There are three places, and knowing which is which explains most endpoint code." },
-                        {
-                            type: "table",
-                            head: ["Source", "Looks like", "Used for"],
-                            rows: [
-                                ["req.body", '{ "name": "Falcon" }', "Data being sent in"],
-                                ["req.params", "/animals/:id", "Identifying which record"],
-                                ["req.query", "?category=Bird", "Filters and options"],
-                            ],
-                            mono: [0, 1],
-                        },
-                        { type: "p", text: "A POST that creates something uses req.body, because the record does not exist yet and there is nothing to identify." },
                     ],
                 },
             ],
@@ -484,6 +372,142 @@ app.listen(port, () => {
                                 { type: "p", text: "That consistency is worth the small awkwardness here. It also means the helper is the right place to decide what to hand back: the endpoint wants one animal, so the helper takes the array apart and returns one, rather than making every caller do it." },
                             ],
                         },
+                    ],
+                },
+            ],
+        },
+        {
+            id: "request",
+            label: "The endpoint",
+            heading: "req, res, and the handler between them",
+            blocks: [
+                { type: "p", text: "app.post takes the path and a function to run when a POST reaches it. That function is the [[handler]], and it receives two objects every time it runs." },
+                {
+                    type: "focus",
+                    file: "index-post",
+                    at: "open",
+                    blocks: [
+                        {
+                            type: "table",
+                            head: ["Object", "What it is"],
+                            rows: [
+                                ["req", "The request. Everything the client sent"],
+                                ["res", "The response. How you send a reply back"],
+                            ],
+                            mono: [0],
+                        },
+                        {
+                            type: "more",
+                            label: "The names are a convention, the order is not",
+                            blocks: [
+                                { type: "p", text: "They arrive in that order, always. The names could be anything, and req and res are what everyone uses, so keeping to them makes your code readable to anyone who has seen Express before." },
+                                { type: "p", text: "The handler is also marked [[async]], because it is going to wait for the database. Only an async function may use await inside it." },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    type: "focus",
+                    file: "index-post",
+                    at: "body",
+                    blocks: [
+                        { type: "h", text: "Reading what arrived" },
+                        { type: "p", text: "Step 1. The data the client sent is on [[req.body]], already parsed by the middleware." },
+                        {
+                            type: "code",
+                            name: "req.body",
+                            code: `{
+    "name": "Falcon",
+    "category": "Bird",
+    "can_fly": true,
+    "lives_in": "Cliffs"
+}`,
+                        },
+                        {
+                            type: "more",
+                            label: "The curly braces on the left of the equals sign are called destructuring",
+                            blocks: [
+                                { type: "p", text: "[[destructuring]] pulls all four values out into their own variables in one line, instead of writing req.body four separate times." },
+                                { type: "p", text: "The names inside the braces have to match the keys in the data. Ask for a key that is not there and you get undefined rather than an error, which is worth remembering when a value mysteriously goes missing." },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    type: "focus",
+                    file: "index-post",
+                    at: "call",
+                    blocks: [
+                        { type: "h", text: "Handing the work over" },
+                        { type: "p", text: "Step 2. The handler calls a [[helper function]], passes it the four values, and waits. What comes back is the animal as the database saved it, id and all." },
+                        {
+                            type: "more",
+                            label: "await is what does the waiting, and leaving it off is a real bug",
+                            blocks: [
+                                { type: "p", text: "The database takes real time. [[await]] holds the handler at this line until the row is actually written." },
+                                { type: "p", text: "Without it the code carries straight on and sends the reply before the row exists. Worse, it usually still looks like it worked: the client gets a cheerful confirmation for something that may not have been saved." },
+                            ],
+                        },
+                        {
+                            type: "more",
+                            label: "The helper is the function above, in this same file",
+                            blocks: [
+                                { type: "p", text: "All the handler needs to know is that it hands over four values and gets a saved animal back. What happens in between is the helper's business." },
+                                { type: "p", text: "That split is deliberate, and it is what keeps this handler readable: three short steps, none of which mention SQL." },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    type: "focus",
+                    file: "index-post",
+                    at: "reply",
+                    blocks: [
+                        { type: "h", text: "Sending a reply" },
+                        { type: "p", text: "Step 3. Every request gets exactly one response, and there are two common ways to send it." },
+                        {
+                            type: "table",
+                            head: ["Method", "Sends", "Use it when"],
+                            rows: [
+                                ["res.send()", "Text", "A short confirmation is enough"],
+                                ["res.json()", "Data", "The client needs the record back"],
+                            ],
+                            mono: [0],
+                        },
+                        {
+                            type: "more",
+                            label: "This one uses res.send because the reply is one sentence",
+                            blocks: [
+                                { type: "p", text: "If a web page had to display the animal that was just saved, res.json would be the right choice instead, because a page needs the values rather than a sentence about them." },
+                                { type: "p", text: "Either way it counts as the one response. Sending a second one after that is an error, which is why a guard clause usually has return in front of it." },
+                            ],
+                        },
+                        {
+                            type: "more",
+                            label: "The message uses the name the database gave back, not the one sent in",
+                            blocks: [
+                                { type: "p", text: "animal.name comes from the row the database returned, not from the value that arrived in the request. Here the two happen to be identical." },
+                                { type: "p", text: "The habit still matters. The database is what decides what was actually stored, and it may trim, default or reject something. Reporting what was saved rather than what was asked for is the difference between a confirmation and a guess." },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    type: "more",
+                    label: "Where else data can arrive in a request",
+                    blocks: [
+                        { type: "p", text: "There are three places, and knowing which is which explains most endpoint code." },
+                        {
+                            type: "table",
+                            head: ["Source", "Looks like", "Used for"],
+                            rows: [
+                                ["req.body", '{ "name": "Falcon" }', "Data being sent in"],
+                                ["req.params", "/animals/:id", "Identifying which record"],
+                                ["req.query", "?category=Bird", "Filters and options"],
+                            ],
+                            mono: [0, 1],
+                        },
+                        { type: "p", text: "A POST that creates something uses req.body, because the record does not exist yet and there is nothing to identify." },
                     ],
                 },
                 {
