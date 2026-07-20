@@ -1,22 +1,21 @@
-# Live lesson
+# Animals
 
-The template filled in during a session. Same shape as the class project: a Vite
-and React client on **5173**, an Express and Postgres server on **3001**, and an
-`/api` proxy between them.
+A small full stack app: a React front end, an Express server, and a Postgres
+database on Neon.
 
-Nothing is written except the setup. The website in this repo explains the
-concepts; these files are where they get typed.
-
-Lesson 1 is not here. It is SQL, done in Neon.
+You are writing two things. The endpoints that talk to the database, and the
+React that puts what comes back on the page.
 
 ---
 
-## Setup
+## Getting it running
 
 ```bash
 cd server && npm install && cd ../client && npm install
 cp server/src/config.example.js server/src/config.js   # paste your Neon string
 ```
+
+Two terminals, because they are two programs:
 
 ```bash
 cd server && npm start      # 3001
@@ -27,29 +26,33 @@ Open **http://localhost:5173**.
 
 ---
 
-## The two topics
+## What you are writing
 
-| | Where you write | How you check it |
+| | File | How you check it |
 |---|---|---|
-| **Topic 2**, POST endpoint | `server/src/index.js` | Postman |
-| **Topic 3**, GET in React | `client/src/pages/AnimalList.jsx` | the page, and the Network tab |
+| **Topic 2**, the endpoints | `server/src/index.js` | Postman |
+| **Topic 3**, the React | `client/src/pages/AnimalList.jsx` | the page, and the Network tab |
 
-**Topic 2** is the whole backend: `express.json()`, a helper that runs
-`INSERT INTO`, the POST endpoint that calls it, a helper that runs `SELECT`, and
-the GET endpoint that calls that. Both endpoints, both helpers, one file.
+**Topic 2** is the back end. A helper that runs `INSERT INTO` and the POST
+endpoint that calls it, then a helper that runs `SELECT` and the GET endpoint
+that calls that. The helpers do the database work; the endpoints handle the
+request and the response.
 
-**Topic 3** is the React side: a helper that calls `fetch`, `useState` to hold
-what comes back, `useEffect` to run it on load, and the JSX that renders it.
+**Topic 3** is the front end. A function that fetches, `useState` to hold what
+comes back, `useEffect` to run it when the page loads, and JSX to render it.
 
-Teaching topic 3 on its own? Paste the topic 2 block from `answer-key.js` into
-`index.js` first. The React needs an endpoint to call, and writing that endpoint
-is the other lesson.
+Each file has the steps written out where the code goes. `answer-key.js` has
+the finished version if you need it.
+
+Starting on topic 3 without having done topic 2? Paste the topic 2 block from
+the answer key into `index.js` first, so there is an endpoint to call.
 
 ---
 
-## The table
+## The data
 
-One table, `lesson_animals`, already set up. If it needs recreating:
+One table, `lesson_animals`, already set up with three animals. If it ever
+needs rebuilding:
 
 ```sql
 CREATE TABLE lesson_animals (
@@ -69,12 +72,17 @@ VALUES
   ('Eagle',   'Bird',   true,  'Mountains',  5000);
 ```
 
-After a session, put it back with `TRUNCATE lesson_animals RESTART IDENTITY;`
-and the `INSERT` again.
+To clear out anything added while testing:
+
+```sql
+TRUNCATE lesson_animals RESTART IDENTITY;
+```
+
+then run the `INSERT` again.
 
 ---
 
-## Testing topic 2 in Postman
+## Trying the endpoints in Postman
 
 `POST http://localhost:3001/add-one-animal`
 
@@ -89,40 +97,41 @@ Body tab, raw, JSON:
 }
 ```
 
-`id` is never sent. `SERIAL` means the database makes it.
+No `id`. The column is `SERIAL`, so the database assigns it.
 
-Then `GET http://localhost:3001/get-all-animals` to prove the row really
-landed. A friendly reply and a stored row are two different claims.
+Then `GET http://localhost:3001/get-all-animals`. A reply saying it worked and
+a row that is actually there are two different things, and this is what tells
+them apart.
 
-No `/api` in either: that prefix belongs to the client. Postman talks to the
-server directly.
+Note there is no `/api` in either URL. That prefix is a front end thing, and
+Postman talks to the server directly.
 
 ---
 
-## The files
+## Why the front end says `/api` and the server does not
+
+The page runs on 5173 and the server on 3001. A browser will not fetch across
+two different origins by default, so `client/vite.config.js` forwards anything
+starting with `/api` to the server and strips the prefix on the way:
+
+```
+the page asks for   /api/get-all-animals
+the server sees     /get-all-animals
+```
+
+---
+
+## Where things are
 
 ```
 client/
-  vite.config.js              the proxy, and the only place 3001 is named here
+  vite.config.js              the proxy
   src/
-    App.jsx                   the page frame, given
-    pages/AnimalList.jsx      TOPIC 3 goes here
+    App.jsx                   the page
+    pages/AnimalList.jsx      TOPIC 3
 server/
   src/
-    index.js                  TOPIC 2 goes here
-    answer-key.js             what goes in both
-    config.js                 your Neon string, gitignored
-```
-
----
-
-## The `/api` prefix
-
-The client asks for `/api/get-all-animals`. The server answers
-`/get-all-animals`. Both are right: they are different origins, so
-`client/vite.config.js` forwards `/api` to port 3001 and strips the prefix.
-
-```
-page asks for      /api/get-all-animals
-server receives    /get-all-animals
+    index.js                  TOPIC 2
+    answer-key.js             the finished code for both
+    config.js                 your Neon connection string, kept out of git
 ```

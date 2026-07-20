@@ -2,14 +2,17 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// The client runs on 5173 and the server on 3001, which are different origins.
-// Rather than write the full address into every fetch, anything starting with
-// /api is forwarded to the server, with the /api removed on the way.
+// This page runs on 5173 and the server on 3001. Different ports means
+// different origins, and a browser will not fetch across them by default.
 //
-//   client asks for   /api/get-all-animals
-//   server receives   /get-all-animals
+// So anything starting with /api gets forwarded to the server, with the /api
+// taken off on the way:
 //
-// This is why the pages say /api and the endpoints do not.
+//   the page asks for   /api/get-all-animals
+//   the server sees     /get-all-animals
+//
+// That is why a fetch says /api and the endpoint does not. In Postman you talk
+// to the server directly, so you use the plain path.
 export default defineConfig({
   server: {
     proxy: {

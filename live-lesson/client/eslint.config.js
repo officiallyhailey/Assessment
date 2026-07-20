@@ -1,5 +1,5 @@
-// Kept minimal on purpose. The class project has a fuller config; nothing here
-// depends on it, and a lesson should not stall on a lint rule.
+// Deliberately loose. Nothing here depends on linting, and a red squiggle is a
+// poor reason to lose the thread of what you are writing.
 export default [
   {
     files: ["**/*.{js,jsx}"],

@@ -1,5 +1,7 @@
-// Copy this file to config.js and paste your Neon connection string in.
-// config.js is gitignored so the string is never committed.
+// Copy this to config.js and paste your Neon connection string in.
+//
+// config.js is gitignored, because that string contains a password and a
+// password in a repo is a password everyone has.
 
 const config = {
   databaseUrl: "postgresql://USER:PASSWORD@HOST-pooler.REGION.aws.neon.tech/neondb?sslmode=require",
