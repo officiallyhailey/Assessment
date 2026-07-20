@@ -39,7 +39,7 @@ function CodeExplorer({ sample, bare, minLines, fixed, highlight, glow, onAimLin
     const lang = sample.lang || (sample.name.endsWith(".sql") ? "sql" : "js");
     const lines = useMemo(() => tokenize(sample.code, lang), [sample.code, lang]);
 
-    const notes = ANNOTATIONS[sample.name] || {};
+    const notes = ANNOTATIONS[sample.key || sample.name] || {};
     const context = sample.context || notes.context || {};
     const flow = sample.flow || notes.flow || {};
 

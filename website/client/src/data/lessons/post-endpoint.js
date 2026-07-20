@@ -16,7 +16,8 @@ export const postEndpoint = {
     lede: "An endpoint is a URL on your server that responds to requests. This lesson covers building one that receives data and saves it to a database.",
     code: [
         {
-            name: "server.js",
+            name: "index.js",
+            key: "index-post",
             // The Try it view puts the real request inside the panel, next to
             // the code that answers it, instead of further down the page.
             try: "post",
@@ -26,7 +27,16 @@ export const postEndpoint = {
                 {
                     id: "imports",
                     code: `import express from "express";
-import { addOneAnimal } from "./animals-helpers.js";`,
+import pg from "pg";
+import config from "./config.js";
+import "./seed.js";`,
+                },
+                {
+                    id: "pool",
+                    code: `const db = new pg.Pool({
+  connectionString: config.databaseUrl,
+  ssl: true,
+});`,
                 },
                 {
                     id: "app",
@@ -35,6 +45,37 @@ import { addOneAnimal } from "./animals-helpers.js";`,
                 {
                     id: "json",
                     code: `app.use(express.json());`,
+                },
+                {
+                    id: "listen",
+                    code: `const port = 3001;
+app.listen(port, () => {
+  console.log(\`Server is listening on port \${port}\`);
+});`,
+                },
+                {
+                    id: "signature",
+                    code: `async function addOneAnimal(name, category, can_fly, lives_in) {`,
+                },
+                {
+                    id: "query",
+                    gap: 0,
+                    code: `  const result = await db.query(
+    \`INSERT INTO lesson_animals
+       (name, category, can_fly, lives_in)
+     VALUES ($1, $2, $3, $4)
+     RETURNING *\`,
+    [name, category, can_fly, lives_in],
+  );`,
+                },
+                {
+                    id: "return",
+                    code: `  return result.rows[0];`,
+                },
+                {
+                    id: "helperclose",
+                    gap: 0,
+                    code: `}`,
                 },
                 {
                     id: "open",
@@ -59,46 +100,6 @@ import { addOneAnimal } from "./animals-helpers.js";`,
                     id: "close",
                     gap: 0,
                     code: `});`,
-                },
-                {
-                    id: "listen",
-                    code: `const port = 3010;
-app.listen(port, () => {
-  console.log(\`Server is listening on port \${port}\`);
-});`,
-                },
-            ],
-        },
-        {
-            name: "animals-helpers.js",
-            parts: [
-                {
-                    id: "imports",
-                    code: `import db from "./db.js";`,
-                },
-                {
-                    id: "signature",
-                    code: `export async function addOneAnimal(name, category, can_fly, lives_in) {`,
-                },
-                {
-                    id: "query",
-                    gap: 0,
-                    code: `  const result = await db.query(
-    \`INSERT INTO animals
-       (name, category, can_fly, lives_in)
-     VALUES ($1, $2, $3, $4)
-     RETURNING *\`,
-    [name, category, can_fly, lives_in],
-  );`,
-                },
-                {
-                    id: "return",
-                    code: `  return result.rows[0];`,
-                },
-                {
-                    id: "close",
-                    gap: 0,
-                    code: `}`,
                 },
             ],
         },
@@ -171,7 +172,7 @@ app.listen(port, () => {
                 },
                 {
                     type: "focus",
-                    file: "server.js",
+                    file: "index-post",
                     at: "imports",
                     blocks: [
                         { type: "h", text: "Loading what the file needs" },
@@ -188,7 +189,7 @@ app.listen(port, () => {
                 },
                 {
                     type: "focus",
-                    file: "server.js",
+                    file: "index-post",
                     at: "app",
                     blocks: [
                         { type: "h", text: "Creating the application" },
@@ -205,7 +206,7 @@ app.listen(port, () => {
                 },
                 {
                     type: "focus",
-                    file: "server.js",
+                    file: "index-post",
                     at: "json",
                     blocks: [
                         { type: "h", text: "Teaching it to read what arrives" },
@@ -244,6 +245,23 @@ app.listen(port, () => {
                     ],
                 },
                 { type: "coderef" },
+                {
+                    type: "focus",
+                    file: "index-post",
+                    at: "listen",
+                    blocks: [
+                        { type: "h", text: "Switching it on" },
+                        { type: "p", text: "app.listen opens a [[port]] and waits. Until it runs, everything above is only a description of a server." },
+                        {
+                            type: "more",
+                            label: "The endpoint below is registered after this line, and still works",
+                            blocks: [
+                                { type: "p", text: "Express checks its routes per request rather than at startup, so a route added after the server is listening is found perfectly well." },
+                                { type: "p", text: "What does have to come first is the middleware. express.json only applies to requests that arrive after it was registered, which is why it sits above rather than below." },
+                            ],
+                        },
+                    ],
+                },
             ],
         },
         {
@@ -254,7 +272,7 @@ app.listen(port, () => {
                 { type: "p", text: "app.post takes the path and a function to run when a POST reaches it. That function is the [[handler]], and it receives two objects every time it runs." },
                 {
                     type: "focus",
-                    file: "server.js",
+                    file: "index-post",
                     at: "open",
                     blocks: [
                         {
@@ -278,7 +296,7 @@ app.listen(port, () => {
                 },
                 {
                     type: "focus",
-                    file: "server.js",
+                    file: "index-post",
                     at: "body",
                     blocks: [
                         { type: "h", text: "Reading what arrived" },
@@ -305,7 +323,7 @@ app.listen(port, () => {
                 },
                 {
                     type: "focus",
-                    file: "server.js",
+                    file: "index-post",
                     at: "call",
                     blocks: [
                         { type: "h", text: "Handing the work over" },
@@ -330,7 +348,7 @@ app.listen(port, () => {
                 },
                 {
                     type: "focus",
-                    file: "server.js",
+                    file: "index-post",
                     at: "reply",
                     blocks: [
                         { type: "h", text: "Sending a reply" },
@@ -380,23 +398,6 @@ app.listen(port, () => {
                         { type: "p", text: "A POST that creates something uses req.body, because the record does not exist yet and there is nothing to identify." },
                     ],
                 },
-                {
-                    type: "focus",
-                    file: "server.js",
-                    at: "listen",
-                    blocks: [
-                        { type: "h", text: "Switching it on" },
-                        { type: "p", text: "The endpoint is written, and app.listen is what lets a request actually reach it. It opens a [[port]] and waits." },
-                        {
-                            type: "more",
-                            label: "It sits at the bottom of the file because order matters here",
-                            blocks: [
-                                { type: "p", text: "Everything above app.listen is setup, and it has to be finished before requests start arriving. A middleware or an endpoint registered after the server is already listening may miss requests that are already in flight." },
-                                { type: "p", text: "Keeping app.listen last is the simple way to guarantee the server is fully built before anyone can reach it." },
-                            ],
-                        },
-                    ],
-                },
             ],
         },
         {
@@ -408,8 +409,8 @@ app.listen(port, () => {
                 { type: "coderef" },
                 {
                     type: "focus",
-                    title: "animals-helpers.js, the signature",
-                    file: "animals-helpers.js",
+                    title: "The helper, its signature",
+                    file: "index-post",
                     at: "signature",
                     blocks: [
                         { type: "h", text: "Declaring the helper" },
@@ -435,8 +436,8 @@ app.listen(port, () => {
                 },
                 {
                     type: "focus",
-                    title: "animals-helpers.js, the query",
-                    file: "animals-helpers.js",
+                    title: "The helper, the query",
+                    file: "index-post",
                     at: "query",
                     blocks: [
                         { type: "h", text: "Running the query" },
@@ -460,9 +461,9 @@ app.listen(port, () => {
                 },
                 {
                     type: "focus",
-                    title: "animals-helpers.js, what it hands back",
-                    file: "animals-helpers.js",
-                    at: ["return", "close"],
+                    title: "The helper, what it hands back",
+                    file: "index-post",
+                    at: ["return", "helperclose"],
                     blocks: [
                         { type: "h", text: "Handing one row down" },
                         { type: "p", text: "[[return]] sends a value back to whoever called the function. This one hands back a single saved animal, and that is where animal.name in the reply comes from." },
@@ -487,7 +488,7 @@ app.listen(port, () => {
                 },
                 {
                     type: "focus",
-                    file: "server.js",
+                    file: "index-post",
                     at: ["open", "close"],
                     try: true,
                     blocks: [

@@ -142,7 +142,7 @@ function Blocks({ blocks, pinned, activeFocus, aimed, path = "b" }) {
                 const id = `${path}-${i}`;
                 // A focus may name its lines directly, or name a region of the
                 // sample and let lib/sample.js work the numbers out.
-                const sample = pinned.find((c) => c.name === b.file);
+                const sample = pinned.find((c) => (c.key || c.name) === b.file);
                 const lines = resolveLines(b, sample);
                 const title = resolveTitle(b, sample);
                 return (

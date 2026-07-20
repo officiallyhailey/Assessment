@@ -128,7 +128,7 @@ function Lesson() {
     // Resolved here rather than waiting for the tab effect to run, so the panel
     // never renders a frame showing the wrong file.
     const shown = (wantTab >= 0 ? pinned[wantTab] : pinned[tab]) || pinned[0];
-    const highlight = focus && shown && focus.file === shown.name ? focus.lines : "";
+    const highlight = focus && shown && focus.file === (shown.key || shown.name) ? focus.lines : "";
 
     // The other direction. Pointing at a line in the panel finds the passage
     // that explains it, so the code can be used as a way into the text rather
@@ -136,7 +136,7 @@ function Lesson() {
     const focusForLine = (n) => {
         if (!shown || n === null) return null;
         for (const el of document.querySelectorAll(".focus")) {
-            if ((el.dataset.file || "") !== shown.name) continue;
+            if ((el.dataset.file || "") !== (shown.key || shown.name)) continue;
             if (parseLines(el.dataset.lines).includes(n)) return el;
         }
         return null;

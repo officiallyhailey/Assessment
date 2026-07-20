@@ -28,7 +28,7 @@ function describe(spec) {
 
 /** Expands `parts` into `code` plus a `regions` map of id to line spec. */
 export function prepare(sample) {
-  if (!sample.parts) return sample;
+  if (!sample.parts) return { ...sample, key: sample.key || sample.name };
 
   const regions = {};
   const out = [];
@@ -45,7 +45,10 @@ export function prepare(sample) {
     line += height;
   });
 
-  return { ...sample, code: out.join("\n"), regions };
+  // `key` is how annotations and focus blocks find a sample. It defaults to the
+  // file name, and is set explicitly where two lessons both show a file called
+  // index.js: they are different files, and they need different notes.
+  return { ...sample, key: sample.key || sample.name, code: out.join("\n"), regions };
 }
 
 /**

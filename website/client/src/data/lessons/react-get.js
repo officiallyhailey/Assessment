@@ -16,6 +16,55 @@ export const reactGet = {
     lede: "This lesson covers how a React component requests data from an API, stores it, and displays it on the screen.",
     code: [
         {
+            name: "index.js",
+            key: "index-get",
+            parts: [
+                {
+                    id: "imports",
+                    code: `import express from "express";
+import pg from "pg";
+import config from "./config.js";
+import "./seed.js";`,
+                },
+                {
+                    id: "pool",
+                    code: `const db = new pg.Pool({
+  connectionString: config.databaseUrl,
+  ssl: true,
+});`,
+                },
+                {
+                    id: "app",
+                    code: `const app = express();`,
+                },
+                {
+                    id: "listen",
+                    code: `const port = 3001;
+app.listen(port, () => {
+  console.log(\`Server is listening on port \${port}\`);
+});`,
+                },
+                {
+                    id: "helper",
+                    code: `async function getAllAnimals() {
+  const result = await db.query(
+    "SELECT * FROM lesson_animals ORDER BY id"
+  );
+
+  return result.rows;
+}`,
+                },
+                {
+                    id: "endpoint",
+                    code: `app.get("/get-all-animals", async (req, res) => {
+  const animals = await getAllAnimals();
+
+  res.json(animals);
+});`,
+                },
+            ],
+        },
+        {
             name: "AnimalList.jsx",
             // Try it runs this exact flow inside the panel, so the two renders
             // can be watched next to the code that causes them.
@@ -100,6 +149,50 @@ export const reactGet = {
                     blocks: [
                         { type: "p", text: "A [[render]] is React working out what should be on screen and putting it there. The component function runs once per render, top to bottom." },
                         { type: "p", text: "It renders when it first appears, and again whenever the data it is holding changes. Nothing else makes it render, which is why storing the data matters so much." },
+                    ],
+                },
+            ],
+        },
+        {
+            id: "endpoint",
+            label: "The endpoint it calls",
+            heading: "What the React is fetching from",
+            blocks: [
+                { type: "p", text: "Before any React, there has to be something to ask. This is the server side of the same job: one [[helper function]] that reads the table, and one endpoint that hands the rows over." },
+                { type: "coderef" },
+                {
+                    type: "focus",
+                    file: "index-get",
+                    at: "helper",
+                    blocks: [
+                        { type: "h", text: "The helper that reads" },
+                        { type: "p", text: "One [[query]], and it hands back the rows rather than the whole result object. Nothing in it knows a request exists." },
+                        {
+                            type: "more",
+                            label: "ORDER BY id is not decoration",
+                            blocks: [
+                                { type: "p", text: "Without it the database is free to hand rows back in whatever order suits it, which usually looks fine and occasionally does not." },
+                                { type: "p", text: "A list that reorders itself between loads is a confusing thing to debug from the React side, and the cause is back here." },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    type: "focus",
+                    file: "index-get",
+                    at: "endpoint",
+                    blocks: [
+                        { type: "h", text: "The endpoint" },
+                        { type: "p", text: "A GET asks for data and sends none, which is why there is no [[req.body]] here and no express.json above." },
+                        { type: "p", text: "res.json sends the array and sets the [[content-type|Content-Type]] header. That header is what lets response.json() read it at the other end." },
+                        {
+                            type: "more",
+                            label: "The path here has no /api on the front",
+                            blocks: [
+                                { type: "p", text: "The React page asks for /api/get-all-animals. The prefix is how the dev server knows to forward a request to the API rather than treat it as a page." },
+                                { type: "p", text: "It is stripped on the way through, so the endpoint sees /get-all-animals. Both are correct, and a request sent straight to the server, from Postman say, uses the plain path." },
+                            ],
+                        },
                     ],
                 },
             ],

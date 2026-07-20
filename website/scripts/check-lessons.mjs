@@ -23,7 +23,8 @@ const samples = new Map();
 for (const lesson of lessons) {
   const collect = (list) => {
     for (const sample of list || []) {
-      if (!samples.has(sample.name)) samples.set(sample.name, sample);
+      const key = sample.key || sample.name;
+      if (!samples.has(key)) samples.set(key, sample);
     }
   };
   collect(lesson.code);
@@ -66,7 +67,7 @@ for (const lesson of lessons) {
   for (const section of lesson.sections) {
     const visible = new Map();
     for (const sample of section.code || lesson.code || []) {
-      visible.set(sample.name, sample);
+      visible.set(sample.key || sample.name, sample);
     }
 
     eachBlock(section.blocks, (block) => {
