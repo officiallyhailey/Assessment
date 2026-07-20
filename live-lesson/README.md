@@ -72,13 +72,17 @@ VALUES
   ('Eagle',   'Bird',   true,  'Mountains',  5000);
 ```
 
-To clear out anything added while testing:
+The server puts the table back to those three every time it starts, so restarting is the reset. Since you restart after every edit anyway, you rarely have to think about it.
+
+That is `server/src/seed.js`, imported at the top of `index.js`. Comment that import out if you ever want rows to survive a restart.
+
+To reset without restarting, run the `TRUNCATE` and the `INSERT` above:
 
 ```sql
 TRUNCATE lesson_animals RESTART IDENTITY;
 ```
 
-then run the `INSERT` again.
+`RESTART IDENTITY` sets the id counter back to 1. Without it the next animal gets id 5, then 9, climbing forever, which muddies the point that the database assigns the id.
 
 ---
 
@@ -102,6 +106,10 @@ No `id`. The column is `SERIAL`, so the database assigns it.
 Then `GET http://localhost:3001/get-all-animals`. A reply saying it worked and
 a row that is actually there are two different things, and this is what tells
 them apart.
+
+Send the same animal twice and the second one fails with a 500, because `name`
+is `UNIQUE`. That is the constraint working, not a bug in the endpoint. Change
+the name, or restart the server.
 
 Note there is no `/api` in either URL. That prefix is a front end thing, and
 Postman talks to the server directly.
