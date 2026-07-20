@@ -9,16 +9,33 @@ import "../App.css";
 function AnimalList() {
   // state: the animals, starting as an empty array
 
+const [animals, setAnimals] = useState([]);
 
   // get helper function: fetch, read the json, store it
 
+  const getAnimals = async () => {
+  const response = await fetch("/api/get-all-animals");
+  const data = await response.json();
+  setAnimals(data);
+};
 
   // useEffect: run the helper once, on page load
 
+useEffect(() => {
+  getAnimals();
+}, []);
 
-  // return the list: a <ul>, one <li key={animal.id}> per animal
+  // replace the code below: return the list: a <ul>, one <li key={animal.id}> per animal
 
-  return <p className="empty">Nothing here yet.</p>;
+return (
+  <ul>
+    {animals.map((animal) => (
+      <li key={animal.id}>
+        <strong>{animal.name}</strong>, {animal.lives_in}
+      </li>
+    ))}
+  </ul>
+);
 }
 
 // ──────────────────────────────────────────────────────────────────────

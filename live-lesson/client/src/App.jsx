@@ -1,5 +1,4 @@
-// The page itself. It holds the heading and drops AnimalList underneath,
-// which is where the animals show up.
+// The page itself. It holds the heading and drops AnimalList underneath, which is where the animals show up.
 
 import AnimalList from "./pages/AnimalList.jsx";
 import "./App.css";
