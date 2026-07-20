@@ -11,9 +11,9 @@ function LessonTwo() {
   const [failed, setFailed] = useState(false);
 
   // The GET is already written for you. It is here so you can see whether the
-  // POST you write actually saved anything.
+  // POST you write actually saved anything. Writing one yourself is lesson 3.
   const load = async () => {
-    const response = await fetch("/api/lesson-one-table");
+    const response = await fetch("/api/animals");
     if (response.ok) setRows(await response.json());
   };
 
@@ -60,6 +60,10 @@ function LessonTwo() {
           </li>
           <li>Fill in the form below and press Send.</li>
         </ol>
+        <p className="note">
+          This lesson uses <code>lesson_animals</code>, which is already filled
+          in, so lesson 1 does not have to have been done first.
+        </p>
         <p className="note">
           The list underneath uses a GET that is already written, so a new row
           appearing there is proof the POST saved rather than just replied.

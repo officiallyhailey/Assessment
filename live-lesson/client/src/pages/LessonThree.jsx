@@ -34,7 +34,8 @@ function LessonThree() {
           <li>Press Load, or refresh the page.</li>
         </ol>
         <p className="note">
-          No POST here. This lesson only reads.
+          Reads <code>lesson_animals</code>, which is already filled in, so this
+          lesson stands on its own. No POST here: it only reads.
         </p>
         <button onClick={getAnimals}>Load</button>
       </section>

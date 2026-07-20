@@ -3,6 +3,9 @@
 // What goes in each marked section of index.js. Copy the section you need, or
 // read it and type it out.
 //
+// Both write to lesson_animals, the table that is already filled in. Lesson 1's
+// table is separate and neither of these touches it.
+//
 // The website explains why any of this works. This is only the what.
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -18,7 +21,7 @@ app.post("/add-one-animal", async (req, res) => {
   const { name, category, can_fly, lives_in } = req.body;
 
   const result = await db.query(
-    `INSERT INTO lesson_one_table
+    `INSERT INTO lesson_animals
        (name, category, can_fly, lives_in)
      VALUES ($1, $2, $3, $4)
      RETURNING *`,
@@ -38,7 +41,7 @@ app.post("/add-one-animal", async (req, res) => {
 // ═══════════════════════════════════════════════════════════════════════
 
 app.get("/get-all-animals", async (req, res) => {
-  const result = await db.query("SELECT * FROM lesson_one_table ORDER BY id");
+  const result = await db.query("SELECT * FROM lesson_animals ORDER BY id");
 
   res.json(result.rows);
 });

@@ -48,6 +48,10 @@ function LessonOne() {
 
       <section>
         <h2>What is in the table</h2>
+        <p className="note">
+          <code>lesson_one_table</code> belongs to this lesson alone. Lessons 2
+          and 3 use a different table that is already set up.
+        </p>
         {missing ? (
           <p className="empty">
             No table yet. Run the SQL above, then press Check.

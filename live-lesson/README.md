@@ -46,7 +46,36 @@ than just replied nicely.
 
 **Lesson 3** writes the GET. There is no POST in it and it needs none.
 
-All three use one table, `lesson_one_table`, which lesson 1 creates.
+### Two tables, so no lesson waits on another
+
+| Table | Who uses it |
+|---|---|
+| `lesson_one_table` | lesson 1 only. It does not exist until lesson 1 creates it |
+| `lesson_animals` | lessons 2 and 3. Already there, already filled |
+
+Only one topic is taught in a session and nobody knows which in advance, so
+lesson 2 and lesson 3 must not depend on lesson 1 having been done. They read a
+table that is already set up, and lesson 1's table is its own.
+
+Set `lesson_animals` up once:
+
+```sql
+CREATE TABLE lesson_animals (
+  id          SERIAL PRIMARY KEY,
+  name        VARCHAR(100) NOT NULL UNIQUE,
+  category    VARCHAR(50),
+  can_fly     BOOLEAN NOT NULL,
+  lives_in    VARCHAR(100),
+  population  INTEGER
+);
+
+INSERT INTO lesson_animals
+  (name, category, can_fly, lives_in, population)
+VALUES
+  ('Lion',    'Mammal', false, 'Savanna',    23000),
+  ('Penguin', 'Bird',   false, 'Antarctica', 1200000),
+  ('Eagle',   'Bird',   true,  'Mountains',  5000);
+```
 
 ---
 
@@ -90,10 +119,11 @@ Postman uses the plain path, since it talks to the server directly.
 
 ## Starting over
 
-Rerun the `INSERT` from lesson 1's page, or in Neon:
+After a lesson 2 session, put `lesson_animals` back:
 
 ```sql
-TRUNCATE lesson_one_table RESTART IDENTITY;
+TRUNCATE lesson_animals RESTART IDENTITY;
 ```
 
-then paste the `INSERT` again.
+then run its `INSERT` again. To rehearse lesson 1 from scratch,
+`DROP TABLE lesson_one_table;` and its page goes back to saying there is none.
