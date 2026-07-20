@@ -4,12 +4,10 @@ The template filled in during a session. Same shape as the class project: a Vite
 and React client on **5173**, an Express and Postgres server on **3001**, and an
 `/api` proxy between them.
 
-The page has a picker for the three lessons. Each one says how to run it and
-shows the data that comes back, so the room can see the code working rather than
-being told it does.
+Nothing is written except the setup. The website in this repo explains the
+concepts; these files are where they get typed.
 
-The website in this repo explains the concepts. These files stay lean on
-purpose: short comments, marked sections, and an answer key beside them.
+Lesson 1 is not here. It is SQL, done in Neon.
 
 ---
 
@@ -29,35 +27,29 @@ Open **http://localhost:5173**.
 
 ---
 
-## The three lessons
+## The two topics
 
-| Lesson | Where you work | What appears |
+| | Where you write | How you check it |
 |---|---|---|
-| 1, SQL | the Neon console | the table's contents on the page |
-| 2, POST | `server/src/index.js` | your row joining the table |
-| 3, GET | `server/src/index.js` | the list rendered by React |
+| **Topic 2**, POST endpoint | `server/src/index.js` | Postman |
+| **Topic 3**, GET in React | `client/src/pages/AnimalList.jsx` | the page, and the Network tab |
 
-**Lesson 1** is done in Neon, not in a file. The page shows the SQL to paste and
-then reads the table back, so the room sees the table exists.
+**Topic 2** is the whole backend: `express.json()`, a helper that runs
+`INSERT INTO`, the POST endpoint that calls it, a helper that runs `SELECT`, and
+the GET endpoint that calls that. Both endpoints, both helpers, one file.
 
-**Lesson 2** writes the POST. The GET it uses to check the row landed is already
-written, marked `GIVEN`, so a new row appearing is proof the POST saved rather
-than just replied nicely.
+**Topic 3** is the React side: a helper that calls `fetch`, `useState` to hold
+what comes back, `useEffect` to run it on load, and the JSX that renders it.
 
-**Lesson 3** writes the GET. There is no POST in it and it needs none.
+Teaching topic 3 on its own? Paste the topic 2 block from `answer-key.js` into
+`index.js` first. The React needs an endpoint to call, and writing that endpoint
+is the other lesson.
 
-### Two tables, so no lesson waits on another
+---
 
-| Table | Who uses it |
-|---|---|
-| `lesson_one_table` | lesson 1 only. It does not exist until lesson 1 creates it |
-| `lesson_animals` | lessons 2 and 3. Already there, already filled |
+## The table
 
-Only one topic is taught in a session and nobody knows which in advance, so
-lesson 2 and lesson 3 must not depend on lesson 1 having been done. They read a
-table that is already set up, and lesson 1's table is its own.
-
-Set `lesson_animals` up once:
+One table, `lesson_animals`, already set up. If it needs recreating:
 
 ```sql
 CREATE TABLE lesson_animals (
@@ -77,28 +69,50 @@ VALUES
   ('Eagle',   'Bird',   true,  'Mountains',  5000);
 ```
 
+After a session, put it back with `TRUNCATE lesson_animals RESTART IDENTITY;`
+and the `INSERT` again.
+
+---
+
+## Testing topic 2 in Postman
+
+`POST http://localhost:3001/add-one-animal`
+
+Body tab, raw, JSON:
+
+```json
+{
+  "name": "Falcon",
+  "category": "Bird",
+  "can_fly": true,
+  "lives_in": "Cliffs"
+}
+```
+
+`id` is never sent. `SERIAL` means the database makes it.
+
+Then `GET http://localhost:3001/get-all-animals` to prove the row really
+landed. A friendly reply and a stored row are two different claims.
+
+No `/api` in either: that prefix belongs to the client. Postman talks to the
+server directly.
+
 ---
 
 ## The files
 
 ```
 client/
-  vite.config.js        the proxy, and the only place 3001 is named here
+  vite.config.js              the proxy, and the only place 3001 is named here
   src/
-    App.jsx             the lesson picker
-    pages/
-      LessonOne.jsx     the SQL to paste, and the table read back
-      LessonTwo.jsx     the form that sends your POST
-      LessonThree.jsx   the list your GET feeds
+    App.jsx                   the page frame, given
+    pages/AnimalList.jsx      TOPIC 3 goes here
 server/
   src/
-    index.js            where you write, with a marked section per lesson
-    answer-key.js       what goes in those sections
-    config.js           your Neon string, gitignored
+    index.js                  TOPIC 2 goes here
+    answer-key.js             what goes in both
+    config.js                 your Neon string, gitignored
 ```
-
-`index.js` is the only file written during a session. Everything in `client/` is
-there so the result can be seen.
 
 ---
 
@@ -112,18 +126,3 @@ The client asks for `/api/get-all-animals`. The server answers
 page asks for      /api/get-all-animals
 server receives    /get-all-animals
 ```
-
-Postman uses the plain path, since it talks to the server directly.
-
----
-
-## Starting over
-
-After a lesson 2 session, put `lesson_animals` back:
-
-```sql
-TRUNCATE lesson_animals RESTART IDENTITY;
-```
-
-then run its `INSERT` again. To rehearse lesson 1 from scratch,
-`DROP TABLE lesson_one_table;` and its page goes back to saying there is none.

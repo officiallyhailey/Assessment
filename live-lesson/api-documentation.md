@@ -1,39 +1,16 @@
 # API
 
-The server runs on **http://localhost:3001**. Paths here have no `/api` prefix:
-that belongs to the client, and Vite strips it on the way through.
+The server runs on **http://localhost:3001**, against the table
+**`lesson_animals`**.
 
-Two tables, so that no lesson depends on another having been taught:
+Paths here have no `/api` prefix: that belongs to the client, and Vite strips it
+on the way through. Postman uses the plain path.
 
-| Table | Endpoints |
-|---|---|
-| `lesson_one_table` | `GET /lesson-one-table`. Created by lesson 1 |
-| `lesson_animals` | everything else. Already set up and filled |
+Both endpoints are written in topic 2. Until then they answer **404**.
 
 ---
 
-## `GET /lesson-one-table` — given
-
-Written already, so lesson 1 can show its table exists once the SQL has run.
-
-**200**
-
-```json
-[{ "id": 1, "name": "Lion", "category": "Mammal", "can_fly": false, "lives_in": "Savanna", "population": 23000 }]
-```
-
-**500** if the table does not exist yet, which is the state before lesson 1 is taught. The page reads that as "no table yet" rather than an error.
-
----
-
-## `GET /animals` — given
-
-Reads `lesson_animals`. Lesson 2's page uses it to show whether a POST really
-saved. Writing a GET yourself is lesson 3, which is why this one is handed over.
-
----
-
-## `POST /add-one-animal` — lesson 2
+## `POST /add-one-animal`
 
 **Headers**
 
@@ -41,8 +18,8 @@ saved. Writing a GET yourself is lesson 3, which is why this one is handed over.
 Content-Type: application/json
 ```
 
-Without it the body still arrives, but nothing parses it and every value is
-undefined.
+Without it the body still arrives, but nothing parses it, `req.body` is
+undefined and the endpoint fails on the line that reads it.
 
 **Body**
 
@@ -58,13 +35,19 @@ undefined.
 The farm has grown: Falcon was added!
 ```
 
-**404** until the endpoint is written.
+**500** when the database refuses the row. `name` is `NOT NULL` and `UNIQUE`, so
+a missing name, or one already in the table, fails here.
 
 ---
 
-## `GET /get-all-animals` — lesson 3
+## `GET /get-all-animals`
 
-Every row of `lesson_animals`, ordered by id. Same shape as `/animals`; writing
-it is the lesson.
+Every row, ordered by id. This is what topic 3 fetches.
 
-**404** until the endpoint is written.
+**200**
+
+```json
+[
+  { "id": 1, "name": "Lion", "category": "Mammal", "can_fly": false, "lives_in": "Savanna", "population": 23000 }
+]
+```
