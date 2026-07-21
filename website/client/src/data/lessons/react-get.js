@@ -18,7 +18,7 @@
 // same imports, pool, app, express.json and listen at the top of index.js. A
 // teacher covering only one topic still walks through it, so topic 3 reuses
 // topic 2's section verbatim, just pointed at this lesson's copy of index.js.
-import { postEndpoint } from "./post-endpoint";
+import { postEndpoint } from "./post-endpoint.js";
 
 const topic2Setup = postEndpoint.sections.find((s) => s.id === "express");
 const settingUpTheFile = {
