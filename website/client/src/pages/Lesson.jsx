@@ -177,7 +177,7 @@ function Lesson() {
                     </Link>
                     <div className="num">{lesson.num}</div>
                     <h1>{lesson.title}</h1>
-                    <p className="lede">{lesson.lede}</p>
+                    {lesson.lede && <p className="lede">{lesson.lede}</p>}
                 </div>
 
                 {lesson.sections.map((s) => (

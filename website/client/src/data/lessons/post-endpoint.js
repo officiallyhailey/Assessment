@@ -13,7 +13,8 @@ export const postEndpoint = {
     title: "Create a POST Endpoint with Express and SQL",
     blurb: "Build an API endpoint that receives data and saves it to a database.",
     tags: ["app.post", "req.body", "res.send"],
-    lede: "An endpoint is a URL on your server that responds to requests. This lesson covers building one that receives data and saves it to a database.",
+    // No lede on purpose. The overview opens with the therapy-office analogy,
+    // which eases in gentler than a one-line definition stacked with terms.
     code: [
         {
             name: "index.js",
