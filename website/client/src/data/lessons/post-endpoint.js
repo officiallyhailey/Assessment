@@ -109,12 +109,21 @@ app.listen(port, () => {
             label: "Overview",
             heading: "What a POST endpoint is",
             blocks: [
-                { type: "p", text: "Something outside your program has data and wants it kept. Your [[server]] receives it and puts it somewhere permanent." },
+                { type: "p", text: "Think of filling in a form at an office. You hand it to a clerk, they file it away so it is kept for good, and you get a receipt back." },
+                {
+                    type: "figure",
+                    src: "/topic2-plain.png",
+                    alt: "You fill in a form, hand it to an office, the office files it in a cabinet, and you get a receipt back",
+                    caption: "Nothing technical yet. Just a form handed in and filed.",
+                },
+                { type: "p", text: "That is the whole idea of this lesson. Something fills in a form of information, sends it in, and it gets stored so it is still there later. A receipt comes back to say it worked." },
+                { type: "h", text: "The same thing, in code" },
+                { type: "p", text: "Now the technical version. The office is a [[server]]: a program, always running, that waits for messages and answers them. The filing cabinet is a [[database]], where information is kept so it is still there tomorrow. Filing a form is a [[post|POST]]." },
                 {
                     type: "figure",
                     src: "/topic2.png",
                     alt: "Data travels from a sender into your server, which saves it to the database and sends a reply back",
-                    caption: "The numbers are the three steps below, in the order they happen.",
+                    caption: "The same three moves, with the real words. The numbers match the steps below.",
                 },
                 { type: "p", text: "Everything in this lesson is one of those three moves. The rest is the words for them." },
                 { type: "h", text: "The words for the picture" },

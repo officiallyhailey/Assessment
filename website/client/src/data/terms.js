@@ -15,12 +15,20 @@ export const TERMS = {
         note: "A web page, a phone app, or Postman. Anything that can send a request.",
     },
     server: {
-        def: "A program that sits waiting for requests and answers them.",
-        note: "Here it is the Node program you start, listening on port 3000.",
+        def: "A computer, always on, that waits for messages and answers them.",
+        note: "Not a special machine. The one you start in this lesson is a program running on your own laptop.",
+    },
+    database: {
+        def: "Where a program keeps information so it is still there tomorrow.",
+        note: "A set of tables, each a grid of rows. This lesson saves an animal as one row.",
     },
     endpoint: {
-        def: "One address on your server that answers one kind of request.",
-        note: "This lesson builds a single endpoint at /add-one-animal.",
+        def: "One address on the server that handles one kind of request.",
+        note: "Like a specific counter at an office, each with its own job. This lesson builds one, at /add-one-animal.",
+    },
+    post: {
+        def: "The kind of request that sends information to be saved.",
+        note: "Named for putting something in, like posting a letter. Its opposite, GET, only asks for information back.",
     },
     handler: {
         def: "The function that runs when a request reaches an endpoint.",
