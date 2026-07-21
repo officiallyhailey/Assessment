@@ -4,7 +4,7 @@ import express from "express";
 import pg from "pg";
 import config from "./config.js";
 
-// Puts the table back to the three clients it starts with, every restart. Comment this out if you want rows to survive one.
+// Puts the table back to the three clients it starts with, every restart. Comment this out if you want rows to survive each session.
 import "./seed.js";
 
 const db = new pg.Pool({
