@@ -278,13 +278,17 @@
        code inside it, rather than pinning to the top. Short samples then sit
        level with the text being read instead of floating above it. */
     .pin {
-        display: block;
+        display: flex;
         position: sticky;
         top: 64px;
         height: calc(100vh - 64px);
-        display: flex;
         align-items: center;
         padding: 12px 0;
+        /* Out of sight through the overview, faded in once the reader reaches
+           the code. Opacity and pointer-events are set inline from React (see
+           Lesson.jsx); this is only the timing. The column is always reserved,
+           so nothing reflows: only the panel itself appears. */
+        transition: opacity 0.4s ease;
     }
 
     /* A fixed height, not a maximum. The panel held its content before, so it

@@ -131,17 +131,7 @@ app.listen(port, () => {
                 { type: "h", text: "How it works" },
                 { type: "p", text: "A therapy office calls the person checking in a client, and so does code. The [[client]] is whatever sends the information in, and here it is you. Its message is a [[request]], and what comes back is a [[response]]." },
                 { type: "p", text: "The front desk is your [[server]]: a program you start, that keeps running and answers whatever arrives. It is the file you write in this lesson, index.js, running on your computer and listening on a [[port]]. The filing cabinet is a [[database]], where information is kept so it is still there tomorrow." },
-                { type: "p", text: "Your server answers at specific addresses, and each one is an [[endpoint]], fixed by two things together." },
-                {
-                    type: "table",
-                    head: ["Part", "Example", "What it decides"],
-                    rows: [
-                        ["The [[path]]", "/add-one-client", "Which address the request is aimed at"],
-                        ["The [[method]]", "POST", "What kind of action is being asked for"],
-                    ],
-                    mono: [1],
-                },
-                { type: "p", text: "This lesson builds one POST endpoint, at /add-one-client, saving one client as one [[row]]." },
+                { type: "p", text: "The server answers at specific addresses, each an [[endpoint]] fixed by a [[path]] and a [[method]]. This lesson builds one, a POST at /add-one-client, saving a client as one [[row]]. The rest is how." },
                 {
                     type: "more",
                     label: "POST sends data in, GET only asks for it",
@@ -158,14 +148,6 @@ app.listen(port, () => {
                         { type: "p", text: "This matters because the endpoint is written without knowing which. It answers whatever arrives, so long as the path and the method match." },
                     ],
                 },
-                {
-                    type: "more",
-                    label: "Back to the therapy office, for one useful detail",
-                    blocks: [
-                        { type: "p", text: "The client fills in a check-in form, the front desk takes that information, files it away, and they say the therapist will be out shortly. Same three steps." },
-                        { type: "p", text: "The useful detail is that the form is handed over rather than spoken. It has named boxes, so the front desk never has to guess which answer is which. That is what the data in a POST request looks like, and it is why the data travels inside the request rather than in the URL." },
-                    ],
-                },
             ],
         },
         {
@@ -173,7 +155,7 @@ app.listen(port, () => {
             label: "Setting up the file",
             heading: "Everything above the code you write",
             blocks: [
-                { type: "analogy", text: "Opening the office for the day. Unlock the door, run a line to the records room, put someone at the front desk, and turn on the sign. None of it is about any one client, and it all happens once before anyone walks in." },
+                { type: "analogy", text: "Opening the office. Unlock the door, turn on the computer that stores the records, put someone at the front desk, and turn on the sign. None of it is about any one client, and it all happens once before anyone walks in." },
                 { type: "p", text: "The top of the file is that setup: load what is needed, open a connection to the database, create the app, and start it listening. It runs once at startup." },
                 {
                     type: "more",

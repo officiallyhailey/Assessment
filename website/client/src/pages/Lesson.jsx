@@ -125,6 +125,16 @@ function Lesson() {
 
     if (!lesson) return null;
 
+    // The overview is a warm-up with no code, so the panel stays out of the way
+    // until the reader reaches the first section that actually explains the
+    // sample, then fades in. A section explains the sample if it holds a focus
+    // block naming a file or a coderef.
+    const showsCode = (blocks = []) =>
+        blocks.some((b) => (b.type === "focus" && b.file) || b.type === "coderef" || showsCode(b.blocks));
+    const codeIndex = lesson.sections.findIndex((s) => showsCode(s.blocks));
+    const activeIndex = lesson.sections.findIndex((s) => s.id === active);
+    const panelShown = codeIndex >= 0 && activeIndex >= codeIndex;
+
     // Resolved here rather than waiting for the tab effect to run, so the panel
     // never renders a frame showing the wrong file.
     const shown = (wantTab >= 0 ? pinned[wantTab] : pinned[tab]) || pinned[0];
@@ -196,8 +206,13 @@ function Lesson() {
             </main>
 
             {/* Stays on screen on wide displays so the code can be pointed at
-                while the explanation beside it is being read. */}
-            <aside className="pin">
+                while the explanation beside it is being read. Hidden through the
+                overview, it fades in once the reader reaches the code. */}
+            <aside
+                className="pin"
+                aria-hidden={!panelShown}
+                style={{ opacity: panelShown ? 1 : 0, pointerEvents: panelShown ? "auto" : "none" }}
+            >
                 <div className="pinbox">
                     <div className="pintop">
                         {pinned.length > 1 ? (

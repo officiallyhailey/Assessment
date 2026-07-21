@@ -136,19 +136,6 @@
     min-height: 0;
 }
 
-/* In the pinned panel the box is as tall as the screen, so a short sample sat
-   against the top with half the panel empty below it. Centring puts the code
-   where the eye already is.
-
-   `safe` is doing real work here. Plain centring pushes the first lines above
-   the top of the box once a sample is taller than the panel, and they cannot be
-   scrolled back to. With safe, anything that overflows falls back to starting at
-   the top, which is the only behaviour that stays readable. */
-.explorer.bare .excode {
-    display: grid;
-    align-content: safe center;
-}
-
 .excode pre {
     margin: 0;
     padding: 14px 0;

@@ -160,6 +160,25 @@
 
 .wire > div { min-width: 0; }
 
+/* The editable JSON body, sitting inside the dark request block so it reads as
+   the body you would type in Postman. Grown to fit by the component. */
+.wire .jsonbox {
+    width: 100%;
+    margin-top: 8px;
+    border: none;
+    background: transparent;
+    resize: none;
+    overflow: hidden;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.5;
+    color: #ffd9a0;
+}
+
+.wire .jsonbox:focus {
+    outline: none;
+}
+
 .wire .k {
     color: #7fd7e0;
 }
