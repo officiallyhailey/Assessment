@@ -14,9 +14,13 @@ import express from "express";
 // the same functions, so a dead network cannot cancel a session. The endpoints
 // below cannot tell the difference, which is the point of the helper split.
 const offline = process.env.DATA_SOURCE === "json";
-const { getAllAnimals, getOneAnimalById, addOneAnimal, resetAnimals, getAllClientForm } = offline
+const helpers = offline
   ? await import("./animals-helpers.offline.js")
   : await import("./animals-helpers.js");
+const {
+  getAllAnimals, getOneAnimalById, addOneAnimal, resetAnimals,
+  getAllClientForm, addOneClient, resetClientForm,
+} = helpers;
 
 const app = express();
 
@@ -35,6 +39,21 @@ app.use(express.json());
 // ---------------------------------------------------------------------------
 app.get("/client-form", endpoint(async (req, res) => {
   const rows = await getAllClientForm();
+  res.json(rows);
+}));
+
+// ---------------------------------------------------------------------------
+// TOPIC 2. POST a client to the check-in form.
+// ---------------------------------------------------------------------------
+app.post("/add-one-client", endpoint(async (req, res) => {
+  const { name, age, mood, first_visit } = req.body;
+  const client = await addOneClient(name, age, mood, first_visit);
+  res.send(`${client.name} is checked in.`);
+}));
+
+// Not part of any lesson. Puts client_form back to the original three.
+app.post("/reset-client-form", endpoint(async (req, res) => {
+  const rows = await resetClientForm();
   res.json(rows);
 }));
 

@@ -108,7 +108,7 @@ export const TERMS = {
     },
     port: {
         def: "A numbered door on a machine, so several programs can listen at once.",
-        note: "This server uses 3001, which is why the address is localhost:3001.",
+        note: "Like a room number in a building. localhost:3001 is this computer, room 3001.",
     },
     async: {
         def: "Marks a function that has to wait for something slow.",

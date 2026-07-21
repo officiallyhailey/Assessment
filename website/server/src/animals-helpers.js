@@ -79,3 +79,32 @@ export async function getAllClientForm() {
   );
   return result.rows;
 }
+
+// ---------------------------------------------------------------------------
+// TOPIC 2. Add one client to client_form and hand back the row created.
+// ---------------------------------------------------------------------------
+export async function addOneClient(name, age, mood, first_visit) {
+  const result = await db.query(
+    `INSERT INTO client_form
+       (name, age, mood, first_visit)
+     VALUES ($1, $2, $3, $4)
+     RETURNING *`,
+    [name, age, mood, first_visit],
+  );
+
+  return result.rows[0];
+}
+
+// Put client_form back to the three it starts with. Not part of any lesson.
+export async function resetClientForm() {
+  await db.query("TRUNCATE client_form RESTART IDENTITY");
+  await db.query(
+    `INSERT INTO client_form
+       (name, age, state, mood, first_visit, checked_in_on)
+     VALUES
+       ('Maya',   34, 'Oregon',     'anxious', true,  '2026-02-10'),
+       ('Daniel', 41, 'California',  'hopeful', false, '2026-02-11'),
+       ('Priya',  29, 'New York',    'tired',   true,  '2026-02-12')`,
+  );
+  return getAllClientForm();
+}

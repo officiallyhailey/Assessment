@@ -1,36 +1,38 @@
 import { useEffect, useState } from "react";
-import { getAllAnimals, addAnimal } from "../../lib/api";
+import { getAllClientForm, addClient } from "../../lib/api";
 
-// Sends a real POST to the server running alongside this app,
-// then re fetches the list so students can see the row really landed.
+// Sends a real POST to the server running alongside this app, then re-fetches
+// the list so students can see the row really landed.
 function PostDemo() {
-    const [name, setName] = useState("Tiger");
-    const [category, setCategory] = useState("Mammal");
-    const [livesIn, setLivesIn] = useState("Jungle");
-    const [canFly, setCanFly] = useState(false);
+    const [name, setName] = useState("Sam");
+    const [age, setAge] = useState("38");
+    const [mood, setMood] = useState("nervous");
+    const [firstVisit, setFirstVisit] = useState(true);
 
     const [sending, setSending] = useState(false);
     const [reply, setReply] = useState(null);
-    const [animals, setAnimals] = useState([]);
+    const [clients, setClients] = useState([]);
     const [newest, setNewest] = useState(null);
 
     const load = async () => {
-        const { data, failed } = await getAllAnimals();
-        setAnimals(failed ? [] : data);
+        const { data, failed } = await getAllClientForm();
+        setClients(failed ? [] : data);
     };
 
     useEffect(() => {
         load();
     }, []);
 
-    const body = { name, category, can_fly: canFly, lives_in: livesIn };
+    // age comes off a text input, so it is a string. The endpoint sends it
+    // straight into an INTEGER column, so it goes as a number here.
+    const body = { name, age: Number(age), mood, first_visit: firstVisit };
 
     const send = async () => {
         setSending(true);
         setReply(null);
-        const { text, status, ms, failed } = await addAnimal(body);
+        const { text, status, ms, failed } = await addClient(body);
         if (failed) {
-            setReply({ status: 0, text: "Could not reach the server on port 3000.", ms: 0 });
+            setReply({ status: 0, text: "Could not reach the server on port 3001.", ms: 0 });
         } else {
             setReply({ status, text, ms });
             setNewest(name);
@@ -48,31 +50,28 @@ function PostDemo() {
             </div>
             <div className="pad">
                 <p className="lead">
-                    Fill in an animal and press Send. This is the same request Postman would make, and the
-                    list at the bottom is re fetched afterwards so you can see the row really saved.
+                    Fill in a client and press Send. This is the same request Postman would make, and the
+                    list at the bottom is re-fetched afterwards so you can see the row really saved.
                 </p>
 
                 <div className="row">
                     <input value={name} onChange={(e) => setName(e.target.value)} placeholder="name" />
                     <input
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        placeholder="category"
+                        value={age}
+                        onChange={(e) => setAge(e.target.value)}
+                        placeholder="age"
+                        style={{ flex: "0 1 90px" }}
                     />
-                    <input
-                        value={livesIn}
-                        onChange={(e) => setLivesIn(e.target.value)}
-                        placeholder="lives in"
-                    />
+                    <input value={mood} onChange={(e) => setMood(e.target.value)} placeholder="mood" />
                     <label
                         style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "14px" }}
                     >
                         <input
                             type="checkbox"
-                            checked={canFly}
-                            onChange={(e) => setCanFly(e.target.checked)}
+                            checked={firstVisit}
+                            onChange={(e) => setFirstVisit(e.target.checked)}
                         />
-                        can fly
+                        first visit
                     </label>
                     <button className="btn" onClick={send} disabled={sending}>
                         {sending ? "Sending" : "Send"}
@@ -81,7 +80,7 @@ function PostDemo() {
 
                 <div className="wire">
                     <div>
-                        <span className="k">POST</span> /add-one-animal
+                        <span className="k">POST</span> /add-one-client
                     </div>
                     <div style={{ opacity: 0.75 }}>Content-Type: application/json</div>
                     <div style={{ marginTop: "8px" }}>
@@ -107,12 +106,12 @@ function PostDemo() {
                     What the table holds now
                 </p>
                 <ul className="list">
-                    {animals.map((a) => (
-                        <li key={a.id} className={a.name === newest ? "fresh" : ""}>
-                            <span className="nm">{a.name}</span>
-                            <span className="where">{a.lives_in}</span>
-                            {a.can_fly ? <span className="tagm fly">can fly</span> : null}
-                            <span className="tagm">id {a.id}</span>
+                    {clients.map((c) => (
+                        <li key={c.id} className={c.name === newest ? "fresh" : ""}>
+                            <span className="nm">{c.name}</span>
+                            <span className="where">{c.mood}</span>
+                            {c.first_visit ? <span className="tagm fly">first visit</span> : null}
+                            <span className="tagm">id {c.id}</span>
                         </li>
                     ))}
                 </ul>

@@ -15,6 +15,8 @@ const ONE_ANIMAL = "/api/get-one-animal-by-id";
 const ADD_ANIMAL = "/api/add-one-animal";
 const RESET = "/api/reset-animals";
 const CLIENT_FORM = "/api/client-form";
+const ADD_CLIENT = "/api/add-one-client";
+const RESET_CLIENT_FORM = "/api/reset-client-form";
 
 /** Wraps a request so callers get timing and errors in one predictable shape. */
 async function timed(run) {
@@ -36,12 +38,33 @@ export function getAllAnimals() {
     });
 }
 
-/** Every row of client_form. Behind the topic 1 SQL query demo. */
+/** Every row of client_form. Behind the topic 1 SQL demo and the topic 2 list. */
 export function getAllClientForm() {
     return timed(async () => {
         const response = await fetch(CLIENT_FORM);
         const data = await response.json();
         return { data, status: response.status, size: JSON.stringify(data).length };
+    });
+}
+
+/** Checks a client in. Returns the server's reply as text, since the endpoint uses res.send. */
+export function addClient(body) {
+    return timed(async () => {
+        const response = await fetch(ADD_CLIENT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+        });
+        return { text: await response.text(), status: response.status };
+    });
+}
+
+/** Puts client_form back to the original three. Not something a student writes. */
+export function resetClientForm() {
+    return timed(async () => {
+        const response = await fetch(RESET_CLIENT_FORM, { method: "POST" });
+        const data = await response.json();
+        return { data, status: response.status };
     });
 }
 

@@ -55,17 +55,17 @@ app.listen(port, () => {
                 },
                 {
                     id: "signature",
-                    code: `async function addOneAnimal(name, category, can_fly, lives_in) {`,
+                    code: `async function addOneClient(name, age, mood, first_visit) {`,
                 },
                 {
                     id: "query",
                     gap: 0,
                     code: `  const result = await db.query(
-    \`INSERT INTO lesson_animals
-       (name, category, can_fly, lives_in)
+    \`INSERT INTO client_form
+       (name, age, mood, first_visit)
      VALUES ($1, $2, $3, $4)
      RETURNING *\`,
-    [name, category, can_fly, lives_in],
+    [name, age, mood, first_visit],
   );`,
                 },
                 {
@@ -79,22 +79,22 @@ app.listen(port, () => {
                 },
                 {
                     id: "open",
-                    code: `app.post("/add-one-animal", async (req, res) => {`,
+                    code: `app.post("/add-one-client", async (req, res) => {`,
                 },
                 {
                     id: "body",
                     gap: 0,
-                    code: `  const { name, category, can_fly, lives_in } = req.body;`,
+                    code: `  const { name, age, mood, first_visit } = req.body;`,
                 },
                 {
                     id: "call",
-                    code: `  const animal = await addOneAnimal(
-    name, category, can_fly, lives_in
+                    code: `  const client = await addOneClient(
+    name, age, mood, first_visit
   );`,
                 },
                 {
                     id: "reply",
-                    code: `  res.send(\`The farm has grown: \${animal.name} was added!\`);`,
+                    code: `  res.send(\`\${client.name} is checked in.\`);`,
                 },
                 {
                     id: "close",
@@ -127,8 +127,8 @@ app.listen(port, () => {
                         },
                     ],
                 },
-                { type: "p", text: "Flip the picture between the two. The office on one side, the code words on the other, and they line up move for move." },
-                { type: "h", text: "The words for the picture" },
+                { type: "p", text: "Flip the picture between the two. The office on one side, the technical example is on the other, and they line up move for move." },
+                { type: "h", text: "How it works" },
                 { type: "p", text: "A therapy office calls the person checking in a client, and so does code. The [[client]] is whatever sends the information in, and here it is you. Its message is a [[request]], and what comes back is a [[response]]." },
                 { type: "p", text: "The front desk is your [[server]]: a program you start, that keeps running and answers whatever arrives. It is the file you write in this lesson, index.js, running on your computer and listening on a [[port]]. The filing cabinet is a [[database]], where information is kept so it is still there tomorrow." },
                 { type: "p", text: "Your server answers at specific addresses, and each one is an [[endpoint]], fixed by two things together." },
@@ -136,12 +136,12 @@ app.listen(port, () => {
                     type: "table",
                     head: ["Part", "Example", "What it decides"],
                     rows: [
-                        ["The [[path]]", "/add-one-animal", "Which address the request is aimed at"],
+                        ["The [[path]]", "/add-one-client", "Which address the request is aimed at"],
                         ["The [[method]]", "POST", "What kind of action is being asked for"],
                     ],
                     mono: [1],
                 },
-                { type: "p", text: "This lesson builds one POST endpoint, at /add-one-animal, saving one animal as one [[row]]." },
+                { type: "p", text: "This lesson builds one POST endpoint, at /add-one-client, saving one client as one [[row]]." },
                 {
                     type: "more",
                     label: "POST sends data in, GET only asks for it",
@@ -162,7 +162,7 @@ app.listen(port, () => {
                     type: "more",
                     label: "Back to the therapy office, for one useful detail",
                     blocks: [
-                        { type: "p", text: "The client fills in a check-in form, the front desk takes that information and passes it to the therapist, and they say the therapist will be out shortly. Same three steps." },
+                        { type: "p", text: "The client fills in a check-in form, the front desk takes that information, files it away, and they say the therapist will be out shortly. Same three steps." },
                         { type: "p", text: "The useful detail is that the form is handed over rather than spoken. It has named boxes, so the front desk never has to guess which answer is which. That is what the data in a POST request looks like, and it is why the data travels inside the request rather than in the URL." },
                     ],
                 },
@@ -290,6 +290,15 @@ app.listen(port, () => {
                     blocks: [
                         { type: "h", text: "Switching it on" },
                         { type: "p", text: "app.listen opens a [[port]] and waits. Until it runs, everything above is only a description of a server." },
+                        { type: "analogy", text: "The port is the office address. Think of it as 56 Main St, Room 3001. The building has many rooms, each a different service, and you want Room 3001, because that is where the front desk that takes your check-in form is." },
+                        {
+                            type: "more",
+                            label: "Why the port is like a room number",
+                            blocks: [
+                                { type: "p", text: "Your computer is the building. Plenty of programs can run on it at once, and each one that answers requests picks its own port, the way each office in a building has its own room number. Nothing else may use 3001 while this server holds it." },
+                                { type: "p", text: "localhost:3001 is that address written out: localhost is this building, 3001 is the room. A request sent there is a client walking up to the right front desk. Send it to the wrong room and nobody is there to take the form." },
+                            ],
+                        },
                         {
                             type: "more",
                             label: "The endpoint below is registered after this line, and still works",
@@ -322,8 +331,8 @@ app.listen(port, () => {
                             type: "more",
                             label: "Parameters are filled in by position, not by name",
                             blocks: [
-                                { type: "p", text: "The endpoint calls addOneAnimal(name, category, can_fly, lives_in), so the first value it passes becomes name here, the second becomes category, and so on down the list." },
-                                { type: "p", text: "Swap two of them at the call and the animal is saved with its category in the name column. Nothing warns you, because both are text and the database has no way to know they were meant the other way round." },
+                                { type: "p", text: "The endpoint calls addOneClient(name, age, mood, first_visit), so the first value it passes becomes name here, the second becomes age, and so on down the list." },
+                                { type: "p", text: "Swap name and mood at the call and the client is saved with their mood in the name column. Nothing warns you, because both are text and the database has no way to know they were meant the other way round." },
                             ],
                         },
                         {
@@ -331,7 +340,7 @@ app.listen(port, () => {
                             label: "Notice what this function does not take: req and res",
                             blocks: [
                                 { type: "p", text: "It receives four plain values and knows nothing about requests, responses, status codes or Express. It could not tell you whether it was called by an endpoint, a script, or a test." },
-                                { type: "p", text: "That is the whole point of keeping it separate. A function that only knows about animals can be used anywhere animals need saving. Hand it a req instead and it would only ever work inside one endpoint." },
+                                { type: "p", text: "That is the whole point of keeping it separate. A function that only knows about clients can be used anywhere a client needs saving. Hand it a req instead and it would only ever work inside one endpoint." },
                                 { type: "p", text: "It is [[async]] for the same reason the handler is. It waits for the database, and only an async function may use await inside it." },
                             ],
                         },
@@ -369,7 +378,7 @@ app.listen(port, () => {
                     at: ["return", "helperclose"],
                     blocks: [
                         { type: "h", text: "Handing one row down" },
-                        { type: "p", text: "[[return]] sends a value back to whoever called the function. This one hands back a single saved animal, and that is where animal.name in the reply comes from." },
+                        { type: "p", text: "[[return]] sends a value back to whoever called the function. This one hands back a single saved client, and that is where client.name in the reply comes from." },
                         {
                             type: "more",
                             label: "The database replies with a result object, not with rows directly",
@@ -384,7 +393,7 @@ app.listen(port, () => {
                             label: "Why an array at all, when only one row was added",
                             blocks: [
                                 { type: "p", text: "db.query is the same function for every query. A SELECT might match forty rows, or none, so it always replies in the same shape: an array, however many rows happen to be in it." },
-                                { type: "p", text: "That consistency is worth the small awkwardness here. It also means the helper is the right place to decide what to hand back: the endpoint wants one animal, so the helper takes the array apart and returns one, rather than making every caller do it." },
+                                { type: "p", text: "That consistency is worth the small awkwardness here. It also means the helper is the right place to decide what to hand back: the endpoint wants one client, so the helper takes the array apart and returns one, rather than making every caller do it." },
                             ],
                         },
                     ],
@@ -433,10 +442,10 @@ app.listen(port, () => {
                             type: "code",
                             name: "req.body",
                             code: `{
-    "name": "Falcon",
-    "category": "Bird",
-    "can_fly": true,
-    "lives_in": "Cliffs"
+    "name": "Maya",
+    "age": 34,
+    "mood": "anxious",
+    "first_visit": true
 }`,
                         },
                         {
@@ -455,7 +464,7 @@ app.listen(port, () => {
                     at: "call",
                     blocks: [
                         { type: "h", text: "Handing the work over" },
-                        { type: "p", text: "Step 2. The handler calls a [[helper function]], passes it the four values, and waits. What comes back is the animal as the database saved it, id and all." },
+                        { type: "p", text: "Step 2. The handler calls a [[helper function]], passes it the four values, and waits. What comes back is the client as the database saved it, id and all." },
                         {
                             type: "more",
                             label: "await is what does the waiting, and leaving it off is a real bug",
@@ -468,7 +477,7 @@ app.listen(port, () => {
                             type: "more",
                             label: "The helper is the function above, in this same file",
                             blocks: [
-                                { type: "p", text: "All the handler needs to know is that it hands over four values and gets a saved animal back. What happens in between is the helper's business." },
+                                { type: "p", text: "All the handler needs to know is that it hands over four values and gets a saved client back. What happens in between is the helper's business." },
                                 { type: "p", text: "That split is deliberate, and it is what keeps this handler readable: three short steps, none of which mention SQL." },
                             ],
                         },
@@ -494,7 +503,7 @@ app.listen(port, () => {
                             type: "more",
                             label: "This one uses res.send because the reply is one sentence",
                             blocks: [
-                                { type: "p", text: "If a web page had to display the animal that was just saved, res.json would be the right choice instead, because a page needs the values rather than a sentence about them." },
+                                { type: "p", text: "If a web page had to display the client that was just checked in, res.json would be the right choice instead, because a page needs the values rather than a sentence about them." },
                                 { type: "p", text: "Either way it counts as the one response. Sending a second one after that is an error, which is why a guard clause usually has return in front of it." },
                             ],
                         },
@@ -502,7 +511,7 @@ app.listen(port, () => {
                             type: "more",
                             label: "The message uses the name the database gave back, not the one sent in",
                             blocks: [
-                                { type: "p", text: "animal.name comes from the row the database returned, not from the value that arrived in the request. Here the two happen to be identical." },
+                                { type: "p", text: "client.name comes from the row the database returned, not from the value that arrived in the request. Here the two happen to be identical." },
                                 { type: "p", text: "The habit still matters. The database is what decides what was actually stored, and it may trim, default or reject something. Reporting what was saved rather than what was asked for is the difference between a confirmation and a guess." },
                             ],
                         },
@@ -517,9 +526,9 @@ app.listen(port, () => {
                             type: "table",
                             head: ["Source", "Looks like", "Used for"],
                             rows: [
-                                ["req.body", '{ "name": "Falcon" }', "Data being sent in"],
-                                ["req.params", "/animals/:id", "Identifying which record"],
-                                ["req.query", "?category=Bird", "Filters and options"],
+                                ["req.body", '{ "name": "Maya" }', "Data being sent in"],
+                                ["req.params", "/clients/:id", "Identifying which record"],
+                                ["req.query", "?mood=anxious", "Filters and options"],
                             ],
                             mono: [0, 1],
                         },
@@ -533,7 +542,7 @@ app.listen(port, () => {
                     try: true,
                     blocks: [
                         { type: "h", text: "Send one and watch it land" },
-                        { type: "p", text: "All three steps are written, so the endpoint can be used rather than read. Switch the code panel to Try it, fill in an animal, and press Send." },
+                        { type: "p", text: "All three steps are written, so the endpoint can be used rather than read. Switch the code panel to Try it, fill in a client, and press Send." },
                         {
                             type: "more",
                             label: "The list underneath is re-read afterwards, which is what makes it proof",
@@ -556,7 +565,7 @@ app.listen(port, () => {
                 {
                     type: "olist",
                     items: [
-                        "Set the method to POST and enter the URL, http://localhost:3001/add-one-animal.",
+                        "Set the method to POST and enter the URL, http://localhost:3001/add-one-client.",
                         "Open the Body tab, select raw, then select JSON.",
                         "Type the JSON with a key for each value the endpoint expects.",
                         "Press Send, then read the status code and the response.",
@@ -606,11 +615,11 @@ app.listen(port, () => {
                         ],
                         [
                             "Why put the database code in a helper function?",
-                            "It keeps the endpoint short and readable, and the helper can be reused by anything else that needs to add an animal.",
+                            "It keeps the endpoint short and readable, and the helper can be reused by anything else that needs to add a client.",
                         ],
                         [
                             "When would you use res.json instead of res.send?",
-                            "When the client needs the actual data back rather than a message, for example a website that has to display the new animal.",
+                            "When the caller needs the actual data back rather than a message, for example a website that has to display the new client.",
                         ],
                     ],
                 },
@@ -625,20 +634,21 @@ app.listen(port, () => {
                     name: "with-checks.js",
                     result: {
                         kind: "exchange",
+                        source: "clientForm",
                         caption: "Send it with no name to watch the check reject it.",
                         method: "POST",
-                        url: "/add-one-animal",
+                        url: "/add-one-client",
                         body: {
-                            name: "Falcon",
-                            category: "Bird",
-                            can_fly: true,
-                            lives_in: "Cliffs",
+                            name: "Maya",
+                            age: 34,
+                            mood: "anxious",
+                            first_visit: true,
                         },
                     },
                     code: `// The same endpoint, now checking the data
 // and setting a status code
-app.post("/add-one-animal", async (req, res) => {
-  const { name, category, can_fly, lives_in } = req.body;
+app.post("/add-one-client", async (req, res) => {
+  const { name, age, mood, first_visit } = req.body;
 
   if (!name) {
     return res.status(400).json({
@@ -647,13 +657,13 @@ app.post("/add-one-animal", async (req, res) => {
   }
 
   try {
-    const animal = await addOneAnimal(
-      name, category, can_fly, lives_in
+    const client = await addOneClient(
+      name, age, mood, first_visit
     );
-    res.status(201).json(animal);
+    res.status(201).json(client);
   } catch (error) {
     res.status(500).json({
-      error: "Could not save the animal",
+      error: "Could not save the client",
     });
   }
 });`,
@@ -662,32 +672,33 @@ app.post("/add-one-animal", async (req, res) => {
                     name: "other-routes.js",
                     result: {
                         kind: "table",
+                        source: "clientForm",
                         caption: "What the GET route sends back.",
-                        columns: ["id", "name", "category", "can_fly", "lives_in", "population"],
+                        columns: ["id", "name", "age", "state", "mood", "first_visit", "checked_in_on"],
                     },
-                    code: `// Reading every animal
-app.get("/get-all-animals", async (req, res) => {
-  const animals = await getAllAnimals();
-  res.json(animals);
+                    code: `// Reading every client
+app.get("/get-all-clients", async (req, res) => {
+  const clients = await getAllClients();
+  res.json(clients);
 });
 
 // Reading one, using a route parameter
-app.get("/get-one-animal/:id", async (req, res) => {
-  const animal = await getOneAnimal(req.params.id);
-  res.json(animal);
+app.get("/get-one-client/:id", async (req, res) => {
+  const client = await getOneClient(req.params.id);
+  res.json(client);
 });
 
 // Changing one
-app.put("/update-one-animal/:id", async (req, res) => {
-  const animal = await updateAnimal(
+app.put("/update-one-client/:id", async (req, res) => {
+  const client = await updateClient(
     req.params.id, req.body
   );
-  res.json(animal);
+  res.json(client);
 });
 
 // Removing one
-app.delete("/delete-one-animal/:id", async (req, res) => {
-  await deleteAnimal(req.params.id);
+app.delete("/delete-one-client/:id", async (req, res) => {
+  await deleteClient(req.params.id);
   res.status(204).send();
 });`,
                 },
@@ -755,7 +766,7 @@ app.delete("/delete-one-animal/:id", async (req, res) => {
                     items: [
                         "Send a POST in Postman with the name missing and see what happens.",
                         "Change res.send to res.json and compare the two responses.",
-                        "Add a GET endpoint that returns all the animals, and use it to confirm your POST saved correctly.",
+                        "Add a GET endpoint that returns all the clients, and use it to confirm your POST saved correctly.",
                     ],
                 },
             ],

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllAnimals, getAllClientForm, addAnimal } from "../lib/api";
+import { getAllAnimals, getAllClientForm, addAnimal, addClient } from "../lib/api";
 
 // A result spec can say which table it reads. Topic 1 is the client_form table,
 // the others are animals, which stays the default.
@@ -115,9 +115,10 @@ function ResultView({ sample }) {
 
     // ---------- a request and its response ----------
     if (spec.kind === "exchange") {
+        const post = spec.source === "clientForm" ? addClient : addAnimal;
         const send = async () => {
             setSending(true);
-            const { text, status, ms, failed: sendFailed } = await addAnimal(spec.body);
+            const { text, status, ms, failed: sendFailed } = await post(spec.body);
             setExchange(
                 sendFailed
                     ? { status: 0, ms: 0, text: "Could not reach the server." }

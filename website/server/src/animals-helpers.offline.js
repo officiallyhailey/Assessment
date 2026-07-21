@@ -61,3 +61,17 @@ export async function getAllClientForm() {
     { id: 3, name: "Priya", age: 29, state: "New York", mood: "tired", first_visit: true, checked_in_on: "2026-02-12" },
   ];
 }
+
+// TOPIC 2. Offline stand-ins for the client_form writes.
+let CLIENT_ROWS = null;
+export async function addOneClient(name, age, mood, first_visit) {
+  if (!CLIENT_ROWS) CLIENT_ROWS = await getAllClientForm();
+  const id = Math.max(0, ...CLIENT_ROWS.map((c) => c.id)) + 1;
+  const row = { id, name, age, state: null, mood, first_visit, checked_in_on: null };
+  CLIENT_ROWS.push(row);
+  return row;
+}
+export async function resetClientForm() {
+  CLIENT_ROWS = null;
+  return getAllClientForm();
+}
