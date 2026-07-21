@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { getAllAnimals, addAnimal } from "../lib/api";
+import { getAllAnimals, getAllClientForm, addAnimal } from "../lib/api";
+
+// A result spec can say which table it reads. Topic 1 is the client_form table,
+// the others are animals, which stays the default.
+const SOURCES = { animals: getAllAnimals, clientForm: getAllClientForm };
 
 // Shows what a code sample produces when it runs. Where the sample talks to
 // the API, the result is fetched live so it is the real thing rather than a
@@ -75,7 +79,8 @@ function ResultView({ sample }) {
         if (!needsData) return;
         let alive = true;
         (async () => {
-            const { data, failed: fetchFailed } = await getAllAnimals();
+            const fetchRows = SOURCES[spec.source] || getAllAnimals;
+            const { data, failed: fetchFailed } = await fetchRows();
             if (!alive) return;
             if (fetchFailed) setFailed(true);
             else setAnimals(data);

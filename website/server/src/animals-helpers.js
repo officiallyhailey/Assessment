@@ -59,3 +59,23 @@ export async function resetAnimals() {
 
   return getAllAnimals();
 }
+
+// ---------------------------------------------------------------------------
+// TOPIC 1. Read every row of client_form.
+//
+// The therapy check-in table topic 1 creates. Its own table so lesson 1 can be
+// taught without disturbing the animals the other lessons use.
+// ---------------------------------------------------------------------------
+export async function getAllClientForm() {
+  // checked_in_on is a DATE. The pg driver hands a DATE back as a JS Date,
+  // which JSON turns into a full timestamp with a time and a zone. Casting it
+  // to text keeps it the plain YYYY-MM-DD the form was filled in with, which is
+  // what the query demo compares against and reads cleanly on screen.
+  const result = await db.query(
+    `SELECT id, name, age, state, mood, first_visit,
+            checked_in_on::text AS checked_in_on
+       FROM client_form
+      ORDER BY id`,
+  );
+  return result.rows;
+}

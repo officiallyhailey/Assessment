@@ -18,8 +18,8 @@ const STEPS = [
         topic: "SQL",
         slug: "sql-tables",
         title: "Create the table and put data in it",
-        blurb: "Nothing exists yet. This defines what an animal is, what each column may hold, and adds the first three rows.",
-        takeaway: "The database now holds three animals, each with an id it assigned itself.",
+        blurb: "Nothing exists yet. This designs the check-in form, what each box may hold, and files the first three in.",
+        takeaway: "The table now holds three clients, each with an id the database assigned.",
     },
     {
         n: "2",

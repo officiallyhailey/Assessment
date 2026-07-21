@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { getAllAnimals } from "../../lib/api";
+import { getAllClientForm } from "../../lib/api";
 
 // A very small SELECT reader. It understands the shape taught in this lesson:
-//   SELECT <columns or *> FROM animals [WHERE <column> = <value>]
+//   SELECT <columns or *> FROM client_form [WHERE <column> = <value>]
 // The rows it runs against are the real ones fetched from the server.
 function runSelect(sql, rows) {
     const clean = sql.trim().replace(/;+\s*$/, "").replace(/\s+/g, " ");
-    const m = clean.match(/^select\s+(.+?)\s+from\s+animals(?:\s+where\s+(.+))?$/i);
+    const m = clean.match(/^select\s+(.+?)\s+from\s+client_form(?:\s+where\s+(.+))?$/i);
     if (!m) {
-        return { error: "Start with SELECT, then FROM animals. A WHERE part is optional." };
+        return { error: "Start with SELECT, then FROM client_form. A WHERE part is optional." };
     }
 
     const colPart = m[1].trim();
     const wherePart = m[2];
 
-    const all = ["id", "name", "category", "can_fly", "lives_in", "population"];
+    const all = ["id", "name", "age", "state", "mood", "first_visit", "checked_in_on"];
     let cols;
     if (colPart === "*") {
         cols = all;
@@ -27,7 +27,7 @@ function runSelect(sql, rows) {
     let out = rows;
     if (wherePart) {
         const w = wherePart.match(/^(\w+)\s*=\s*(.+)$/);
-        if (!w) return { error: "The WHERE part should look like: WHERE name = 'Lion'" };
+        if (!w) return { error: "The WHERE part should look like: WHERE name = 'Maya'" };
         const col = w[1].toLowerCase();
         if (!all.includes(col)) return { error: `There is no column called ${col}.` };
 
@@ -36,7 +36,7 @@ function runSelect(sql, rows) {
         if (/^'.*'$/.test(raw) || /^".*"$/.test(raw)) value = raw.slice(1, -1);
         else if (/^(true|false)$/i.test(raw)) value = raw.toLowerCase() === "true";
         else if (/^\d+$/.test(raw)) value = Number(raw);
-        else return { error: "Put text in single quotes, like 'Lion'." };
+        else return { error: "Put text in single quotes, like 'Maya'." };
 
         out = rows.filter((r) => r[col] === value);
     }
@@ -45,10 +45,10 @@ function runSelect(sql, rows) {
 }
 
 const EXAMPLES = [
-    "SELECT * FROM animals;",
-    "SELECT * FROM animals WHERE name = 'Lion';",
-    "SELECT name, lives_in FROM animals WHERE can_fly = true;",
-    "SELECT name, population FROM animals WHERE category = 'Bird';",
+    "SELECT * FROM client_form;",
+    "SELECT * FROM client_form WHERE name = 'Maya';",
+    "SELECT name, mood FROM client_form WHERE first_visit = true;",
+    "SELECT name, state FROM client_form WHERE age = 34;",
 ];
 
 function SqlDemo() {
@@ -77,9 +77,9 @@ function SqlDemo() {
 
     useEffect(() => {
         const load = async () => {
-            const { data, failed } = await getAllAnimals();
+            const { data, failed } = await getAllClientForm();
             if (failed) {
-                setResult({ error: "Could not reach the server. Is it running on port 3000?" });
+                setResult({ error: "Could not reach the server, so there are no live rows to query." });
             } else {
                 setRows(data);
                 setResult(runSelect(EXAMPLES[0], data));
@@ -95,7 +95,7 @@ function SqlDemo() {
         <div className="demo">
             <div className="top">
                 <span className="dot" />
-                <strong>Query the animals table</strong>
+                <strong>Query the client_form table</strong>
                 <span className="hint">rows come from the live server</span>
             </div>
             <div className="pad">
@@ -139,7 +139,7 @@ function SqlDemo() {
                                 setResult(runSelect(ex, rows));
                             }}
                         >
-                            {i === 0 ? "all rows" : i === 1 ? "one name" : i === 2 ? "only fliers" : "only birds"}
+                            {i === 0 ? "all rows" : i === 1 ? "one client" : i === 2 ? "first visits" : "by age"}
                         </button>
                     ))}
                 </div>

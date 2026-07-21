@@ -134,10 +134,24 @@ export const CONCEPTS = {
 // Names specific to these examples. Explained by their place in the code
 // rather than as general language terms.
 export const NAMES = {
+    // Topic 1, the client_form table.
+    client_form: "The check-in table this lesson builds, one row per client.",
+    age: "The client's age. A whole number, so it can be sorted and averaged.",
+    state: "Which state the client lives in. Optional text.",
+    mood: "How the client is feeling. Optional text.",
+    first_visit: "Whether this is the client's first visit. Only true or false.",
+    checked_in_on: "The date the client checked in. A real date, not loose text.",
+    sessions: "A second table, where each row points back at one client.",
+    client_id: "Holds an id from the client_form table, linking a session to a client.",
+    session_on: "The date a therapy session happened.",
+    Maya: "One of the three clients in this example.",
+    Daniel: "One of the three clients in this example.",
+    Priya: "One of the three clients in this example.",
+    // Topics 2 and 3, the animals table.
     animals: "The table this example builds, and the array it becomes once fetched.",
     sightings: "A second table, where each row points back at one animal.",
     id: "The number identifying each row. The database fills this in.",
-    name: "The animal's name. Required, and no two may match.",
+    name: "The name on the record. Required.",
     category: "What kind of animal it is, such as Mammal or Bird. Optional.",
     can_fly: "Whether the animal can fly. Only true or false.",
     lives_in: "Where the animal lives. Optional text.",

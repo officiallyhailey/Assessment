@@ -14,7 +14,7 @@ import express from "express";
 // the same functions, so a dead network cannot cancel a session. The endpoints
 // below cannot tell the difference, which is the point of the helper split.
 const offline = process.env.DATA_SOURCE === "json";
-const { getAllAnimals, getOneAnimalById, addOneAnimal, resetAnimals } = offline
+const { getAllAnimals, getOneAnimalById, addOneAnimal, resetAnimals, getAllClientForm } = offline
   ? await import("./animals-helpers.offline.js")
   : await import("./animals-helpers.js");
 
@@ -29,6 +29,14 @@ const endpoint = (handler) => (req, res, next) => Promise.resolve(handler(req, r
 
 // Reads incoming JSON bodies. WITHOUT THIS LINE req.body IS undefined.
 app.use(express.json());
+
+// ---------------------------------------------------------------------------
+// TOPIC 1. GET every row of client_form, for the lesson 1 query demo.
+// ---------------------------------------------------------------------------
+app.get("/client-form", endpoint(async (req, res) => {
+  const rows = await getAllClientForm();
+  res.json(rows);
+}));
 
 // ---------------------------------------------------------------------------
 // TOPIC 3. GET all the animals

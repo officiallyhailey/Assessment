@@ -123,18 +123,18 @@ export const TERMS = {
         note: "It is how you check an endpoint works before anything else depends on it.",
     },
     row: {
-        def: "One record in a database table. One animal, here.",
-        note: "A POST that succeeds adds exactly one row.",
+        def: "One record in a database table. One filled-in form here.",
+        note: "One client's check-in. A POST that succeeds adds exactly one.",
     },
 
     // ---------- topic 1, tables and SQL ----------
     table: {
         def: "A grid of stored records, all sharing the same columns.",
-        note: "This lesson builds one called animals, with six columns.",
+        note: "This lesson builds one called client_form, one row per client.",
     },
     column: {
         def: "One piece of information, held for every record in the table.",
-        note: "name and can_fly are columns. What each may hold is fixed when the table is made.",
+        note: "name and first_visit are columns. What each may hold is fixed when the table is made.",
     },
     sql: {
         def: "The language databases are given instructions in.",
@@ -142,7 +142,7 @@ export const TERMS = {
     },
     "data type": {
         def: "What kind of value a column is allowed to hold.",
-        note: "Choosing INTEGER rather than text is what lets population be sorted and totalled.",
+        note: "Choosing INTEGER rather than text is what lets age be sorted and totalled.",
     },
     constraint: {
         def: "A rule a value has to follow. Rows breaking it are rejected.",

@@ -14,6 +14,7 @@ const ANIMALS = "/api/get-all-animals";
 const ONE_ANIMAL = "/api/get-one-animal-by-id";
 const ADD_ANIMAL = "/api/add-one-animal";
 const RESET = "/api/reset-animals";
+const CLIENT_FORM = "/api/client-form";
 
 /** Wraps a request so callers get timing and errors in one predictable shape. */
 async function timed(run) {
@@ -30,6 +31,15 @@ async function timed(run) {
 export function getAllAnimals() {
     return timed(async () => {
         const response = await fetch(ANIMALS);
+        const data = await response.json();
+        return { data, status: response.status, size: JSON.stringify(data).length };
+    });
+}
+
+/** Every row of client_form. Behind the topic 1 SQL query demo. */
+export function getAllClientForm() {
+    return timed(async () => {
+        const response = await fetch(CLIENT_FORM);
         const data = await response.json();
         return { data, status: response.status, size: JSON.stringify(data).length };
     });

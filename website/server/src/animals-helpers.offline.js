@@ -52,3 +52,12 @@ export async function resetAnimals() {
   await write(ORIGINAL);
   return ORIGINAL;
 }
+
+// TOPIC 1. The client_form rows, fixed. Topic 1 only reads them.
+export async function getAllClientForm() {
+  return [
+    { id: 1, name: "Maya", age: 34, state: "Oregon", mood: "anxious", first_visit: true, checked_in_on: "2026-02-10" },
+    { id: 2, name: "Daniel", age: 41, state: "California", mood: "hopeful", first_visit: false, checked_in_on: "2026-02-11" },
+    { id: 3, name: "Priya", age: 29, state: "New York", mood: "tired", first_visit: true, checked_in_on: "2026-02-12" },
+  ];
+}
