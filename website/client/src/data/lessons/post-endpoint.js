@@ -109,16 +109,17 @@ app.listen(port, () => {
             label: "Overview",
             heading: "What a POST endpoint is",
             blocks: [
-                { type: "p", text: "Think of filling in a form at an office. You hand it to a clerk, they file it away so it is kept for good, and you get a receipt back." },
+                { type: "p", text: "Think of filling in a form at the doctor's office. You hand it to the front desk, they file it away, and they tell you you're all set and to wait to be called." },
                 {
                     type: "figure",
                     src: "/topic2-plain.png",
-                    alt: "You fill in a form, hand it to an office, the office files it in a cabinet, and you get a receipt back",
-                    caption: "Nothing technical yet. Just a form handed in and filed.",
+                    alt: "You fill in a form, hand it to the front desk, they file it away, and tell you you're all set",
+                    caption: "Nothing technical yet. A form handed in, filed, and a word back that it is done.",
                 },
-                { type: "p", text: "That is the whole idea of this lesson. Something fills in a form of information, sends it in, and it gets stored so it is still there later. A receipt comes back to say it worked." },
+                { type: "p", text: "That is the whole idea of this lesson. You fill in some information, hand it in, and it gets filed so it is still there later. A word comes back to say it worked." },
+                { type: "p", text: "The one filling in the form and handing it over is you. In code, whatever sends the information in is called the [[client]], and it is you here." },
                 { type: "h", text: "The same thing, in code" },
-                { type: "p", text: "Now the technical version. The office is a [[server]]: a program, always running, that waits for messages and answers them. The filing cabinet is a [[database]], where information is kept so it is still there tomorrow. Filing a form is a [[post|POST]]." },
+                { type: "p", text: "Now the technical version. The front desk is a [[server]]: a program, always running, that waits for messages and answers them. The filing cabinet is a [[database]], where information is kept so it is still there tomorrow. Handing your form in is a [[post|POST]]." },
                 {
                     type: "figure",
                     src: "/topic2.png",
@@ -127,7 +128,7 @@ app.listen(port, () => {
                 },
                 { type: "p", text: "Everything in this lesson is one of those three moves. The rest is the words for them." },
                 { type: "h", text: "The words for the picture" },
-                { type: "p", text: "The sender is the [[client]], its message is a [[request]], what comes back is a [[response]]. Your server answers at specific addresses, and each one is an [[endpoint]], fixed by two things together." },
+                { type: "p", text: "The [[client]] is you, from a moment ago. Its message is a [[request]], and what comes back is a [[response]]. Your server answers at specific addresses, and each one is an [[endpoint]], fixed by two things together." },
                 {
                     type: "table",
                     head: ["Part", "Example", "What it decides"],
