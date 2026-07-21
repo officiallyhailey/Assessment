@@ -109,15 +109,15 @@ app.listen(port, () => {
             label: "Overview",
             heading: "What a POST endpoint is",
             blocks: [
-                { type: "p", text: "Think of filling in a form at the doctor's office. You hand it to the front desk, they file it away, and they tell you you're all set and to wait to be called." },
+                { type: "p", text: "Think of arriving at a therapy office. You fill in a check-in form, hand it to the front desk, they file it away, and they tell you your therapist will be out to see you shortly." },
                 {
                     type: "figure",
                     src: "/topic2-plain.png",
-                    alt: "You fill in a form, hand it to the front desk, they file it away, and tell you you're all set",
+                    alt: "A client fills in a check-in form, hands it to the front desk, they file it away, and say the therapist will be out shortly",
                     caption: "Nothing technical yet. A form handed in, filed, and a word back that it is done.",
                 },
                 { type: "p", text: "That is the whole idea of this lesson. You fill in some information, hand it in, and it gets filed so it is still there later. A word comes back to say it worked." },
-                { type: "p", text: "The one filling in the form and handing it over is you. In code, whatever sends the information in is called the [[client]], and it is you here." },
+                { type: "p", text: "A therapy office calls the person checking in a client, and so does code. Whatever sends the information in is the [[client]], and here that is you." },
                 { type: "h", text: "The same thing, in code" },
                 { type: "p", text: "Now the technical version. The front desk is a [[server]]: a program, always running, that waits for messages and answers them. The filing cabinet is a [[database]], where information is kept so it is still there tomorrow. Handing your form in is a [[post|POST]]." },
                 {
@@ -128,7 +128,7 @@ app.listen(port, () => {
                 },
                 { type: "p", text: "Everything in this lesson is one of those three moves. The rest is the words for them." },
                 { type: "h", text: "The words for the picture" },
-                { type: "p", text: "The [[client]] is you, from a moment ago. Its message is a [[request]], and what comes back is a [[response]]. Your server answers at specific addresses, and each one is an [[endpoint]], fixed by two things together." },
+                { type: "p", text: "The [[client]] is you, checking in a moment ago. Its message is a [[request]], and what comes back is a [[response]]. Your server answers at specific addresses, and each one is an [[endpoint]], fixed by two things together." },
                 {
                     type: "table",
                     head: ["Part", "Example", "What it decides"],
@@ -157,10 +157,10 @@ app.listen(port, () => {
                 },
                 {
                     type: "more",
-                    label: "An everyday comparison: a bank deposit slip",
+                    label: "Back to the therapy office, for one useful detail",
                     blocks: [
-                        { type: "p", text: "Depositing money at a counter follows the same steps. You fill in a slip with named fields, hand it across, the teller records it, and you get a receipt back." },
-                        { type: "p", text: "The useful detail is that the slip is handed over rather than spoken. It has named fields, so the teller does not have to guess which number is which. That is what the data in a POST request looks like, and it is why the data travels inside the request rather than in the URL." },
+                        { type: "p", text: "The client fills in a check-in form, the front desk takes that information and passes it to the therapist, and they say the therapist will be out shortly. Same three steps." },
+                        { type: "p", text: "The useful detail is that the form is handed over rather than spoken. It has named boxes, so the front desk never has to guess which answer is which. That is what the data in a POST request looks like, and it is why the data travels inside the request rather than in the URL." },
                     ],
                 },
             ],
