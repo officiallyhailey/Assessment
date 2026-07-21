@@ -4,8 +4,8 @@
 //   keyword     commands and language words        SELECT, const, await
 //   type        column data types                  VARCHAR, INTEGER
 //   rule        column constraints                 PRIMARY KEY, NOT NULL
-//   data        values typed into the code         'Lion', 23000, true
-//   name        things the code names              animals, getAnimals, req
+//   data        values typed into the code         'Maya', 34, true
+//   name        things the code names              clients, getClients, req
 //   fn          something being called             fetch(, useState(
 //   comment     notes for the reader
 //   punct       brackets, commas, operators

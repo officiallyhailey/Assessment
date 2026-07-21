@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { lessons } from "../data/lessons";
-import { resetAnimals } from "../lib/api";
+import { resetClientForm } from "../lib/api";
 import { announceReset } from "../lib/resetEvent";
 
 function Header() {
@@ -11,7 +11,7 @@ function Header() {
 
     const putItBack = async () => {
         setState("working");
-        const { failed } = await resetAnimals();
+        const { failed } = await resetClientForm();
         if (failed) {
             setState("failed");
         } else {
@@ -57,7 +57,7 @@ function Header() {
                         }`}
                         onClick={putItBack}
                         disabled={state === "working"}
-                        title="Put the animals back to the original three"
+                        title="Put the check-in list back to the original three"
                     >
                         {label}
                     </button>

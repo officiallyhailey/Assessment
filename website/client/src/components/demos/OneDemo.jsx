@@ -1,19 +1,19 @@
 import { useState } from "react";
-import { getAnimalById } from "../../lib/api";
+import { getClientById } from "../../lib/api";
 
 // Fetching one record with a route parameter. The URL that actually goes out
 // is printed underneath, so the placeholder becoming a real value is visible.
 function OneDemo() {
-    const [id, setId] = useState("3");
-    const [animal, setAnimal] = useState(null);
+    const [id, setId] = useState("2");
+    const [client, setClient] = useState(null);
     const [sent, setSent] = useState(null);
     const [busy, setBusy] = useState(false);
 
     const get = async () => {
         setBusy(true);
-        const { data, status, url, ms, failed } = await getAnimalById(id);
-        setSent({ url: url || `/get-one-animal-by-id/${id}`, status: failed ? 0 : status, ms });
-        setAnimal(!failed && data && data.name ? data : false);
+        const { data, status, url, ms, failed } = await getClientById(id);
+        setSent({ url: url || `/get-one-client-by-id/${id}`, status: failed ? 0 : status, ms });
+        setClient(!failed && data && data.name ? data : false);
         setBusy(false);
     };
 
@@ -21,7 +21,7 @@ function OneDemo() {
         <div className="demo">
             <div className="top">
                 <span className="dot" />
-                <strong>Fetch one animal by id</strong>
+                <strong>Fetch one client by id</strong>
                 <span className="hint">route parameter</span>
             </div>
             <div className="pad">
@@ -38,7 +38,7 @@ function OneDemo() {
                         style={{ maxWidth: "90px", fontFamily: "var(--mono)" }}
                     />
                     <button className="btn" onClick={get} disabled={busy}>
-                        {busy ? "Getting" : "Get this animal"}
+                        {busy ? "Getting" : "Get this client"}
                     </button>
                 </div>
 
@@ -56,28 +56,28 @@ function OneDemo() {
                     </div>
                 )}
 
-                {animal === false && (
+                {client === false && (
                     <div className="note warn" style={{ marginTop: "14px" }}>
                         <div className="lab">Nothing found</div>
                         <p>
-                            There is no animal with that id. The endpoint still answered, it just had nothing
+                            There is no client with that id. The endpoint still answered, it just had nothing
                             to send back.
                         </p>
                     </div>
                 )}
 
-                {animal && animal.name && (
+                {client && client.name && (
                     <div className="renderbox fresh" style={{ marginTop: "14px" }}>
                         <div className="rcount">one object, not a list, so there is no map here</div>
                         <div style={{ fontSize: "20px", fontWeight: 600, color: "var(--deep)" }}>
-                            {animal.name}
+                            {client.name}
                         </div>
                         <div style={{ marginTop: "6px", fontSize: "14.5px" }}>
-                            Category: {animal.category}
+                            Mood: {client.mood}
                             <br />
-                            Lives in: {animal.lives_in}
+                            Age: {client.age}
                             <br />
-                            Can fly: {animal.can_fly ? "Yes" : "No"}
+                            First visit: {client.first_visit ? "Yes" : "No"}
                         </div>
                     </div>
                 )}

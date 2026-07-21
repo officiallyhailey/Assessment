@@ -17,19 +17,21 @@ app.use(express.json());
 
 // #region  TOPIC 2  ·  post helper function
 /*
-  The helper does the database work. It takes four plain values and knows nothing about requests or responses, which is why it could be called from anywhere.
+  The helper does the database work. It takes five plain values and knows nothing about requests or responses, which is why it could be called from anywhere.
 
   $1 and $2 are placeholders. The values travel separately, in the array below, so the database never mistakes one for part of the command. Glue the query together out of strings instead and a value containing SQL would run as SQL, which is how injection happens.
 
   RETURNING * asks for the finished row back, including the id the database generated, so the caller can see exactly what was stored.
+
+  email is UNIQUE in the table, so a second client with an address already on file is refused: the INSERT throws, and the endpoint's error handling turns that into a 500.
 */
-async function addOneAnimal(name, category, can_fly, lives_in) {
+async function addOneClient(name, age, email, mood, first_visit) {
   const result = await db.query(
-    `INSERT INTO lesson_animals
-       (name, category, can_fly, lives_in)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO client_form
+       (name, age, email, mood, first_visit)
+     VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
-    [name, category, can_fly, lives_in],
+    [name, age, email, mood, first_visit],
   );
 
   return result.rows[0];
@@ -40,18 +42,18 @@ async function addOneAnimal(name, category, can_fly, lives_in) {
 /*
   Read the input, do the work, send one reply. Every endpoint is that shape.
 
-  The four values arrive on req.body, which only works because of the middleware above.
+  The five values arrive on req.body, which only works because of the middleware above.
 
   async and await because the database takes real time. Without await the reply would go out before the row was saved, and it would look like it worked right up until it did not.
 
   The message uses the name the database handed back rather than the one that came in, so it reflects what is actually stored.
 */
-app.post("/add-one-animal", async (req, res) => {
-  const { name, category, can_fly, lives_in } = req.body;
+app.post("/add-one-client", async (req, res) => {
+  const { name, age, email, mood, first_visit } = req.body;
 
-  const animal = await addOneAnimal(name, category, can_fly, lives_in);
+  const client = await addOneClient(name, age, email, mood, first_visit);
 
-  res.send(`The farm has grown: ${animal.name} was added!`);
+  res.send(`${client.name} is checked in.`);
 });
 // #endregion
 
@@ -61,8 +63,8 @@ app.post("/add-one-animal", async (req, res) => {
 
   The rows sit on result.rows. Returning those rather than the whole result keeps the endpoint simple.
 */
-async function getAllAnimals() {
-  const result = await db.query("SELECT * FROM lesson_animals ORDER BY id");
+async function getAllClients() {
+  const result = await db.query("SELECT * FROM client_form ORDER BY id");
 
   return result.rows;
 }
@@ -74,22 +76,22 @@ async function getAllAnimals() {
 
   res.json sends the array and sets the Content-Type header, and that header is what lets response.json() read it at the other end. res.send would send plain text, and the fetch would have to unpick it by hand.
 */
-app.get("/get-all-animals", async (req, res) => {
-  const animals = await getAllAnimals();
+app.get("/get-all-clients", async (req, res) => {
+  const clients = await getAllClients();
 
-  res.json(animals);
+  res.json(clients);
 });
 // #endregion
 
 // #region  TOPIC 3  ·  state
 /*
-  The animals have to survive between draws. A plain variable would not: the component function runs again on every draw, so anything declared inside it is made fresh and whatever it held is gone.
+  The clients have to survive between draws. A plain variable would not: the component function runs again on every draw, so anything declared inside it is made fresh and whatever it held is gone.
 
   State survives, and changing it is also what asks React to draw again.
 
   It starts as an empty array so the list below has something to map over before any data exists. Start it as nothing and the first draw throws.
 */
-const [animals, setAnimals] = useState([]);
+const [clients, setClients] = useState([]);
 // #endregion
 
 // #region  TOPIC 3  ·  get helper function
@@ -102,10 +104,10 @@ const [animals, setAnimals] = useState([]);
 
   The address starts with /api, which Vite forwards to port 3001 and strips on the way. See vite.config.js.
 */
-const getAnimals = async () => {
-  const response = await fetch("/api/get-all-animals");
+const getClients = async () => {
+  const response = await fetch("/api/get-all-clients");
   const data = await response.json();
-  setAnimals(data);
+  setClients(data);
 };
 // #endregion
 
@@ -118,7 +120,7 @@ const getAnimals = async () => {
   The empty array is the dependency list. Empty means run once. Leave it off entirely and you get exactly that endless loop, which is worth causing on purpose with the Network tab open.
 */
 useEffect(() => {
-  getAnimals();
+  getClients();
 }, []);
 // #endregion
 
@@ -132,9 +134,10 @@ useEffect(() => {
 */
 return (
   <ul>
-    {animals.map((animal) => (
-      <li key={animal.id}>
-        <strong>{animal.name}</strong>, {animal.lives_in}
+    {clients.map((client) => (
+      <li key={client.id}>
+        <strong>{client.name}</strong> — {client.mood}
+        {client.first_visit ? ", first visit" : ""}
       </li>
     ))}
   </ul>

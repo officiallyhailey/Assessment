@@ -269,9 +269,32 @@
        and the outer width and padding were trimmed to hand it the room. */
     .lesson {
         max-width: 1900px;
-        grid-template-columns: 180px minmax(0, 1fr) clamp(470px, 34vw, 720px);
+        grid-template-columns: 180px minmax(0, 1fr) 0px;
         gap: 32px;
         padding: 0 24px 45vh;
+        transition: grid-template-columns 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Before any stage or code appears, the reading column is centred and given
+       room, so the overview reads like a page rather than a narrow column
+       pinned to the left with an empty panel beside it. */
+    .lesson:not(.staged) > main {
+        max-width: 800px;
+        margin-inline: auto;
+    }
+
+    /* Once the panel is wanted the third column opens and the reading column
+       shrinks to the left to make room. The column width is what animates.
+       The panel is kept narrow enough that the reading column never drops below
+       the prose measure, so opening it slides the text left without rewrapping
+       it, which is what stops the active section from bouncing. */
+    .lesson.staged {
+        grid-template-columns: 180px minmax(0, 1fr) clamp(430px, 30vw, 700px);
+    }
+
+    .lesson.staged > main {
+        max-width: none;
+        margin-inline: 0;
     }
 
     /* The panel holds the height of the screen below the header and centres the
@@ -316,6 +339,15 @@
         font-size: 12px;
         color: #8fc4ca;
         padding-left: 4px;
+    }
+
+    /* Which lines the current section is about, shown so the reader can see the
+       range the highlight covers named in the panel. */
+    .pincover {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: #6f9298;
+        margin-left: 10px;
     }
 
     .pintabs {
@@ -386,6 +418,34 @@
     border-left-color: var(--bright);
 }
 
+/* The paged lesson's rail is the pager, so its items are buttons. They carry
+   the same look as the anchors above. */
+.rail li button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--soft);
+    background: none;
+    border: none;
+    border-left: 2px solid transparent;
+    margin-left: -2px;
+    padding: 8px 0 8px 16px;
+    cursor: pointer;
+    transition: color 0.16s ease, border-color 0.16s ease;
+}
+
+.rail li button:hover {
+    color: var(--deep);
+}
+
+.rail li button.on {
+    color: var(--deep);
+    font-weight: 600;
+    border-left-color: var(--bright);
+}
+
 .lesson-head {
     padding: 46px 0 8px;
 }
@@ -430,6 +490,41 @@ section.block {
     scroll-margin-top: 84px;
 }
 
+/* ---------------- focus mode: one section at a time ---------------- */
+
+/* Only the section holding the middle of the screen stays clear; the others dim
+   and blur, so the reader is on one thing rather than reading the section before
+   and after at the same time. Scroll, or the rail, brings the next into focus.
+   The pinned code panel is a sibling of main, so it is never touched. */
+.lesson.focusmode > main > section.block {
+    padding-top: 8vh;
+    padding-bottom: 8vh;
+    scroll-margin-top: 20vh;
+    filter: blur(2.5px);
+    opacity: 0.26;
+    transition: filter 0.35s ease, opacity 0.35s ease;
+}
+
+.lesson.focusmode > main > section.block.clear {
+    filter: none;
+    opacity: 1;
+}
+
+/* Room for the first and last sections to reach the middle of the screen. */
+.lesson.focusmode > main > section.block:first-of-type {
+    padding-top: 3vh;
+}
+
+.lesson.focusmode > main {
+    padding-bottom: 42vh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lesson.focusmode > main > section.block {
+        transition: none;
+    }
+}
+
 section.block > h2 {
     font-size: 13px;
     font-weight: 600;
@@ -447,28 +542,28 @@ section.block > h2 + .h {
     font-size: 27px;
     line-height: 1.2;
     color: var(--deep);
-    margin: 0 0 16px;
+    margin: 0 0 12px;
     letter-spacing: -0.015em;
-    max-width: 24ch;
+    max-width: 35ch;
 }
 
 .sub {
     font-size: 19px;
     color: var(--deep);
-    margin: 20px 0 12px;
+    margin: 15px 0 8px;
     font-weight: 600;
 }
 
 p.t {
-    max-width: 66ch;
-    margin: 0 0 5px;
+    max-width: 80ch;
+    margin: 0 0 6px;
 }
 
 ul.t,
 ol.t {
-    max-width: 66ch;
+    max-width: 80ch;
     padding-left: 22px;
-    margin: 0 0 15px;
+    margin: 0 0 12px;
 }
 
 ul.t li,
@@ -552,16 +647,19 @@ code.i {
         padding-bottom: 2px;
     }
 
-    .rail li a {
+    .rail li a,
+    .rail li button {
         white-space: nowrap;
         padding: 6px 13px;
         margin-left: 0;
         border: 1px solid var(--line);
         border-radius: 999px;
         background: var(--paper);
+        width: auto;
     }
 
-    .rail li a.on {
+    .rail li a.on,
+    .rail li button.on {
         background: var(--deep);
         border-color: var(--deep);
         color: #fff;
@@ -571,5 +669,146 @@ code.i {
 @media (max-width: 880px) {
     .masthead nav a {
         padding: 7px 9px;
+    }
+}
+
+/* ---------------- paged lesson ---------------- */
+
+/* One section on screen at a time, pulled up to fill the height so the next
+   section is out of view and the reader has one thing to look at. */
+.paged-topbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 30px 0 4px;
+    flex: none;
+}
+
+.paged-topbar .back {
+    font-size: 14px;
+    color: var(--soft);
+    display: inline-flex;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+.paged-topbar .back:hover {
+    color: var(--bright);
+}
+
+.paged-loc {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--soft);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.paged-section {
+    animation: fadein 0.28s ease both;
+}
+
+/* The section's own eyebrow and heading, kept as in the scrolling lesson. */
+.paged-section > h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--bright);
+    margin: 0 0 12px;
+}
+
+.paged-section > h2 + .h {
+    margin-top: 0;
+}
+
+/* Forward and back through the deck, so the rail is not the only way on. */
+.pager-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    flex: none;
+}
+
+.pgn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    max-width: 48%;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--deep);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: border-color 0.18s ease, transform 0.18s ease, color 0.18s ease;
+}
+
+.pgn.next {
+    margin-left: auto;
+}
+
+.pgn:hover:not(:disabled) {
+    border-color: var(--bright);
+    transform: translateY(-1px);
+}
+
+.pgn:disabled {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pgn-lab {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (min-width: 1400px) {
+    /* Fill the height and centre the section between the top bar and the pager,
+       so it reads as a focused page rather than a short column up top. */
+    .lesson.paged {
+        align-items: stretch;
+    }
+
+    .lesson.paged > main {
+        min-height: calc(100vh - 88px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Auto margins centre the section between the top bar and the pager when it
+       is shorter than the screen, and collapse to nothing when it is taller, so
+       a long section simply fills the height and scrolls rather than being cut
+       off the top the way justify-content would. */
+    .lesson.paged .paged-section {
+        margin-block: auto;
+        padding-top: 0;
+    }
+
+    /* The panel is not sticky here; there is only one section. It sizes to its
+       content and sits centred in the column, rather than being stretched to
+       full height. Topic 1's samples are short, so a fixed-height box left a
+       large empty area below the code. */
+    .lesson.paged .pin {
+        position: static;
+        height: auto;
+        align-self: center;
+    }
+
+    .lesson.paged .pinbox {
+        height: auto;
+        max-height: calc(100vh - 140px);
+    }
+
+    .lesson.paged .stagebox {
+        max-height: calc(100vh - 140px);
     }
 }

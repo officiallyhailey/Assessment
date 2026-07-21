@@ -1,4 +1,4 @@
-// The component that puts the animals on the page.
+// The component that puts the clients on the page.
 
 import { useState, useEffect } from "react";
 import "../App.css";
@@ -6,32 +6,33 @@ import "../App.css";
 // ─── TOPIC 3 ──────────────────────────────────────────────────────────
 // Notes on each step are in answer-key.js.
 
-function AnimalList() {
-  // state: the animals, starting as an empty array
+function ClientList() {
+  // state: the clients, starting as an empty array
 
-const [animals, setAnimals] = useState([]);
+const [clients, setClients] = useState([]);
 
   // get helper function: fetch, read the json, store it
 
-  const getAnimals = async () => {
-  const response = await fetch("/api/get-all-animals");
+  const getClients = async () => {
+  const response = await fetch("/api/get-all-clients");
   const data = await response.json();
-  setAnimals(data);
+  setClients(data);
 };
 
   // useEffect: run the helper once, on page load
 
 useEffect(() => {
-  getAnimals();
+  getClients();
 }, []);
 
-  // replace the code below: return the list: a <ul>, one <li key={animal.id}> per animal
+  // replace the code below: return the list: a <ul>, one <li key={client.id}> per client
 
 return (
   <ul>
-    {animals.map((animal) => (
-      <li key={animal.id}>
-        <strong>{animal.name}</strong>, {animal.lives_in}
+    {clients.map((client) => (
+      <li key={client.id}>
+        <strong>{client.name}</strong> — {client.mood}
+        {client.first_visit ? ", first visit" : ""}
       </li>
     ))}
   </ul>
@@ -40,4 +41,4 @@ return (
 
 // ──────────────────────────────────────────────────────────────────────
 
-export default AnimalList;
+export default ClientList;

@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// The site runs on 5174, the animals API on 3010.
+// The site runs on 5174, the check-in API on 3010.
 //
 // Everything the demos fetch starts with /api, and this rewrites that prefix
 // away before forwarding to the server. It is the same arrangement the class

@@ -30,9 +30,16 @@ const MODES = [
 const LINE = 20.25;
 const CHROME = 38 + 28 + 34;
 
-function CodeExplorer({ sample, bare, minLines, fixed, highlight, glow, onAimLine, onGoToLine, onLinking }) {
+function CodeExplorer({ sample, bare, minLines, fixed, highlight, glow, wantView, onAimLine, onGoToLine, onLinking }) {
     const [mode, setMode] = useState("content");
     const [view, setView] = useState("code"); // code | result | try
+
+    // The lesson can ask the panel to open a particular view when a section is
+    // reached: Testing in Postman opens Try it. This runs only when the request
+    // changes, so a manual click still wins for the rest of that section.
+    useEffect(() => {
+        if (wantView) setView(wantView);
+    }, [wantView]);
     const [hover, setHover] = useState(null); // { text, label, kind }
     const [pinnedNote, setPinnedNote] = useState(null);
 
@@ -205,6 +212,9 @@ function CodeExplorer({ sample, bare, minLines, fixed, highlight, glow, onAimLin
                                         setPinnedNote((p) => (p && p.line === n ? null : v));
                                     }}
                                 >
+                                    <span className="lnno" aria-hidden="true">
+                                        {n}
+                                    </span>
                                     {step !== null && <span className="step">{step}</span>}
                                     {tokens.map((tk, ti) => {
                                         if (mode !== "concept") {

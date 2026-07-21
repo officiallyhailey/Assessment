@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2800 860" font-family="'Avenir Next','Segoe UI',system-ui,-apple-system,Helvetica,Arial,sans-serif">
+  <defs>
+    <clipPath id="winL"><rect x="180" y="188" width="950" height="528" rx="22"/></clipPath>
+    <clipPath id="winR"><rect x="1670" y="188" width="950" height="528" rx="22"/></clipPath>
+  </defs>
+
+  <!-- ============ STEP 1 : the empty page ============ -->
+  <circle cx="232" cy="106" r="40" fill="#005157"/>
+  <text x="232" y="122" text-anchor="middle" font-size="46" font-weight="700" fill="#ffffff">1</text>
+  <text x="300" y="122" font-size="48" fill="#2c4a4d">The page appears straight away</text>
+
+  <!-- left window -->
+  <rect x="180" y="188" width="950" height="528" rx="22" fill="#ffffff" stroke="#dbe7e8" stroke-width="3"/>
+  <g clip-path="url(#winL)">
+    <rect x="180" y="188" width="950" height="72" fill="#f1f8f9"/>
+  </g>
+  <line x1="180" y1="260" x2="1130" y2="260" stroke="#dbe7e8" stroke-width="2"/>
+  <circle cx="250" cy="224" r="12" fill="#a9c9cc"/>
+  <circle cx="298" cy="224" r="12" fill="#a9c9cc"/>
+  <circle cx="346" cy="224" r="12" fill="#a9c9cc"/>
+  <text x="245" y="378" font-size="56" font-weight="700" fill="#005157">Checked in today</text>
+  <rect x="245" y="432" width="600" height="22" rx="11" fill="#e4eff0"/>
+  <rect x="245" y="490" width="520" height="22" rx="11" fill="#e4eff0"/>
+  <rect x="245" y="548" width="560" height="22" rx="11" fill="#e4eff0"/>
+  <text x="245" y="656" font-size="40" fill="#6b8a8d">nothing to show yet</text>
+
+  <!-- ============ STEP 2 : the request ============ -->
+  <circle cx="1400" cy="330" r="40" fill="#005157"/>
+  <text x="1400" y="346" text-anchor="middle" font-size="46" font-weight="700" fill="#ffffff">2</text>
+  <text x="1400" y="452" text-anchor="middle" font-size="46" fill="#2c4a4d">The data is asked for</text>
+  <line x1="1298" y1="516" x2="1498" y2="516" stroke="#005157" stroke-width="10" stroke-linecap="round"/>
+  <polygon points="1498,494 1498,538 1540,516" fill="#005157"/>
+  <text x="1400" y="590" text-anchor="middle" font-size="38" fill="#6b8a8d">it takes a moment, and</text>
+  <text x="1400" y="636" text-anchor="middle" font-size="38" fill="#6b8a8d">the page stays on screen</text>
+
+  <!-- ============ STEP 3 : the page again, with the list ============ -->
+  <circle cx="1712" cy="106" r="40" fill="#005157"/>
+  <text x="1712" y="122" text-anchor="middle" font-size="46" font-weight="700" fill="#ffffff">3</text>
+  <text x="1780" y="122" font-size="48" fill="#2c4a4d">It appears again, with the list</text>
+
+  <!-- right window -->
+  <rect x="1670" y="188" width="950" height="528" rx="22" fill="#ffffff" stroke="#109aa9" stroke-width="3"/>
+  <g clip-path="url(#winR)">
+    <rect x="1670" y="188" width="950" height="72" fill="#f1f8f9"/>
+  </g>
+  <line x1="1670" y1="260" x2="2620" y2="260" stroke="#dbe7e8" stroke-width="2"/>
+  <circle cx="1740" cy="224" r="12" fill="#a9c9cc"/>
+  <circle cx="1788" cy="224" r="12" fill="#a9c9cc"/>
+  <circle cx="1836" cy="224" r="12" fill="#a9c9cc"/>
+  <text x="1735" y="378" font-size="56" font-weight="700" fill="#005157">Checked in today</text>
+  <text x="1735" y="452" font-size="46" fill="#2c4a4d">Maya &#8212; anxious, first visit</text>
+  <text x="1735" y="520" font-size="46" fill="#2c4a4d">Daniel &#8212; hopeful</text>
+  <text x="1735" y="588" font-size="46" fill="#2c4a4d">Priya &#8212; tired, first visit</text>
+  <text x="1735" y="664" font-size="40" fill="#6b8a8d">three clients, now on screen</text>
+
+  <!-- ============ caption ============ -->
+  <text x="1400" y="812" text-anchor="middle" font-size="46" fill="#2c4a4d">The same page, drawn twice. Nothing waits for the data before showing something.</text>
+</svg>

@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllAnimals, getAllClientForm, addAnimal, addClient } from "../lib/api";
-
-// A result spec can say which table it reads. Topic 1 is the client_form table,
-// the others are animals, which stays the default.
-const SOURCES = { animals: getAllAnimals, clientForm: getAllClientForm };
+import { getAllClientForm, addClient } from "../lib/api";
 
 // Shows what a code sample produces when it runs. Where the sample talks to
 // the API, the result is fetched live so it is the real thing rather than a
@@ -43,7 +39,7 @@ function Table({ columns, rows }) {
     );
 }
 
-function Screen({ title, animals }) {
+function Screen({ title, rows }) {
     return (
         <div className="rscreen">
             <div className="rbar">
@@ -54,10 +50,11 @@ function Screen({ title, animals }) {
             <div className="rbody">
                 <h4>{title}</h4>
                 <ul>
-                    {animals.map((a) => (
-                        <li key={a.id}>
-                            <strong>{a.name}</strong>
-                            {a.lives_in ? <span>, {a.lives_in}</span> : null}
+                    {rows.map((c) => (
+                        <li key={c.id}>
+                            <strong>{c.name}</strong>
+                            {c.mood ? <span> &mdash; {c.mood}</span> : null}
+                            {c.first_visit ? <span>, first visit</span> : null}
                         </li>
                     ))}
                 </ul>
@@ -68,7 +65,7 @@ function Screen({ title, animals }) {
 
 function ResultView({ sample }) {
     const spec = sample.result;
-    const [animals, setAnimals] = useState(null);
+    const [rows, setRows] = useState(null);
     const [failed, setFailed] = useState(false);
     const [sending, setSending] = useState(false);
     const [exchange, setExchange] = useState(null);
@@ -79,11 +76,10 @@ function ResultView({ sample }) {
         if (!needsData) return;
         let alive = true;
         (async () => {
-            const fetchRows = SOURCES[spec.source] || getAllAnimals;
-            const { data, failed: fetchFailed } = await fetchRows();
+            const { data, failed: fetchFailed } = await getAllClientForm();
             if (!alive) return;
-            if (fetchFailed) setFailed(true);
-            else setAnimals(data);
+            if (fetchFailed || !Array.isArray(data)) setFailed(true);
+            else setRows(data);
         })();
         return () => {
             alive = false;
@@ -101,21 +97,21 @@ function ResultView({ sample }) {
     // ---------- a query returning rows ----------
     if (spec.kind === "table") {
         if (failed) return <div className="rwrap"><p className="ridle">The API is not running, so there are no live rows to show.</p></div>;
-        if (!animals) return <div className="rwrap"><p className="ridle"><span className="spinner" /> reading from the database</p></div>;
+        if (!rows) return <div className="rwrap"><p className="ridle"><span className="spinner" /> reading from the database</p></div>;
 
-        const rows = spec.filter ? animals.filter(spec.filter) : animals;
-        const columns = spec.columns || Object.keys(animals[0] || {});
+        const shown = spec.filter ? rows.filter(spec.filter) : rows;
+        const columns = spec.columns || Object.keys(rows[0] || {});
         return (
             <div className="rwrap">
                 <div className="rlead">{spec.caption}</div>
-                <Table columns={columns} rows={rows} />
+                <Table columns={columns} rows={shown} />
             </div>
         );
     }
 
     // ---------- a request and its response ----------
     if (spec.kind === "exchange") {
-        const post = spec.source === "clientForm" ? addClient : addAnimal;
+        const post = addClient;
         const send = async () => {
             setSending(true);
             const { text, status, ms, failed: sendFailed } = await post(spec.body);
@@ -162,11 +158,11 @@ function ResultView({ sample }) {
     // ---------- what appears on screen ----------
     if (spec.kind === "screen") {
         if (failed) return <div className="rwrap"><p className="ridle">The API is not running, so there is nothing to render.</p></div>;
-        if (!animals) return <div className="rwrap"><p className="ridle"><span className="spinner" /> fetching</p></div>;
+        if (!rows) return <div className="rwrap"><p className="ridle"><span className="spinner" /> fetching</p></div>;
         return (
             <div className="rwrap">
                 <div className="rlead">{spec.caption}</div>
-                <Screen title={spec.title || "Animals"} animals={animals} />
+                <Screen title={spec.title || "Checked in today"} rows={rows} />
             </div>
         );
     }

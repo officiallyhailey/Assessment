@@ -1,4 +1,4 @@
-# Animals
+# Client check-in
 
 A small full stack app: a React front end, an Express server, and a Postgres
 database on Neon.
@@ -31,7 +31,7 @@ Open **http://localhost:5173**.
 | | File | How you check it |
 |---|---|---|
 | **Topic 2**, the endpoints | `server/src/index.js` | Postman |
-| **Topic 3**, the React | `client/src/pages/AnimalList.jsx` | the page, and the Network tab |
+| **Topic 3**, the React | `client/src/pages/ClientList.jsx` | the page, and the Network tab |
 
 **Topic 2** is the back end. A helper that runs `INSERT INTO` and the POST
 endpoint that calls it, then a helper that runs `SELECT` and the GET endpoint
@@ -51,25 +51,25 @@ the answer key into `index.js` first, so there is an endpoint to call.
 
 ## The data
 
-One table, `lesson_animals`, already set up with three animals. If it ever
+One table, `client_form`, already set up with three clients. If it ever
 needs rebuilding:
 
 ```sql
-CREATE TABLE lesson_animals (
-  id          SERIAL PRIMARY KEY,
-  name        VARCHAR(100) NOT NULL UNIQUE,
-  category    VARCHAR(50),
-  can_fly     BOOLEAN NOT NULL,
-  lives_in    VARCHAR(100),
-  population  INTEGER
+CREATE TABLE client_form (
+  id           SERIAL PRIMARY KEY,
+  name         VARCHAR(100) NOT NULL,
+  age          INTEGER,
+  email        VARCHAR(255) NOT NULL UNIQUE,
+  mood         VARCHAR(50),
+  first_visit  BOOLEAN NOT NULL
 );
 
-INSERT INTO lesson_animals
-  (name, category, can_fly, lives_in, population)
+INSERT INTO client_form
+  (name, age, email, mood, first_visit)
 VALUES
-  ('Lion',    'Mammal', false, 'Savanna',    23000),
-  ('Penguin', 'Bird',   false, 'Antarctica', 1200000),
-  ('Eagle',   'Bird',   true,  'Mountains',  5000);
+  ('Maya',   34, 'maya@example.com',   'anxious', true),
+  ('Daniel', 41, 'daniel@example.com', 'hopeful', false),
+  ('Priya',  29, 'priya@example.com',  'tired',   true);
 ```
 
 The server puts the table back to those three every time it starts, so restarting is the reset. Since you restart after every edit anyway, you rarely have to think about it.
@@ -79,37 +79,40 @@ That is `server/src/seed.js`, imported at the top of `index.js`. Comment that im
 To reset without restarting, run the `TRUNCATE` and the `INSERT` above:
 
 ```sql
-TRUNCATE lesson_animals RESTART IDENTITY;
+TRUNCATE client_form RESTART IDENTITY;
 ```
 
-`RESTART IDENTITY` sets the id counter back to 1. Without it the next animal gets id 5, then 9, climbing forever, which muddies the point that the database assigns the id.
+`RESTART IDENTITY` sets the id counter back to 1. Without it the next client gets id 5, then 9, climbing forever, which muddies the point that the database assigns the id.
 
 ---
 
 ## Trying the endpoints in Postman
 
-`POST http://localhost:3001/add-one-animal`
+`POST http://localhost:3001/add-one-client`
 
 Body tab, raw, JSON:
 
 ```json
 {
-  "name": "Falcon",
-  "category": "Bird",
-  "can_fly": true,
-  "lives_in": "Cliffs"
+  "name": "Sam",
+  "age": 27,
+  "email": "sam@example.com",
+  "mood": "nervous",
+  "first_visit": true
 }
 ```
 
 No `id`. The column is `SERIAL`, so the database assigns it.
 
-Then `GET http://localhost:3001/get-all-animals`. A reply saying it worked and
+Then `GET http://localhost:3001/get-all-clients`. A reply saying it worked and
 a row that is actually there are two different things, and this is what tells
 them apart.
 
-Send the same animal twice and the second one fails with a 500, because `name`
-is `UNIQUE`. That is the constraint working, not a bug in the endpoint. Change
-the name, or restart the server.
+Send the same body twice and the second one fails with a 500, because `email` is
+`UNIQUE`: no two clients can share an address. That is the constraint working,
+not a bug in the endpoint. Change the email, or restart the server. (Leaving the
+`name` out fails too, because `name` is `NOT NULL`. Two clients *can* share a
+name, though.)
 
 Note there is no `/api` in either URL. That prefix is a front end thing, and
 Postman talks to the server directly.
@@ -123,8 +126,8 @@ two different origins by default, so `client/vite.config.js` forwards anything
 starting with `/api` to the server and strips the prefix on the way:
 
 ```
-the page asks for   /api/get-all-animals
-the server sees     /get-all-animals
+the page asks for   /api/get-all-clients
+the server sees     /get-all-clients
 ```
 
 ---
@@ -136,7 +139,7 @@ client/
   vite.config.js              the proxy
   src/
     App.jsx                   the page
-    pages/AnimalList.jsx      TOPIC 3
+    pages/ClientList.jsx      TOPIC 3
 server/
   src/
     index.js                  TOPIC 2

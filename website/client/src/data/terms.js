@@ -6,8 +6,8 @@
 //
 // Two fields, and both earn their place. `def` is what the word means on its
 // own, in one sentence. `note` is what it means for this lesson specifically,
-// so a student reading about a bank counter and a student reading about an
-// animals table land in the same place.
+// so a student reading about a bank counter and a student reading about a
+// check-in table land in the same place.
 
 export const TERMS = {
     client: {
@@ -20,11 +20,11 @@ export const TERMS = {
     },
     database: {
         def: "Where a program keeps information so it is still there tomorrow.",
-        note: "A set of tables, each a grid of rows. This lesson saves an animal as one row.",
+        note: "A set of tables, each a grid of rows. This lesson saves a client's check-in as one row.",
     },
     endpoint: {
         def: "One address on the server that handles one kind of request.",
-        note: "Like a specific counter at an office, each with its own job. This lesson builds one, at /add-one-animal.",
+        note: "Like a specific counter at an office, each with its own job. This lesson builds one, at /add-one-client.",
     },
     post: {
         def: "The kind of request that sends information to be saved.",
@@ -40,7 +40,7 @@ export const TERMS = {
     },
     response: {
         def: "The message the server sends back. Every request gets exactly one.",
-        note: "Here the response is a short line of text confirming the animal was added.",
+        note: "Here the response is a short line of text confirming the client was checked in.",
     },
     method: {
         def: "The word that says what kind of action a request wants.",
@@ -48,7 +48,7 @@ export const TERMS = {
     },
     path: {
         def: "The part of the URL after the host, naming which endpoint is wanted.",
-        note: "/add-one-animal is the path in this lesson.",
+        note: "/add-one-client is the path in this lesson.",
     },
     library: {
         def: "Code somebody else wrote that you load into your own.",
@@ -168,7 +168,7 @@ export const TERMS = {
     // ---------- topic 3, React ----------
     component: {
         def: "A function that returns what should appear on the screen.",
-        note: "AnimalList is one. It is called by React, not by you.",
+        note: "ClientList is one. It is called by React, not by you.",
     },
     render: {
         def: "React working out what should be on screen and putting it there.",
@@ -176,7 +176,7 @@ export const TERMS = {
     },
     state: {
         def: "A value a component keeps between renders, and updates the screen when changed.",
-        note: "The animals array is state, which is why the list appears when it arrives.",
+        note: "The clients array is state, which is why the list appears when it arrives.",
     },
     hook: {
         def: "A built in function giving a component an ability it would not otherwise have.",
@@ -192,7 +192,7 @@ export const TERMS = {
     },
     array: {
         def: "An ordered list of values, counted from 0.",
-        note: "The animals arrive as one, and map turns it into list items.",
+        note: "The clients arrive as one, and map turns it into list items.",
     },
     key: {
         def: "A unique value on each list item so React can tell them apart between renders.",

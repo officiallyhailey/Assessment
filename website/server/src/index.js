@@ -5,7 +5,7 @@
 //   2. call a helper that does the work (await)
 //   3. send a response                  (res.json / res.send)
 //
-// No SQL in this file. The queries all live in animals-helpers.js.
+// No SQL in this file. The queries all live in helpers.js.
 // ---------------------------------------------------------------------------
 
 import express from "express";
@@ -15,11 +15,10 @@ import express from "express";
 // below cannot tell the difference, which is the point of the helper split.
 const offline = process.env.DATA_SOURCE === "json";
 const helpers = offline
-  ? await import("./animals-helpers.offline.js")
-  : await import("./animals-helpers.js");
+  ? await import("./helpers.offline.js")
+  : await import("./helpers.js");
 const {
-  getAllAnimals, getOneAnimalById, addOneAnimal, resetAnimals,
-  getAllClientForm, addOneClient, resetClientForm,
+  getAllClientForm, getOneClientById, addOneClient, resetClientForm,
 } = helpers;
 
 const app = express();
@@ -43,53 +42,38 @@ app.get("/client-form", endpoint(async (req, res) => {
 }));
 
 // ---------------------------------------------------------------------------
+// TOPIC 3. GET every checked-in client, for the lesson 3 React demo.
+// ---------------------------------------------------------------------------
+app.get("/get-all-clients", endpoint(async (req, res) => {
+  const clients = await getAllClientForm();
+  res.json(clients);
+}));
+
+// ---------------------------------------------------------------------------
+// TOPIC 3. GET one client by id, using a route parameter.
+// The :id is a placeholder. /get-one-client-by-id/2  ->  req.params.id === "2"
+// ---------------------------------------------------------------------------
+app.get("/get-one-client-by-id/:id", endpoint(async (req, res) => {
+  const client = await getOneClientById(req.params.id);
+  res.json(client);
+}));
+
+// ---------------------------------------------------------------------------
 // TOPIC 2. POST a client to the check-in form.
 // ---------------------------------------------------------------------------
 app.post("/add-one-client", endpoint(async (req, res) => {
-  const { name, age, mood, first_visit } = req.body;
-  const client = await addOneClient(name, age, mood, first_visit);
+  const { name, age, email, mood, first_visit } = req.body;
+  const client = await addOneClient(name, age, email, mood, first_visit);
   res.send(`${client.name} is checked in.`);
-}));
-
-// Not part of any lesson. Puts client_form back to the original three.
-app.post("/reset-client-form", endpoint(async (req, res) => {
-  const rows = await resetClientForm();
-  res.json(rows);
-}));
-
-// ---------------------------------------------------------------------------
-// TOPIC 3. GET all the animals
-// ---------------------------------------------------------------------------
-app.get("/get-all-animals", endpoint(async (req, res) => {
-  const animals = await getAllAnimals();
-  res.json(animals);
-}));
-
-// ---------------------------------------------------------------------------
-// TOPIC 3. GET one animal by id, using a route parameter
-// The :id is a placeholder. /get-one-animal-by-id/3  ->  req.params.id === "3"
-// ---------------------------------------------------------------------------
-app.get("/get-one-animal-by-id/:id", endpoint(async (req, res) => {
-  const animal = await getOneAnimalById(req.params.id);
-  res.json(animal);
-}));
-
-// ---------------------------------------------------------------------------
-// TOPIC 2. POST a new animal
-// ---------------------------------------------------------------------------
-app.post("/add-one-animal", endpoint(async (req, res) => {
-  const { name, category, can_fly, lives_in } = req.body;
-  const animal = await addOneAnimal(name, category, can_fly, lives_in);
-  res.send(`The farm has grown: ${animal.name} was added!`);
 }));
 
 // ---------------------------------------------------------------------------
 // Not part of any lesson. The site's reset button calls this, so the data can
-// be put back to the original three animals without leaving the browser.
+// be put back to the original three clients without leaving the browser.
 // ---------------------------------------------------------------------------
-app.post("/reset-animals", endpoint(async (req, res) => {
-  const animals = await resetAnimals();
-  res.json(animals);
+app.post("/reset-client-form", endpoint(async (req, res) => {
+  const rows = await resetClientForm();
+  res.json(rows);
 }));
 
 // ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 # API
 
 The server runs on **http://localhost:3001**, against the table
-**`lesson_animals`**.
+**`client_form`**.
 
 Paths here have no `/api` prefix: that belongs to the client, and Vite strips it
 on the way through. Postman uses the plain path.
@@ -11,7 +11,7 @@ saying it has no route for that path.
 
 ---
 
-## `POST /add-one-animal`
+## `POST /add-one-client`
 
 **Headers**
 
@@ -25,7 +25,7 @@ Without it the body still arrives, but nothing turns it into an object, so
 **Body**
 
 ```json
-{ "name": "Falcon", "category": "Bird", "can_fly": true, "lives_in": "Cliffs" }
+{ "name": "Sam", "age": 27, "email": "sam@example.com", "mood": "nervous", "first_visit": true }
 ```
 
 `id` is never sent. `SERIAL` means the database makes it.
@@ -33,15 +33,17 @@ Without it the body still arrives, but nothing turns it into an object, so
 **200**
 
 ```
-The farm has grown: Falcon was added!
+Sam is checked in.
 ```
 
-**500** when the database refuses the row. `name` is `NOT NULL` and `UNIQUE`, so
-a missing name, or one already in the table, fails here.
+**500** when the database refuses the row. `email` is `NOT NULL UNIQUE`, so a
+row with no email, or one whose email is already on file, fails here. `name` is
+`NOT NULL` too. A name that already exists is fine, since two clients can share
+one — only the email has to be unique.
 
 ---
 
-## `GET /get-all-animals`
+## `GET /get-all-clients`
 
 Every row, ordered by id. This is the one the React page calls.
 
@@ -49,6 +51,6 @@ Every row, ordered by id. This is the one the React page calls.
 
 ```json
 [
-  { "id": 1, "name": "Lion", "category": "Mammal", "can_fly": false, "lives_in": "Savanna", "population": 23000 }
+  { "id": 1, "name": "Maya", "age": 34, "email": "maya@example.com", "mood": "anxious", "first_visit": true }
 ]
 ```

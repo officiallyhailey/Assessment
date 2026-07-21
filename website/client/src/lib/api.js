@@ -1,5 +1,5 @@
 /**
- * The demo panels talk to the same animals API the students will build, so
+ * The demo panels talk to the same check-in API the students will build, so
  * what they see on the page is what they would see in their own project.
  *
  * The /api prefix is stripped by Vite before the request reaches the server
@@ -10,11 +10,9 @@
  * lesson: a request is not instant, which is exactly why React renders twice.
  */
 
-const ANIMALS = "/api/get-all-animals";
-const ONE_ANIMAL = "/api/get-one-animal-by-id";
-const ADD_ANIMAL = "/api/add-one-animal";
-const RESET = "/api/reset-animals";
 const CLIENT_FORM = "/api/client-form";
+const ALL_CLIENTS = "/api/get-all-clients";
+const ONE_CLIENT = "/api/get-one-client-by-id";
 const ADD_CLIENT = "/api/add-one-client";
 const RESET_CLIENT_FORM = "/api/reset-client-form";
 
@@ -29,21 +27,34 @@ async function timed(run) {
     }
 }
 
-/** Every animal. The list behind the SQL, fetch and render demos. */
-export function getAllAnimals() {
+/** Every row of client_form. Behind the topic 1 SQL demo and the topic 2 list. */
+export function getAllClientForm() {
     return timed(async () => {
-        const response = await fetch(ANIMALS);
+        const response = await fetch(CLIENT_FORM);
+        if (!response.ok) throw new Error(`server responded ${response.status}`);
         const data = await response.json();
         return { data, status: response.status, size: JSON.stringify(data).length };
     });
 }
 
-/** Every row of client_form. Behind the topic 1 SQL demo and the topic 2 list. */
-export function getAllClientForm() {
+/** Every checked-in client, behind the lesson 3 fetch/render demo. */
+export function getAllClients() {
     return timed(async () => {
-        const response = await fetch(CLIENT_FORM);
+        const response = await fetch(ALL_CLIENTS);
+        if (!response.ok) throw new Error(`server responded ${response.status}`);
         const data = await response.json();
         return { data, status: response.status, size: JSON.stringify(data).length };
+    });
+}
+
+/** One client by id, the route-parameter demo. `id` stays a string, as it would in a URL. */
+export function getClientById(id) {
+    const url = `${ONE_CLIENT}/${id}`;
+    return timed(async () => {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`server responded ${response.status}`);
+        const data = await response.json();
+        return { data, status: response.status, url };
     });
 }
 
@@ -63,41 +74,8 @@ export function addClient(body) {
 export function resetClientForm() {
     return timed(async () => {
         const response = await fetch(RESET_CLIENT_FORM, { method: "POST" });
+        if (!response.ok) throw new Error(`server responded ${response.status}`);
         const data = await response.json();
         return { data, status: response.status };
-    });
-}
-
-/** One animal by id, the route-parameter demo. `id` stays a string, as it would in a URL. */
-export function getAnimalById(id) {
-    const url = `${ONE_ANIMAL}/${id}`;
-    return timed(async () => {
-        const response = await fetch(url);
-        const data = await response.json();
-        return { data, status: response.status, url };
-    });
-}
-
-/**
- * Puts the animals back to the original three. Not something a student writes;
- * it exists so a class that has been adding rows all session can start clean.
- */
-export function resetAnimals() {
-    return timed(async () => {
-        const response = await fetch(RESET, { method: "POST" });
-        const data = await response.json();
-        return { data, status: response.status };
-    });
-}
-
-/** Adds an animal. Returns the server's reply as text, since the endpoint uses res.send. */
-export function addAnimal(body) {
-    return timed(async () => {
-        const response = await fetch(ADD_ANIMAL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-        });
-        return { text: await response.text(), status: response.status };
     });
 }

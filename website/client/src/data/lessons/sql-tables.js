@@ -1,11 +1,12 @@
 // Lesson 01, creating a table with SQL.
 //
-// Page content as data. Blocks render through src/components/Blocks.jsx, and
-// `code` is the sample pinned beside the lesson on wide screens. A section may
-// carry its own `code`, which takes over the panel while that section is read.
+// Page content as data. Blocks render through src/components/Blocks.jsx. The
+// sample in `code` is used two ways: the code accordion in "The code" slices it
+// into the stretches it explains, and the Try it query runner runs against it.
 //
-// Line notes for the Context and Flow modes live in ../annotations.js, keyed by
-// the sample's file name.
+// A section may declare a `stage`, which drives the right-hand panel: "Defining
+// columns" shows the blank form, "The code" shows the code as an accordion. See
+// components/Stage.jsx. Line notes for Context and Flow live in ../annotations.js.
 //
 // The running example is a therapy office's check-in form, the same office that
 // carries through the other two lessons. This lesson designs the form and files
@@ -18,37 +19,40 @@ export const sqlTables = {
     title: "Create a Database Table with SQL",
     blurb: "Create a table, add rows to it, and query the data back out.",
     tags: ["CREATE TABLE", "INSERT INTO", "SELECT"],
+    // Paged rather than scroll-tracked. The SQL is three separate statements,
+    // not one program to read down a file, so each section is its own screen and
+    // the panel beside it shows what that section is about. See PagedLesson.jsx.
+    paged: true,
     // No lede on purpose. The overview opens with the office analogy, which
     // eases in gentler than a one-line definition stacked with terms.
     code: [
         {
             name: "client_form.sql",
-            // Try it puts the query runner inside the panel, beside the SQL it
-            // is running, rather than further down the page.
+            // Try it puts the query runner inside the accordion, beside the SQL
+            // it is running, rather than further down the page.
             try: "sql",
-            // Written in parts so the focus blocks can name a region rather
-            // than a line number. See lib/sample.js.
+            // Written in parts so the accordion can name a region rather than a
+            // line number. See lib/sample.js.
             parts: [
                 {
                     id: "create",
                     code: `CREATE TABLE client_form (
-  id            SERIAL PRIMARY KEY,
-  name          VARCHAR(100) NOT NULL,
-  age           INTEGER,
-  state         VARCHAR(50),
-  mood          VARCHAR(50),
-  first_visit   BOOLEAN NOT NULL,
-  checked_in_on DATE
+  id          SERIAL PRIMARY KEY,
+  name        VARCHAR(100) NOT NULL,
+  age         INTEGER,
+  email       VARCHAR(255) NOT NULL UNIQUE,
+  mood        VARCHAR(50),
+  first_visit BOOLEAN NOT NULL
 );`,
                 },
                 {
                     id: "insert",
                     code: `INSERT INTO client_form
-  (name, age, state, mood, first_visit, checked_in_on)
+  (name, age, email, mood, first_visit)
 VALUES
-  ('Maya',   34, 'Oregon',     'anxious', true,  '2026-02-10'),
-  ('Daniel', 41, 'California',  'hopeful', false, '2026-02-11'),
-  ('Priya',  29, 'New York',    'tired',   true,  '2026-02-12');`,
+  ('Maya',   34, 'maya@example.com',   'anxious', true),
+  ('Daniel', 41, 'daniel@example.com', 'hopeful', false),
+  ('Priya',  29, 'priya@example.com',  'tired',   true);`,
                 },
                 {
                     id: "selectall",
@@ -73,7 +77,7 @@ VALUES
             label: "Overview",
             heading: "What does that even mean?",
             blocks: [
-                { type: "p", text: "A therapy office runs on a check-in form. Before anyone fills one in, someone has to design the blank form: decide what boxes it has, what kind of answer each box takes, and which ones cannot be left blank. Then clients start filling them in, and the office keeps the filled forms." },
+                { type: "p", text: "A therapy office has a check-in form. Before anyone fills one in, someone designs the blank form: which boxes it has, what kind of answer each box takes, and which cannot be left blank. Then clients start filling them in, and the office keeps the filled forms." },
                 {
                     type: "figuretoggle",
                     labels: ["The office", "In code"],
@@ -81,7 +85,7 @@ VALUES
                         {
                             src: "/topic1-plain.png",
                             alt: "A blank check-in form is designed, clients fill copies in, and the filled forms are kept in a filing cabinet",
-                            caption: "Design the blank form, fill some in, keep them to look up later.",
+                            caption: "Create the blank form, fill some in, keep them to look up later.",
                         },
                         {
                             src: "/topic1-tech.png",
@@ -90,39 +94,33 @@ VALUES
                         },
                     ],
                 },
-                { type: "p", text: "That is the whole lesson. Designing the blank form is one command, filling one in is another, and looking someone up is a third." },
-                { type: "h", text: "The words for the picture" },
-                { type: "p", text: "The filled forms are kept in a [[table]]: a grid, much like a spreadsheet. Each box on the form is a [[column]], and each filled-in form is a [[row]]. The instructions are written in [[sql|SQL]]." },
+                { type: "h", text: "How it works" },
+                { type: "p", text: "The filled forms are kept in a [[table]]: a grid, much like a ((spreadsheet|Unlike a spreadsheet, where any cell can hold anything, a table fixes what each column may hold and rejects whatever does not fit. It also handles many people reading and writing at once, which is what an office, or an app, needs.)). Each box on the form is a [[column]], each filled-in form is a [[row]], and the instructions are written in [[sql|SQL]]." },
                 {
                     type: "table",
                     head: ["The office", "In code", "Command"],
                     rows: [
-                        ["Design the blank form", "Define the table and its columns", "CREATE TABLE"],
+                        ["Create the blank form", "Define the table and its columns", "CREATE TABLE"],
                         ["A client fills one in", "Add a row", "INSERT INTO"],
                         ["Look someone up", "Read rows back", "SELECT"],
                     ],
                     mono: [2],
                 },
-                { type: "p", text: "Everything below is detail inside one of those three." },
-                {
-                    type: "more",
-                    label: "Why a database and not a spreadsheet",
-                    blocks: [
-                        { type: "p", text: "In a spreadsheet, any cell can hold anything. Someone can type the word none into a column of ages and the file accepts it." },
-                        { type: "p", text: "A table defines what each column is allowed to hold and rejects anything that does not fit. It also handles many people reading and writing at once, which is what an office, or an application, needs." },
-                    ],
-                },
+                { type: "p", text: "That is the whole lesson: one command to design the form, one to fill it in, one to look someone up. Everything below is detail inside one of the three." },
             ],
         },
         {
             id: "columns",
             label: "Defining columns",
             heading: "Data types and constraints",
+            // The panel shows the same client_form two ways, with a toggle: the
+            // filled table and the blank form. It opens on the table.
+            panel: { kind: "preview", start: "table" },
             blocks: [
-                { type: "analogy", text: "Designing the boxes on the blank form. Each box says what kind of answer belongs in it, a number for age, a date for the visit, a yes or no for first time here, and some boxes are marked so they cannot be left blank." },
+                { type: "analogy", text: "Designing the boxes on the blank check-in form. Each box says what kind of answer belongs in it, a number for age, a date for the visit, a yes or no for first time here, and some boxes are marked so they cannot be left blank." },
                 { type: "p", text: "In code that is two things per column: a [[data type]], and optionally one or more [[constraint|constraints]]." },
                 { type: "h", text: "Data types" },
-                { type: "p", text: "A data type says what kind of value a column holds." },
+                { type: "p", text: "A data type says what kind of value a column holds, and ((why it matters|A number kept as text will not sort or total correctly, because text is compared one character at a time, so 100 would sort before 34. INTEGER lets age be sorted and averaged; DATE lets the visit be compared and put in order.)) it decides what you can do with that column later." },
                 {
                     type: "table",
                     head: ["Type", "Holds", "On the form"],
@@ -131,17 +129,8 @@ VALUES
                         ["VARCHAR(100)", "Text, up to 100 characters", "'Maya'"],
                         ["INTEGER", "A whole number", "34"],
                         ["BOOLEAN", "true or false", "first visit?"],
-                        ["DATE", "A calendar date", "'2026-02-10'"],
                     ],
                     mono: [0, 2],
-                },
-                {
-                    type: "more",
-                    label: "The type decides what the column will accept, and what you can do with it later",
-                    blocks: [
-                        { type: "p", text: "A number stored as text does not sort or add up correctly. Text is compared one character at a time, so 100 would sort before 34 because 1 comes before 3." },
-                        { type: "p", text: "Choosing INTEGER for age means the database can sort it, total it, and average it correctly. Choosing DATE for the visit means it can be compared and put in order, rather than being loose text that only looks like a date." },
-                    ],
                 },
                 { type: "h", text: "Constraints" },
                 { type: "p", text: "A constraint is a rule the value must follow. The database rejects any row that breaks one." },
@@ -155,129 +144,65 @@ VALUES
                     ],
                     mono: [0],
                 },
-                {
-                    type: "focus",
-                    file: "client_form.sql",
-                    at: "create",
-                    blocks: [
-                        { type: "p", text: "In the form id is the [[primary key]], name and first_visit are NOT NULL, and the rest have no constraints at all, which is what makes them optional." },
-                        {
-                            type: "more",
-                            label: "PRIMARY KEY and UNIQUE look similar, and the difference matters",
-                            blocks: [
-                                { type: "p", text: "A PRIMARY KEY is the column that identifies the row. It is unique, it cannot be empty, and a table has exactly one." },
-                                { type: "p", text: "UNIQUE is only the no-duplicates rule, and a table can have several. Here id identifies each form. name is not unique, because two clients really can share a name, which is exactly why the office assigns everyone a number." },
-                            ],
-                        },
-                        {
-                            type: "more",
-                            label: "A column with no constraint may be left empty, which is called null",
-                            blocks: [
-                                { type: "p", text: "[[null]] is the absence of a value, and it is not the same as zero or as empty text. It means the box was left blank." },
-                                { type: "p", text: "So leaving a column unconstrained is a decision, not an oversight. state and mood are optional because a client may not fill them in, while first_visit is NOT NULL because the office needs to know either way." },
-                            ],
-                        },
-                    ],
-                },
+                { type: "p", text: "On this form id is the [[primary key]]; name, email and first_visit are NOT NULL, the boxes marked required; and ((age and mood|A column with no NOT NULL rule may be left null, the absence of a value, which is not zero or empty text. age and mood are optional because a client may not give them, while name, email and first_visit are required because the office needs each one.)) may be left blank." },
+                { type: "p", text: "email is the box marked ((UNIQUE|UNIQUE is the no-duplicates rule, separate from the PRIMARY KEY, and a table can have several. email is unique because an address belongs to one person, so two clients sharing one would be a mistake the database should catch. name is left off it on purpose: two clients really can share a name, which is exactly why the office also assigns everyone a number.)): no two clients can share an address. name is deliberately not, because two people really can share one." },
             ],
         },
         {
             id: "code",
             label: "The code",
             heading: "Creating, inserting, and selecting",
+            // The panel shows the whole client_form.sql at once. The toggle below
+            // picks which of the three statements is being explained, and lights
+            // up its lines in the panel. Switch the panel to Try it to run them.
+            toggle: {
+                file: "client_form.sql",
+                options: [
+                    {
+                        id: "create",
+                        label: "Create table",
+                        at: "create",
+                        blocks: [
+                            { type: "analogy", text: "Making the blank form: deciding the fields and how each one behaves." },
+                            { type: "p", text: "Each line inside the brackets defines one [[column]]: name first, then [[data type]], then any [[constraint|constraints]]." },
+                            { type: "p", text: "Nothing is stored yet, and ((that is the point|The command describes a shape rather than filling one in. When it finishes the table exists and holds no rows. Everything decided here is then enforced on every row added afterwards, however it arrives, which is the difference between a table and a spreadsheet.)) that is deliberate." },
+                        ],
+                    },
+                    {
+                        id: "insert",
+                        label: "Input data",
+                        at: "insert",
+                        blocks: [
+                            { type: "analogy", text: "The first three clients filling in their forms and handing them to the front desk." },
+                            { type: "p", text: "INSERT INTO names the table and the columns being filled. Each set of brackets after VALUES is one [[row]], its values lining up ((by position|Each value matches the column in the same position in the list above. Get the order wrong and the data still goes in, just into the wrong boxes.)) with the column list." },
+                            { type: "p", text: "id is not listed at all, because ((SERIAL fills it in|id is defined as SERIAL, so the database assigns it and counts up on its own. That is what keeps every form distinct even when two clients share a name.)) it assigns itself. All three rows go in as ((one command|One INSERT INTO carries as many rows as you list, separated by commas, with a single semicolon at the end. It is all or nothing: if one row breaks a rule, none are stored.)) a single command." },
+                        ],
+                    },
+                    {
+                        id: "read",
+                        label: "Read data",
+                        at: ["selectall", "selectcols"],
+                        blocks: [
+                            { type: "analogy", text: "The office worker pulling forms from the cabinet, sometimes all of them, sometimes one person's, sometimes only a couple of the boxes off each." },
+                            { type: "p", text: "Three [[query|queries]], each asking for something different." },
+                            {
+                                type: "table",
+                                head: ["Query", "Returns"],
+                                rows: [
+                                    ["SELECT * FROM client_form", "Every column, every row"],
+                                    ["... WHERE name = 'Maya'", "Every column, only matching rows"],
+                                    ["SELECT name, mood ... WHERE first_visit = true", "Only those columns, only matching rows"],
+                                ],
+                                mono: [0],
+                            },
+                            { type: "p", text: "Rows and columns are ((controlled separately|The star means all columns; listing names limits which columns come back. WHERE filters which rows come back. They do not affect each other, which is why the three queries can vary one, the other, or both.)) chosen independently. And a query that matches nothing ((is not an error|A SELECT that matches nothing succeeds and returns an empty result. It is telling you nobody fits, not reporting a problem. Code that treats empty as failure breaks the first time someone looks up a client who is not there.)) still succeeds." },
+                            { type: "p", text: "Switch the panel to Try it to run these against the live data, then change a column or a value after WHERE and see what comes back." },
+                        ],
+                    },
+                ],
+            },
             blocks: [
-                { type: "p", text: "The full example designs the [[table]], files three clients in, then reads them back three ways." },
-                { type: "coderef" },
-                {
-                    type: "focus",
-                    file: "client_form.sql",
-                    at: "create",
-                    blocks: [
-                        { type: "analogy", text: "Printing the blank form for the first time. Nothing is filled in yet. You are only deciding what the form looks like and which boxes it has." },
-                        { type: "h", text: "Creating the table" },
-                        { type: "p", text: "Each line inside the brackets defines one [[column]]: name first, then [[data type]], then any [[constraint|constraints]]." },
-                        {
-                            type: "more",
-                            label: "Nothing is stored yet, and that is the point",
-                            blocks: [
-                                { type: "p", text: "This command describes a shape rather than filling one in. When it finishes the table exists and holds no rows at all." },
-                                { type: "p", text: "Everything decided here is then enforced on every row added afterwards, however it arrives. That is the difference between a table and a spreadsheet: the rules live with the data, not with whoever is typing." },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    type: "focus",
-                    file: "client_form.sql",
-                    at: "insert",
-                    blocks: [
-                        { type: "analogy", text: "The first three clients filling in their forms and handing them to the front desk, which files them." },
-                        { type: "h", text: "Adding rows" },
-                        { type: "p", text: "INSERT INTO names the table and the columns being filled. Each set of brackets after VALUES is one [[row]]." },
-                        {
-                            type: "more",
-                            label: "The values line up by position, and id is deliberately missing",
-                            blocks: [
-                                { type: "p", text: "Each value matches the column in the same position in the list above it. Get the order wrong and the data still goes in, just into the wrong boxes." },
-                                { type: "p", text: "id is not listed at all. It is SERIAL, so the database fills it in and counts up on its own, which is what keeps every form reliably distinct even when two clients share a name." },
-                            ],
-                        },
-                        {
-                            type: "more",
-                            label: "All three rows go in as one command, not three",
-                            blocks: [
-                                { type: "p", text: "One INSERT INTO can carry as many rows as you list, separated by commas, with a single semicolon at the end." },
-                                { type: "p", text: "It is also all or nothing. If one row breaks a rule, none of them are stored, which stops a half-finished insert leaving the table in a state nobody expected." },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    type: "focus",
-                    file: "client_form.sql",
-                    at: ["selectall", "selectcols"],
-                    blocks: [
-                        { type: "analogy", text: "The office worker pulling forms from the cabinet. Sometimes all of them, sometimes just one person's, sometimes only a couple of the boxes off each form." },
-                        { type: "h", text: "Reading the data" },
-                        { type: "p", text: "Three [[query|queries]], each asking for something different." },
-                        {
-                            type: "table",
-                            head: ["Query", "Returns"],
-                            rows: [
-                                ["SELECT * FROM client_form", "Every column, every row"],
-                                ["SELECT * FROM client_form WHERE name = 'Maya'", "Every column, only matching rows"],
-                                ["SELECT name, mood FROM client_form WHERE first_visit = true", "Only those two columns, only matching rows"],
-                            ],
-                            mono: [0],
-                        },
-                        {
-                            type: "more",
-                            label: "Rows and columns are controlled separately",
-                            blocks: [
-                                { type: "p", text: "The star means all columns, and listing names instead limits which columns come back. WHERE is what [[filter|filters]] which rows come back." },
-                                { type: "p", text: "They do not affect each other, which is why the three queries can vary one, the other, or both. Holding that apart in your head makes every query after this one easier to read." },
-                            ],
-                        },
-                        {
-                            type: "more",
-                            label: "No rows matching is an answer, not an error",
-                            blocks: [
-                                { type: "p", text: "A SELECT that matches nothing succeeds and returns an empty result. The database is not reporting a problem, it is telling you nobody fits." },
-                                { type: "p", text: "Worth knowing early, because code that treats an empty result as a failure will be wrong the first time somebody looks up a client who is not there." },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    type: "focus",
-                    file: "client_form.sql",
-                    at: ["selectall", "selectcols"],
-                    try: true,
-                    blocks: [
-                        { type: "h", text: "Run a query yourself" },
-                        { type: "p", text: "Switch the code panel to Try it. The queries run against the live client_form data, so changing the columns or the value after WHERE changes what comes back." },
-                    ],
-                },
+                { type: "p", text: "The full example designs the [[table]], files three clients in, then reads them back three ways. It is all one file, shown on the right. Pick a statement below to walk through it, and its lines light up." },
             ],
         },
         {
@@ -322,7 +247,7 @@ SELECT name, age FROM client_form
 -- Two conditions at once
 SELECT name FROM client_form
   WHERE first_visit = true
-AND state = 'Oregon';
+AND mood = 'anxious';
 
 -- Answering "how many" instead of "which ones"
 SELECT COUNT(*) FROM client_form;
@@ -375,14 +300,9 @@ ON sessions.client_id = client_form.id;`,
                     ],
                     mono: [0],
                 },
-                {
-                    type: "more",
-                    label: "A second table points back at this one by holding its id",
-                    blocks: [
-                        { type: "p", text: "Larger applications split information across several tables instead of repeating it. Here each therapy session is its own row in a sessions table, and it points back at one client by holding that client's id." },
-                        { type: "p", text: "A FOREIGN KEY is a column that points at a row in another table, and a JOIN brings the two back together in one query. This is where the PRIMARY KEY earns its place, because it is the value other tables point at." },
-                    ],
-                },
+                { type: "h", text: "Storing a date" },
+                { type: "p", text: "One [[data type]] the check-in table leaves out is DATE, for a calendar day like 2026-02-10. Stored as a real date rather than loose text, it can be compared and put in order, so you can ask for visits before a certain day or sort by when they happened. The sessions table below uses it for session_on." },
+                { type: "p", text: "Larger applications split information across several tables instead of repeating it, and ((point back with an id|Each therapy session is its own row in a sessions table, and it points back at one client by holding that client's id. A FOREIGN KEY is a column holding the id of a row in another table; a JOIN brings the two back together in one query. This is where the PRIMARY KEY earns its place, as the value other tables point at.)) connect them by id." },
                 { type: "h", text: "Practice" },
                 {
                     type: "list",

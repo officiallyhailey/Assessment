@@ -4,6 +4,7 @@ import { getAllClientForm, addClient } from "../../lib/api";
 const STARTING_BODY = `{
   "name": "Sam",
   "age": 38,
+  "email": "sam@example.com",
   "mood": "nervous",
   "first_visit": true
 }`;
@@ -24,7 +25,7 @@ function PostDemo() {
 
     const load = async () => {
         const { data, failed } = await getAllClientForm();
-        setClients(failed ? [] : data);
+        setClients(failed || !Array.isArray(data) ? [] : data);
     };
 
     useEffect(() => {
@@ -52,7 +53,21 @@ function PostDemo() {
         setReply(null);
         const { text, status, ms, failed } = await addClient(body);
         if (failed) {
-            setReply({ status: 0, text: "Could not reach the server on port 3001.", ms: 0 });
+            setReply({ status: 0, text: "Could not reach the server. Is the API running?", ms: 0 });
+        } else if (status >= 400) {
+            // A duplicate email lands here: the database refused it because email
+            // is UNIQUE. Surface that rather than the raw error JSON.
+            const dup = /unique|duplicate/i.test(text);
+            let msg = text;
+            if (dup) msg = "That email is already checked in. email is UNIQUE, so the database refused the duplicate.";
+            else {
+                try {
+                    msg = JSON.parse(text).error || text;
+                } catch {
+                    /* leave as-is */
+                }
+            }
+            setReply({ status, text: msg, ms });
         } else {
             setReply({ status, text, ms });
             setNewest(body.name);
@@ -72,7 +87,8 @@ function PostDemo() {
                 <p className="lead">
                     This is the request itself, the way Postman sends it: a method, a path, and a JSON
                     body. Edit the body and press Send. The list at the bottom is re-fetched afterwards, so
-                    you can see the row really saved.
+                    you can see the row really saved. Press Send twice without changing the email and watch
+                    the database refuse the duplicate &mdash; that is the UNIQUE constraint.
                 </p>
 
                 <div className="wire">
@@ -97,7 +113,15 @@ function PostDemo() {
                 {reply && (
                     <div className="wire" style={{ marginTop: "12px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
-                            <span className={reply.status === 200 ? "pill200" : "pill201"}>
+                            <span
+                                className={
+                                    reply.status === 0 || reply.status >= 400
+                                        ? "pillbad"
+                                        : reply.status === 200
+                                        ? "pill200"
+                                        : "pill201"
+                                }
+                            >
                                 {reply.status || "no reply"}
                             </span>
                             <span style={{ opacity: 0.7 }}>{reply.ms} ms</span>
@@ -122,6 +146,7 @@ function PostDemo() {
                                 <th className="m">id</th>
                                 <th className="m">name</th>
                                 <th className="m">age</th>
+                                <th className="m">email</th>
                                 <th className="m">mood</th>
                                 <th className="m">first_visit</th>
                             </tr>
@@ -132,6 +157,7 @@ function PostDemo() {
                                     <td className="m">{c.id}</td>
                                     <td className="m">{c.name}</td>
                                     <td className="m">{c.age}</td>
+                                    <td className="m">{c.email}</td>
                                     <td className="m">{c.mood}</td>
                                     <td className="m">{String(c.first_visit)}</td>
                                 </tr>

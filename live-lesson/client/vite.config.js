@@ -6,8 +6,8 @@ import react from "@vitejs/plugin-react";
 //
 // So anything starting with /api gets forwarded to the server, with the /api taken off on the way:
 //
-//   the page asks for   /api/get-all-animals
-//   the server sees     /get-all-animals
+//   the page asks for   /api/get-all-clients
+//   the server sees     /get-all-clients
 //
 // That is why a fetch says /api and the endpoint does not. In Postman you talk to the server directly, so you use the plain path.
 export default defineConfig({

@@ -1,4 +1,4 @@
-// Puts the animals back to the original three, from the command line.
+// Puts the check-in list back to the original three, from the command line.
 //
 // The site has a Reset button in its header, but the lesson folder has no UI,
 // and an HTTP endpoint is no use when the class has been adding rows with the
@@ -7,12 +7,12 @@
 //   npm run reset
 
 import db from "./db.js";
-import { resetAnimals } from "./animals-helpers.js";
+import { resetClientForm } from "./helpers.js";
 
-const animals = await resetAnimals();
+const clients = await resetClientForm();
 
 console.log("");
-console.log(`  Reset. ${animals.length} animals: ${animals.map((a) => a.name).join(", ")}`);
+console.log(`  Reset. ${clients.length} clients: ${clients.map((c) => c.name).join(", ")}`);
 console.log("");
 
 await db.end();

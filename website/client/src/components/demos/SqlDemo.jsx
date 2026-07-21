@@ -5,6 +5,9 @@ import { getAllClientForm } from "../../lib/api";
 //   SELECT <columns or *> FROM client_form [WHERE <column> = <value>]
 // The rows it runs against are the real ones fetched from the server.
 function runSelect(sql, rows) {
+    if (!Array.isArray(rows)) {
+        return { error: "No rows are loaded, so there is nothing to query yet." };
+    }
     const clean = sql.trim().replace(/;+\s*$/, "").replace(/\s+/g, " ");
     const m = clean.match(/^select\s+(.+?)\s+from\s+client_form(?:\s+where\s+(.+))?$/i);
     if (!m) {
@@ -14,7 +17,7 @@ function runSelect(sql, rows) {
     const colPart = m[1].trim();
     const wherePart = m[2];
 
-    const all = ["id", "name", "age", "state", "mood", "first_visit", "checked_in_on"];
+    const all = ["id", "name", "age", "email", "mood", "first_visit"];
     let cols;
     if (colPart === "*") {
         cols = all;
@@ -48,7 +51,7 @@ const EXAMPLES = [
     "SELECT * FROM client_form;",
     "SELECT * FROM client_form WHERE name = 'Maya';",
     "SELECT name, mood FROM client_form WHERE first_visit = true;",
-    "SELECT name, state FROM client_form WHERE age = 34;",
+    "SELECT name, email FROM client_form WHERE age = 34;",
 ];
 
 function SqlDemo() {
@@ -78,7 +81,7 @@ function SqlDemo() {
     useEffect(() => {
         const load = async () => {
             const { data, failed } = await getAllClientForm();
-            if (failed) {
+            if (failed || !Array.isArray(data)) {
                 setResult({ error: "Could not reach the server, so there are no live rows to query." });
             } else {
                 setRows(data);

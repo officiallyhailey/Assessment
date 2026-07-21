@@ -1,25 +1,26 @@
 import { useState } from "react";
-import { getAllAnimals } from "../../lib/api";
+import { getAllClients } from "../../lib/api";
 
 // Shows the thing students find confusing: the component draws once with an
 // empty array, then draws again once the data arrives. The render counter and
 // the state readout make that visible.
 function FetchDemo() {
     const [phase, setPhase] = useState("idle"); // idle, waiting, done
-    const [animals, setAnimals] = useState([]);
+    const [clients, setClients] = useState([]);
     const [renders, setRenders] = useState(0);
     const [failed, setFailed] = useState(false);
 
     const mount = async () => {
         setPhase("waiting");
-        setAnimals([]);
+        setClients([]);
         setRenders(1);
         setFailed(false);
 
-        const { data, failed: didFail } = await getAllAnimals();
-        setFailed(didFail);
-        if (!didFail) {
-            setAnimals(data);
+        const { data, failed: didFail } = await getAllClients();
+        const ok = !didFail && Array.isArray(data);
+        setFailed(!ok);
+        if (ok) {
+            setClients(data);
             setRenders(2);
         }
         setPhase("done");
@@ -52,8 +53,8 @@ function FetchDemo() {
                 <div className="renderbox" style={{ marginTop: "16px" }}>
                     <div className="rcount">
                         {phase === "idle" && "nothing has happened yet"}
-                        {phase === "waiting" && "render 1: animals = [ ]"}
-                        {phase === "done" && `render 2: animals = [ ${animals.length} items ]`}
+                        {phase === "waiting" && "render 1: clients = [ ]"}
+                        {phase === "done" && `render 2: clients = [ ${clients.length} items ]`}
                     </div>
 
                     {phase === "waiting" && (
@@ -66,11 +67,11 @@ function FetchDemo() {
 
                     {phase === "done" && (
                         <ul className="list">
-                            {animals.map((a) => (
-                                <li key={a.id} className="fresh">
-                                    <span className="nm">{a.name}</span>
-                                    <span className="where">{a.lives_in}</span>
-                                    {a.can_fly ? <span className="tagm fly">can fly</span> : null}
+                            {clients.map((c) => (
+                                <li key={c.id} className="fresh">
+                                    <span className="nm">{c.name}</span>
+                                    <span className="where">{c.mood}</span>
+                                    {c.first_visit ? <span className="tagm fly">first visit</span> : null}
                                 </li>
                             ))}
                         </ul>
@@ -84,7 +85,7 @@ function FetchDemo() {
                     is the place to read what actually crossed the wire. */}
                 {failed && (
                     <p className="stat" style={{ marginTop: "14px" }}>
-                        Could not reach the server on port 3000.
+                        Could not reach the server. Is the API running?
                     </p>
                 )}
             </div>

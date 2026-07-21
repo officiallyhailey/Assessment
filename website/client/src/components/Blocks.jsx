@@ -2,6 +2,7 @@ import CodeBlock from "./CodeBlock";
 import CodeExplorer from "./CodeExplorer";
 import Vocab from "./Vocab";
 import More from "./More";
+import Analogy from "./Analogy";
 import FigureToggle from "./FigureToggle";
 import SqlDemo from "./demos/SqlDemo";
 import PostDemo from "./demos/PostDemo";
@@ -16,6 +17,12 @@ const DEMOS = { sql: SqlDemo, post: PostDemo, fetch: FetchDemo, one: OneDemo };
 // `path` makes every focus block a stable id, so Lesson.jsx can name which one
 // is being read even when focus blocks are nested inside a dropdown.
 function Blocks({ blocks, pinned, activeFocus, aimed, path = "b" }) {
+    // An analogy inside this list is hoisted onto its first heading, so the
+    // office briefcase sits beside the sub-title exactly as it does the section
+    // title, rather than as a lone icon at the bottom of the part.
+    const analogy = blocks.find((b) => b.type === "analogy");
+    const hoistOnto = analogy ? blocks.findIndex((b) => b.type === "h") : -1;
+
     return blocks.map((b, i) => {
         switch (b.type) {
             case "p":
@@ -29,6 +36,7 @@ function Blocks({ blocks, pinned, activeFocus, aimed, path = "b" }) {
                 return (
                     <h3 className="sub" key={i}>
                         {b.text}
+                        {i === hoistOnto && <Analogy text={analogy.text} />}
                     </h3>
                 );
 
@@ -87,13 +95,10 @@ function Blocks({ blocks, pinned, activeFocus, aimed, path = "b" }) {
             // A one-line tie from a code section back to the running example, so
             // the instructor can say "in the office, this is the X" before the
             // code. Marked so it reads as the plain-English side, not more code.
+            // Hoisted onto the heading above when there is one; otherwise shown
+            // inline on its own (a part with a tie-in but no sub-heading).
             case "analogy":
-                return (
-                    <div className="analogy" key={i}>
-                        <span className="analogy-tag">In the office</span>
-                        <p>{rich(b.text)}</p>
-                    </div>
-                );
+                return hoistOnto >= 0 ? null : <Analogy key={i} text={b.text} />;
 
             case "note":
                 return (
@@ -160,6 +165,11 @@ function Blocks({ blocks, pinned, activeFocus, aimed, path = "b" }) {
                 const sample = pinned.find((c) => (c.key || c.name) === b.file);
                 const lines = resolveLines(b, sample);
                 const title = resolveTitle(b, sample);
+                // When the passage opens with a heading, the line label sits on
+                // the same row as it rather than stacked above, which is tighter.
+                const inner = b.blocks || [];
+                const leadHeading = title && inner[0] && inner[0].type === "h" ? inner[0].text : null;
+                const rest = leadHeading ? inner.slice(1) : inner;
                 return (
                     <div
                         key={i}
@@ -171,9 +181,16 @@ function Blocks({ blocks, pinned, activeFocus, aimed, path = "b" }) {
                         data-lines={linesAttr(lines) || ""}
                         data-try={b.try ? "1" : ""}
                     >
-                        {title && <div className="focustag">{title}</div>}
+                        {leadHeading ? (
+                            <div className="focushead">
+                                <span className="focustag">{title}</span>
+                                <h3 className="sub">{leadHeading}</h3>
+                            </div>
+                        ) : (
+                            title && <div className="focustag">{title}</div>
+                        )}
                         <Blocks
-                            blocks={b.blocks}
+                            blocks={rest}
                             pinned={pinned}
                             activeFocus={activeFocus}
                             aimed={aimed}

@@ -1,14 +1,14 @@
-// The page itself. It holds the heading and drops AnimalList underneath, which is where the animals show up.
+// The page itself. It holds the heading and drops ClientList underneath, which is where the clients show up.
 
-import AnimalList from "./pages/AnimalList.jsx";
+import ClientList from "./pages/ClientList.jsx";
 import "./App.css";
 
 function App() {
   return (
     <main>
-      <h1>Animals</h1>
+      <h1>Checked in today</h1>
       <p className="sub">Everything below comes from the database.</p>
-      <AnimalList />
+      <ClientList />
     </main>
   );
 }

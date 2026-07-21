@@ -2,7 +2,7 @@
 // are scattered across pages. Rather than thread a callback through everything,
 // a reset announces itself and whoever cares listens.
 
-const NAME = "animals-reset";
+const NAME = "data-reset";
 
 export function announceReset() {
     window.dispatchEvent(new CustomEvent(NAME));

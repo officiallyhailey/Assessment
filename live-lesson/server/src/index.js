@@ -4,7 +4,7 @@ import express from "express";
 import pg from "pg";
 import config from "./config.js";
 
-// Puts the table back to the three animals it starts with, every restart. Comment this out if you want rows to survive one.
+// Puts the table back to the three clients it starts with, every restart. Comment this out if you want rows to survive one.
 import "./seed.js";
 
 const db = new pg.Pool({
@@ -14,10 +14,9 @@ const db = new pg.Pool({
 
 const app = express();
 
-// ─── TOPIC 2 ──────────────────────────────────  table: lesson_animals
-// Notes on each step are in answer-key.js.
+// ─── TOPIC 2 ──────────────────────────────────  table: client_form
 
-// middleware: turns a JSON body into an object on req.body
+// Topis 2 Middleware: turns a JSON body into an object on req.body
 
 app.use(express.json());
 
@@ -27,44 +26,46 @@ app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
 
-// post helper function: INSERT INTO, return the new row
+// Topic 2 Post Helper function: INSERT INTO, return the new row
 
-async function addOneAnimal(name, category, can_fly, lives_in) {
+async function addOneClient(name, age, email, mood, first_visit) {
   const result = await db.query(
-    `INSERT INTO lesson_animals
-       (name, category, can_fly, lives_in)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO client_form
+      (name, age, email, mood, first_visit)
+      VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
-    [name, category, can_fly, lives_in],
+    [name, age, email, mood, first_visit],
   );
 
   return result.rows[0];
 }
 
-// post api endpoint: /add-one-animal
+// Topic 2 Post Api Endpoint: /add-one-client
 
-app.post("/add-one-animal", async (req, res) => {
-  const { name, category, can_fly, lives_in } = req.body;
+app.post("/add-one-client", async (req, res) => {
+  const { name, age, email, mood, first_visit } = req.body;
 
-  const animal = await addOneAnimal(name, category, can_fly, lives_in);
+  const client = await addOneClient(name, age, email, mood, first_visit);
 
-  res.send(`The farm has grown: ${animal.name} was added!`);
+  res.send(`${client.name} is checked in.`);
 });
 
-// Topic 3: get helper function: SELECT, return the rows
+// Topic 3:
 
-async function getAllAnimals() {
-  const result = await db.query("SELECT * FROM lesson_animals ORDER BY id");
+//get helper function: SELECT, return the rows
+
+async function getAllClients() {
+  const result = await db.query("SELECT * FROM client_form ORDER BY id");
 
   return result.rows;
 }
 
-// Topic 3: get api endpoint: /get-all-animals
+// Topic 3: get api endpoint: /get-all-clients
 
-app.get("/get-all-animals", async (req, res) => {
-  const animals = await getAllAnimals();
+app.get("/get-all-clients", async (req, res) => {
+  const clients = await getAllClients();
 
-  res.json(animals);
+  res.json(clients);
 });
 
 // ──────────────────────────────────────────────────────────────────────

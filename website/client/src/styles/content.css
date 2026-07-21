@@ -52,34 +52,44 @@
     color: #fff;
 }
 
-/* ---------------- the real-world tie-in for a code section ---------------- */
+/* ---------------- the real-world tie-in for a section ---------------- */
 
-.analogy {
-    display: flex;
-    gap: 12px;
-    align-items: baseline;
-    background: #fbf7ef;
+/* A small briefcase beside the heading. Hovering it opens the office analogy in
+   a popover, so the tie-in costs no vertical space and never interrupts the
+   read. It reads as an aside on the heading, not a box of its own. */
+.officenote {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+    margin-left: 12px;
+    top: -2px;
+}
+
+.officebtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
     border: 1px solid #ecdcc0;
-    border-radius: 10px;
-    padding: 12px 15px;
-    margin: 0 0 16px;
+    border-radius: 8px;
+    background: #effafb;
+    color: #2a8cb0;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-.analogy-tag {
-    flex: none;
-    font-family: var(--mono);
-    font-size: 10.5px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #9a6a1c;
-    padding-top: 2px;
+.officebtn:hover,
+.officebtn.on {
+    background: #f3e6cd;
+    color: #8a5e18;
+    border-color: #e0caa0;
 }
 
-.analogy p {
-    margin: 0;
-    font-size: 14.5px;
-    color: #6b4e22;
+.officebtn:focus-visible {
+    outline: 2px solid var(--bright);
+    outline-offset: 2px;
 }
 
 /* ---------------- glossary terms in the prose ---------------- */
@@ -175,6 +185,7 @@
 .pop-label.n-name { color: #ffd9a0; }
 .pop-label.n-context { color: #7ee3b8; }
 .pop-label.n-flow { color: #c4a2ff; }
+.pop-label.n-office { color: #ffcaa0; }
 
 .pop-body {
     display: block;
@@ -202,10 +213,28 @@
    read as the passage being lit, not as a quoted block. */
 .focus {
     position: relative;
-    padding: 14px 18px;
-    margin: 0 -18px 6px;
+    padding: 10px 18px;
+    margin: 0 -18px 2px;
     border-radius: 12px;
     transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* The line label and the passage's heading share a row, so the two do not each
+   take their own line at the top of every passage. */
+.focushead {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.focushead .focustag {
+    margin-bottom: 0;
+}
+
+.focushead .sub {
+    margin: 0;
 }
 
 .focus.on {
@@ -280,9 +309,9 @@ ol.t.steps li::before {
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--paper);
-    padding: 17px 20px;
-    margin: 0 0 18px;
-    max-width: 70ch;
+    padding: 14px 18px;
+    margin: 0 0 14px;
+    max-width: 80ch;
 }
 
 .note .lab {
@@ -312,7 +341,8 @@ ol.t.steps li::before {
 
 .tw {
     overflow-x: auto;
-    margin: 0 0 18px;
+    margin: 0 0 14px;
+    max-width: 80ch;
 }
 
 table.d {
@@ -426,8 +456,8 @@ table.d th.m {
     border: 1px solid var(--line);
     border-radius: 11px;
     background: var(--paper);
-    margin: 0 0 16px;
-    max-width: 70ch;
+    margin: 0 0 14px;
+    max-width: 80ch;
     overflow: hidden;
 }
 

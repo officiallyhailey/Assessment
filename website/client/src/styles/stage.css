@@ -1,0 +1,415 @@
+/* The right-hand stage: the panel that swaps between an office form preview and
+   the code, and the same pieces rendered inline on narrow screens. */
+
+/* Scroll container inside the sticky panel. The card inside carries its own
+   look, so this only holds the height and lets a tall accordion scroll. */
+.stagebox {
+    width: 100%;
+    max-height: calc(100vh - 100px);
+    overflow: auto;
+}
+
+/* Inline copy shown on narrow screens, where the sticky panel is gone. */
+.stage-inline {
+    margin: 8px 0 20px;
+}
+
+/* ---------------- form preview ---------------- */
+
+.formprev {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px 18px;
+}
+
+.formprev-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 13px;
+    margin-bottom: 16px;
+}
+
+.formprev-kicker {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--deep);
+    letter-spacing: 0.01em;
+}
+
+.formprev-id {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--soft);
+}
+
+.formprev-id em {
+    font-style: normal;
+    opacity: 0.85;
+}
+
+.formprev-fields {
+    display: grid;
+    gap: 13px;
+}
+
+.ff {
+    display: block;
+}
+
+.ff-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.ff-label {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--body);
+}
+
+.ff-req,
+.ff-uniq {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--bright);
+    border: 1px solid var(--mist);
+    border-radius: 999px;
+    padding: 1px 7px;
+}
+
+.ff-uniq {
+    color: var(--amber);
+    border-color: #ecdcc0;
+}
+
+.ff-box {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 11px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.ff-holds {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-style: italic;
+    color: var(--soft);
+}
+
+.ff-choice {
+    display: inline-flex;
+    gap: 8px;
+}
+
+.ff-opt {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--soft);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 18px;
+    background: #fff;
+}
+
+.formprev-foot {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--soft);
+    margin: 17px 0 0;
+    line-height: 1.5;
+}
+
+.formprev-foot strong {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--deep);
+    font-weight: 600;
+}
+
+/* ---------------- code accordion ---------------- */
+
+.acc {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.acc-file {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--soft);
+    padding: 11px 15px;
+    border-bottom: 1px solid var(--line);
+    background: var(--wash);
+}
+
+.accitem {
+    border-bottom: 1px solid var(--line);
+}
+
+.accitem:last-child {
+    border-bottom: none;
+}
+
+.acchead {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 15px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+}
+
+.acchead:hover {
+    background: var(--wash);
+}
+
+.acctitle {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--deep);
+}
+
+.acclines {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--soft);
+}
+
+.accchev {
+    margin-left: auto;
+    color: var(--soft);
+    font-size: 19px;
+    line-height: 1;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.accitem.open .acchead {
+    background: var(--wash);
+}
+
+.accitem.open .accchev {
+    transform: rotate(90deg);
+    color: var(--bright);
+}
+
+.accbody {
+    padding: 2px 15px 16px;
+    animation: fadein 0.2s ease both;
+}
+
+/* The one dark element: the stretch of code this item is about, inset in the
+   otherwise light card so the surrounding explanation reads as prose. */
+.acccode {
+    background: var(--code-bg);
+    border-radius: 10px;
+    margin: 0 0 13px;
+    padding: 12px 0;
+    overflow-x: auto;
+}
+
+.acccode code {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.62;
+    color: var(--code-fg);
+    white-space: pre;
+    display: block;
+}
+
+.acccode .ln {
+    display: block;
+    padding: 0 16px;
+}
+
+/* The explanation under the code is ordinary lesson prose, so it keeps every
+   style it has elsewhere. It only needs its last paragraph not to add a gap. */
+.accnote > p.t:last-child,
+.accnote > ul.t:last-child {
+    margin-bottom: 0;
+}
+
+/* A demo living inside an accordion item (Try it), trimmed so it sits flush. */
+.acctry .demo {
+    margin: 4px 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .accbody {
+        animation: none;
+    }
+
+    .accchev {
+        transition: none;
+    }
+}
+
+/* ---------------- segmented toggle ---------------- */
+
+.seg {
+    display: inline-flex;
+    gap: 3px;
+    background: var(--wash);
+    border: 1px solid var(--line);
+    padding: 3px;
+    border-radius: 10px;
+    max-width: 100%;
+    flex-wrap: wrap;
+}
+
+.seg button {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--soft);
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    padding: 6px 15px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.seg button:hover {
+    color: var(--deep);
+}
+
+.seg button.on {
+    background: var(--bright);
+    color: #fff;
+}
+
+/* ---------------- the code toggle in the text ---------------- */
+
+/* The control that picks which statement is being explained, and its chosen
+   explanation. Selecting one also lights that statement's lines in the panel. */
+.codetoggle {
+    margin: 26px 0 10px;
+}
+
+.codetoggle .seg {
+    margin-bottom: 18px;
+}
+
+/* The highlighted code, shown inline under the control on a narrow screen where
+   the side panel is gone. On wide screens the pinned panel carries it instead. */
+.codetoggle-code {
+    margin-bottom: 18px;
+}
+
+.codetoggle-body {
+    animation: fadein 0.2s ease both;
+}
+
+.codetoggle-body > :last-child {
+    margin-bottom: 0;
+}
+
+/* ---------------- table / form preview ---------------- */
+
+.preview {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.seg-panel {
+    align-self: flex-start;
+}
+
+.preview-body {
+    animation: fadein 0.2s ease both;
+}
+
+.tableprev {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.tableprev-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--wash);
+}
+
+.tableprev-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--deep);
+}
+
+.tableprev-sub {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--soft);
+}
+
+.tableprev-scroll {
+    overflow-x: auto;
+}
+
+.dbgrid {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: var(--mono);
+    font-size: 12px;
+}
+
+.dbgrid th {
+    text-align: left;
+    padding: 8px 11px;
+    color: var(--deep);
+    font-weight: 700;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+}
+
+.dbgrid td {
+    padding: 7px 11px;
+    color: var(--body);
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+}
+
+.dbgrid tbody tr:last-child td,
+.dbgrid tr:last-child td {
+    border-bottom: none;
+}
+
+.tableprev-foot {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--soft);
+    margin: 0;
+    padding: 12px 16px 14px;
+    line-height: 1.5;
+}

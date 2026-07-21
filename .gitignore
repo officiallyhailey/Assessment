@@ -11,3 +11,5 @@ server/src/config.js
 # dependencies and its own Neon config.
 lesson/*/node_modules/
 lesson/server/src/config.js
+
+.claude/

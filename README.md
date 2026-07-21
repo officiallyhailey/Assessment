@@ -62,9 +62,9 @@ any real project.
 
 ## The database
 
-Both talk to the same Neon database, and to **different tables**. The website
-uses `animals`; the live project uses `lesson_animals`, so a session can add and
-delete freely without touching what the site is showing.
+Both talk to the same Neon database, and to the same table, `client_form` — the
+therapy check-in table Lesson 01 builds. The live project seeds it back to the
+original three on every restart, so a session always starts from a known state.
 
 Each project has its own gitignored `server/src/config.js`. The connection
 string is a password.
