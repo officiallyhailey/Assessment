@@ -2,6 +2,7 @@ import CodeBlock from "./CodeBlock";
 import CodeExplorer from "./CodeExplorer";
 import Vocab from "./Vocab";
 import More from "./More";
+import FigureToggle from "./FigureToggle";
 import SqlDemo from "./demos/SqlDemo";
 import PostDemo from "./demos/PostDemo";
 import FetchDemo from "./demos/FetchDemo";
@@ -78,6 +79,20 @@ function Blocks({ blocks, pinned, activeFocus, aimed, path = "b" }) {
                         <img src={b.src} alt={b.alt} />
                         {b.caption && <figcaption>{rich(b.caption)}</figcaption>}
                     </figure>
+                );
+
+            case "figuretoggle":
+                return <FigureToggle key={i} views={b.views} labels={b.labels} start={b.start} />;
+
+            // A one-line tie from a code section back to the running example, so
+            // the instructor can say "in the office, this is the X" before the
+            // code. Marked so it reads as the plain-English side, not more code.
+            case "analogy":
+                return (
+                    <div className="analogy" key={i}>
+                        <span className="analogy-tag">In the office</span>
+                        <p>{rich(b.text)}</p>
+                    </div>
                 );
 
             case "note":

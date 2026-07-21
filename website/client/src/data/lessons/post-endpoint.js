@@ -108,28 +108,30 @@ app.listen(port, () => {
         {
             id: "overview",
             label: "Overview",
-            heading: "What a POST endpoint is",
+            heading: "What does that even mean?",
             blocks: [
-                { type: "p", text: "Think of arriving at a therapy office. You fill in a check-in form, hand it to the front desk, they file it away, and they tell you your therapist will be out to see you shortly." },
+                { type: "p", text: "Think of arriving at a therapy office. You fill in a check-in form, hand it to the front desk, they file it away, and they tell you your therapist will be out shortly. That is the whole shape of this lesson." },
                 {
-                    type: "figure",
-                    src: "/topic2-plain.png",
-                    alt: "A client fills in a check-in form, hands it to the front desk, they file it away, and say the therapist will be out shortly",
-                    caption: "Nothing technical yet. A form handed in, filed, and a word back that it is done.",
+                    type: "figuretoggle",
+                    labels: ["The office", "In code"],
+                    views: [
+                        {
+                            src: "/topic2-plain.png",
+                            alt: "A client fills in a check-in form, hands it to the front desk, they file it away, and say the therapist will be out shortly",
+                            caption: "A form handed in, filed, and a word back that it is done.",
+                        },
+                        {
+                            src: "/topic2.png",
+                            alt: "A client sends a request to your server, which reads it, saves it to the database, and sends a response back",
+                            caption: "The same three moves, with the real words. The numbers match the steps below.",
+                        },
+                    ],
                 },
-                { type: "p", text: "That is the whole idea of this lesson. You fill in some information, hand it in, and it gets filed so it is still there later. A word comes back to say it worked." },
-                { type: "p", text: "A therapy office calls the person checking in a client, and so does code. Whatever sends the information in is the [[client]], and here that is you." },
-                { type: "h", text: "The same thing, in code" },
-                { type: "p", text: "Now the technical version. The front desk is a [[server]]: a program, always running, that waits for messages and answers them. The filing cabinet is a [[database]], where information is kept so it is still there tomorrow. Handing your form in is a [[post|POST]]." },
-                {
-                    type: "figure",
-                    src: "/topic2.png",
-                    alt: "Data travels from a sender into your server, which saves it to the database and sends a reply back",
-                    caption: "The same three moves, with the real words. The numbers match the steps below.",
-                },
-                { type: "p", text: "Everything in this lesson is one of those three moves. The rest is the words for them." },
+                { type: "p", text: "Flip the picture between the two. The office on one side, the code words on the other, and they line up move for move." },
                 { type: "h", text: "The words for the picture" },
-                { type: "p", text: "The [[client]] is you, checking in a moment ago. Its message is a [[request]], and what comes back is a [[response]]. Your server answers at specific addresses, and each one is an [[endpoint]], fixed by two things together." },
+                { type: "p", text: "A therapy office calls the person checking in a client, and so does code. The [[client]] is whatever sends the information in, and here it is you. Its message is a [[request]], and what comes back is a [[response]]." },
+                { type: "p", text: "The front desk is your [[server]]: a program you start, that keeps running and answers whatever arrives. It is the file you write in this lesson, index.js, running on your computer and listening on a [[port]]. The filing cabinet is a [[database]], where information is kept so it is still there tomorrow." },
+                { type: "p", text: "Your server answers at specific addresses, and each one is an [[endpoint]], fixed by two things together." },
                 {
                     type: "table",
                     head: ["Part", "Example", "What it decides"],
@@ -171,7 +173,8 @@ app.listen(port, () => {
             label: "Setting up the file",
             heading: "Everything above the code you write",
             blocks: [
-                { type: "p", text: "The top of the file is setup: load what is needed, open a connection to the database, create the app, and start it listening. None of it is specific to animals, and all of it runs once at startup." },
+                { type: "analogy", text: "Opening the office for the day. Unlock the door, run a line to the records room, put someone at the front desk, and turn on the sign. None of it is about any one client, and it all happens once before anyone walks in." },
+                { type: "p", text: "The top of the file is that setup: load what is needed, open a connection to the database, create the app, and start it listening. It runs once at startup." },
                 {
                     type: "more",
                     label: "Express exists so you are not the one reading raw network traffic",
@@ -304,7 +307,8 @@ app.listen(port, () => {
             label: "The helper",
             heading: "Where the database work lives",
             blocks: [
-                { type: "p", text: "The handler hands four values over and waits. This is the file that does something with them." },
+                { type: "analogy", text: "The records clerk in the back room. They never meet the client. The front desk hands them a filled-in form, they file it, and they hand back a note saying it is done. Their whole job is the filing cabinet." },
+                { type: "p", text: "The handler hands four values over and waits. This is the function that does something with them, kept apart from anything about requests." },
                 { type: "coderef" },
                 {
                     type: "focus",
@@ -392,6 +396,7 @@ app.listen(port, () => {
             label: "The endpoint",
             heading: "req, res, and the handler between them",
             blocks: [
+                { type: "analogy", text: "The front desk itself. It is the counter the client actually walks up to. It takes the form, reads what is on it, passes it to the records clerk in the back, and gives the client the word back. It never files anything itself." },
                 { type: "p", text: "app.post takes the path and a function to run when a POST reaches it. That function is the [[handler]], and it receives two objects every time it runs." },
                 {
                     type: "focus",
@@ -546,11 +551,12 @@ app.listen(port, () => {
             label: "Testing in Postman",
             heading: "Checking the endpoint works",
             blocks: [
+                { type: "analogy", text: "Walking up to your own front desk as a pretend client, to check it works, before the doors open to the public. You fill in a form, hand it in, and see whether the right word comes back." },
                 { type: "p", text: "[[postman|Postman]] sends requests to your endpoints without a website existing yet, so you can confirm one works on its own." },
                 {
                     type: "olist",
                     items: [
-                        "Set the method to POST and enter the URL, http://localhost:3000/add-one-animal.",
+                        "Set the method to POST and enter the URL, http://localhost:3001/add-one-animal.",
                         "Open the Body tab, select raw, then select JSON.",
                         "Type the JSON with a key for each value the endpoint expects.",
                         "Press Send, then read the status code and the response.",
